@@ -22,6 +22,7 @@ import {
   ALLIANCE_SHOP, ALLIANCE_TECH_BY_ID, DONATION_CONTRIB, DONATION_PROGRESS, HELPS_PER_JOB, HELP_CONTRIB, HELP_DAILY_CAP, MEMBERS, REQUEST_KINDS,
   allianceLevelXp, donationCost, giftReward, techNeed,
 } from '../data/alliance';
+import { ACHIEVEMENTS, ACHIEVEMENT_BY_ID, achievementValue, type AchievementDef } from '../data/achievements';
 import { TROOPS, TYPE_INFO } from '../data/troops';
 import { TITAN_BY_ID, campName, campTroops, nodeRate, riftTroops } from '../data/world';
 import { computeEffects, heroUtility, type Effects } from './bonuses';
@@ -167,6 +168,7 @@ export class Game {
     this.respawnTick(now);
     this.dailyTick(now);
     this.eventTick(now);
+    this.achievementTick(now);
     if (this.fogDirty) { this.fogDirty = false; bus.emit('fog'); }
     s.lastTick = now;
   }
@@ -1373,6 +1375,52 @@ export class Game {
   /** Allied banners join battles against titans and rifts. */
   allianceSupport(): number { return this.allianceOn() ? 0.05 + this.level('embassy') * 0.01 + this.s.alliance.level * 0.005 : 0; }
 
+  // ————————————————————————————————————————— achievements
+  private achCheckAt = 0;
+
+  achievementValue(a: AchievementDef): number { return achievementValue(a, this.s, this.power()); }
+
+  achievementState(a: AchievementDef): 'claimed' | 'ready' | 'locked' {
+    if (this.s.achievements.claimed.includes(a.id)) return 'claimed';
+    return this.achievementValue(a) >= a.target ? 'ready' : 'locked';
+  }
+
+  achievementsReady(): number {
+    const st = this.s.achievements;
+    return st.seen.filter((id) => !st.claimed.includes(id)).length;
+  }
+
+  achievementPoints(): number {
+    return this.s.achievements.claimed.reduce((n, id) => n + (ACHIEVEMENT_BY_ID[id]?.points ?? 0), 0);
+  }
+
+  claimAchievement(id: string): Result & { reward?: Reward } {
+    const a = ACHIEVEMENT_BY_ID[id];
+    const st = this.s.achievements;
+    if (!a) return fail('Нет такого достижения');
+    if (st.claimed.includes(id)) return fail('Награда уже получена');
+    if (this.achievementValue(a) < a.target) return fail('Достижение ещё не открыто');
+    st.claimed.push(id);
+    if (!st.seen.includes(id)) st.seen.push(id);
+    this.grant(a.reward);
+    bus.emit('state');
+    return { ok: true, reward: a.reward };
+  }
+
+  /** Announces newly unlocked achievements (throttled; old saves are scanned silently once). */
+  private achievementTick(now: number) {
+    if (now < this.achCheckAt && this.achCheckAt - now <= 2000) return;
+    this.achCheckAt = now + 2000;
+    const st = this.s.achievements;
+    const power = this.power();
+    for (const a of ACHIEVEMENTS) {
+      if (st.seen.includes(a.id) || achievementValue(a, this.s, power) < a.target) continue;
+      st.seen.push(a.id);
+      if (st.init) bus.emit('achievement', a.id);
+    }
+    st.init = true;
+  }
+
   // ————————————————————————————————————————— events
   currentEvent(now = this.s.lastTick) { return eventAt(now, this.s.created); }
 
@@ -1762,6 +1810,7 @@ export function migrate(s: GameState) {
   if (s.raidCooldown == null) s.raidCooldown = 0;
   if (!s.flags) s.flags = {};
   if (!s.gear) s.gear = [];
+  if (!s.achievements) s.achievements = { seen: [], claimed: [], init: false };
   if (!s.alliance) s.alliance = { level: 1, xp: 0, contribution: 0, day: '', helpsToday: 0, donationsToday: 0, techs: {}, gifts: [], requests: [], nextGift: 0, nextRequest: 0, shopToday: {} };
   if (s.stats.allianceHelps == null) s.stats.allianceHelps = 0;
   if (!s.event) s.event = { key: '', points: 0, claimed: [], wave: 0, nextWave: 0 };

@@ -238,6 +238,8 @@ export interface GameState {
     nextGift: number; nextRequest: number; shopToday: Record<string, number>;
   };
   event: { key: string; points: number; claimed: number[]; wave: number; nextWave: number };
+  /** seen = unlocked (announced), claimed = reward taken; init=false until the first silent scan */
+  achievements: { seen: string[]; claimed: string[]; init: boolean };
   gear: { uid: number; bp: string; rarity: 0 | 1 | 2 | 3; hero: string | null }[];
   reports: Report[];
   stats: Stats;

@@ -1,3 +1,4 @@
+import { ACHIEVEMENTS } from '../src/data/achievements';
 /**
  * Headless balance bot: plays the game greedily in simulated time and reports
  * how long each story chapter takes. Run: npx vite-node scripts/bot.ts
@@ -74,6 +75,7 @@ function act() {
   }
   if (g.calendarReady()) g.claimCalendar();
   for (let i = 0; i < 5; i++) g.claimEventMilestone(i);
+  for (const id of [...g.s.achievements.seen]) if (!g.s.achievements.claimed.includes(id)) g.claimAchievement(id);
   // alliance: help, take gifts, ask for help, donate surplus, shop
   if (g.allianceOn()) {
     g.helpAllies();
@@ -185,4 +187,5 @@ console.log('Titans', JSON.stringify(g.s.titans), 'research', Object.values(g.s.
 console.log('Res', JSON.stringify(Object.fromEntries(Object.entries(g.s.res).map(([k, v]) => [k, Math.round(v)]))));
 console.log('Buildings', g.s.buildings.filter((b) => b.level > 0).map((b) => `${b.plot}:${b.level}`).join(' '));
 console.log('Played minutes', Math.round(sessionMinutes));
+console.log('Achievements', g.s.achievements.claimed.length, '/', ACHIEVEMENTS.length, 'points', g.achievementPoints());
 void BUILDINGS; void log;

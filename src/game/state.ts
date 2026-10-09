@@ -55,6 +55,7 @@ export function newGame(faction: FactionId, name: string, seed = (Math.random() 
     gear: [],
     alliance: { level: 1, xp: 0, contribution: 0, day: '', helpsToday: 0, donationsToday: 0, techs: {}, gifts: [], requests: [], nextGift: 0, nextRequest: 0, shopToday: {} },
     event: { key: '', points: 0, claimed: [], wave: 0, nextWave: 0 },
+    achievements: { seen: [], claimed: [], init: true },
     reports: [],
     stats: emptyStats(),
     quests: { chapter: 1, claimed: [], chapterClaimed: [], dailyDate: dayKey(now), daily: { ...emptyStats() } as any, dailyClaimed: [], dailyChests: [], dailyPoints: 0 },

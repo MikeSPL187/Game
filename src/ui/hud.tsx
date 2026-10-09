@@ -41,7 +41,10 @@ export function TopBar() {
   return (
     <div class="hud-top">
       <div class="lordplate act" onClick={() => { sfx('click'); ui.open('profile'); }}>
-        <div class="crest"><img src={portraitUrl(lead)} /></div>
+        <div style={{ position: 'relative', flex: 'none' }}>
+          <div class="crest"><img src={portraitUrl(lead)} /></div>
+          {g.achievementsReady() > 0 && <span class="badge" title="Достижения" style={{ top: -4, right: -6 }}>{g.achievementsReady()}</span>}
+        </div>
         <div class="lordinfo">
           <div class="row" style={{ gap: 6 }}><div class="lordname">{g.s.player.name}</div><button class="act" title="Настройки" style={{ width: 26, height: 26, borderRadius: 13, background: 'rgba(0,0,0,.45)', boxShadow: '0 0 0 1px rgba(232,184,74,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={(e) => { e.stopPropagation(); sfx('click'); ui.open('settings'); }}><Icon name="gear" size={18} /></button></div>
           <div class="power"><Icon name="power" size={22} />{fmt(g.power())}</div>

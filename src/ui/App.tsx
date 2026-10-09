@@ -21,6 +21,8 @@ import { ReportsPanel } from './panels/reports';
 import { ForgePanel } from './panels/forge';
 import { EventPanel } from './panels/event';
 import { AlliancePanel } from './panels/alliance';
+import { AchievementsPanel } from './panels/achievements';
+import { ACHIEVEMENT_BY_ID } from '../data/achievements';
 import { sfx } from '../audio/audio';
 import { CrashScreen, Guard } from './guard';
 import { Capacitor } from '@capacitor/core';
@@ -29,7 +31,7 @@ import { requestNotifications } from '../core/notify';
 const PANELS: Record<string, (p: any) => any> = {
   upgrade: UpgradePanel, speedup: SpeedupPanel, train: TrainPanel, research: ResearchPanel, heroes: HeroesPanel, tavern: TavernPanel,
   dispatch: DispatchPanel, search: SearchPanel, inventory: InventoryPanel, quests: QuestsPanel, reports: ReportsPanel, army: ArmyPanel,
-  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, event: EventPanel, alliance: AlliancePanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
+  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, event: EventPanel, alliance: AlliancePanel, achievements: AchievementsPanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
 };
 
 // ———————————————————————————————————————— building context menu
@@ -127,6 +129,7 @@ function Notes() {
         if (r.kind === 'system') return;
         push({ icon: r.kind === 'battle' ? (r.win ? 'trophy' : 'skull') : r.kind === 'defense' ? 'tower' : 'ruin', text: r.title, sub: 'Нажмите, чтобы открыть отчёт', tone: r.win === false ? 'bad' : undefined, fn: () => ui.open('reports', { id: r.id }) });
       }),
+      bus.on('achievement', (id: string) => { const a = ACHIEVEMENT_BY_ID[id]; if (!a) return; sfx('levelup'); push({ icon: 'trophy', text: `Достижение: ${a.name}`, sub: a.desc, fn: () => ui.open('achievements') }); }),
       bus.on('raid', () => { sfx('alarm'); haptic(true); push({ icon: 'skull', text: 'Вражеская армия идёт на город!', sub: 'Подготовьте оборону', tone: 'bad', fn: () => ui.open('wall') }); }),
       bus.on('titan-tamed', (id: string) => { sfx('legendary'); bus.emit('story', { text: `${TITAN_BY_ID[id].name} склонил голову перед вами! Отныне титан будет сражаться на вашей стороне. Загляните в Святилище, чтобы взять его в бой.` }); }),
       bus.on('gather-done', (e) => { if (e.amount > 0) push({ icon: e.res, text: `Добыто: ${fmt(e.amount)}`, sub: 'Отряд возвращается домой' }); }),

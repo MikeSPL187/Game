@@ -347,10 +347,14 @@ export function ProfilePanel() {
           <div class="mute" style={{ fontSize: 13, fontStyle: 'italic' }}>«{f.motto}»</div>
           <div class="good" style={{ fontSize: 12, textAlign: 'center' }}>{f.bonus}</div>
           <div class="power" style={{ fontSize: 18 }}><Icon name="power" size={26} />{fmt(g.power())}</div>
+          <div style={{ position: 'relative', width: '100%', marginTop: 8 }}>
+            <Btn kind="gold" wide onClick={() => ui.open('achievements')}><Icon name="trophy" size={22} /> Достижения · {g.achievementPoints()}</Btn>
+            {g.achievementsReady() > 0 && <span class="badge">{g.achievementsReady()}</span>}
+          </div>
         </div>
         <div class="card col grow" style={{ gap: 2 }}>
           <div class="h" style={{ color: 'var(--gold2)' }}>Летопись</div>
-          {([['Цитадель', g.citadel], ['Логов Пустоты разорено', st.campsDefeated], ['Макс. уровень логова', st.maxCampLevel], ['Добыто ресурсов', fmt(st.gathered)], ['Обучено воинов', fmt(st.troopsTrained)], ['Призывов героев', st.summons], ['Руин исследовано', st.ruinsExplored], ['Набегов отражено', st.raidsDefended], ['Побед над лордами', st.lordsDefeated], ['Разломов закрыто', st.riftsCleared], ['Титанов приручено', Object.keys(g.s.titans.tamed).length]] as const).map(([l, v]) => (
+          {([['Цитадель', g.citadel], ['Логов Пустоты разорено', st.campsDefeated], ['Макс. уровень логова', st.maxCampLevel], ['Добыто ресурсов', fmt(st.gathered)], ['Обучено воинов', fmt(st.troopsTrained)], ['Призывов героев', st.summons], ['Руин исследовано', st.ruinsExplored], ['Набегов отражено', st.raidsDefended], ['Побед над лордами', st.lordsDefeated], ['Разломов закрыто', st.riftsCleared], ['Титанов приручено', Object.keys(g.s.titans.tamed).length], ['Предметов выковано', st.crafted], ['Помощь союзникам', st.allianceHelps]] as const).map(([l, v]) => (
             <div class="statline"><span class="mute">{l}</span><b>{v}</b></div>
           ))}
         </div>
