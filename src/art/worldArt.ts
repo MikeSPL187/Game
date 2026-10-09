@@ -296,3 +296,17 @@ export function bannerArt(color: string): ArtResult {
   flag(s, cx - 6, cy, 50, color, '#ffd76a');
   return done();
 }
+
+/** Small fishing / trade boat for lakes and the sea (faces right). */
+export function boatArt(sail: string): ArtResult {
+  const { s, cx, cy, done } = fr(70, 70, 56);
+  s.ellipse(cx, cy + 2, 26, 5, 'rgba(255,255,255,.35)');
+  s.path(`M${cx - 24},${cy - 8} L${cx + 26},${cy - 8} Q${cx + 20},${cy + 4} ${cx + 8},${cy + 4} L${cx - 16},${cy + 4} Q${cx - 22},${cy} ${cx - 24},${cy - 8} Z`, s.lin([[0, '#9a6a3a'], [1, '#5a3a1a']]), 'stroke="#2a1a0a" stroke-width="1"');
+  s.line(cx - 22, cy - 5, cx + 22, cy - 5, '#c89a5a', 1.2);
+  s.line(cx, cy - 8, cx, cy - 46, '#4a3020', 2);
+  s.path(`M${cx + 1},${cy - 44} Q${cx + 20},${cy - 30} ${cx + 18},${cy - 12} L${cx + 1},${cy - 12} Z`, s.lin([[0, '#fff8e8'], [1, '#d8ccb0']], 0, 0, 1, 0), 'stroke="#8a7a60" stroke-width=".8"');
+  s.path(`M${cx + 2},${cy - 30} Q${cx + 12},${cy - 26} ${cx + 18},${cy - 22} L${cx + 18},${cy - 18} Q${cx + 10},${cy - 22} ${cx + 2},${cy - 24} Z`, sail);
+  s.path(`M${cx - 1},${cy - 40} Q${cx - 14},${cy - 26} ${cx - 12},${cy - 12} L${cx - 1},${cy - 12} Z`, '#efe4cc', 'stroke="#8a7a60" stroke-width=".8"');
+  s.path(`M${cx},${cy - 48} l9,3 l-9,3 z`, sail);
+  return done();
+}

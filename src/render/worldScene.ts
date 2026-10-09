@@ -2,7 +2,7 @@ import { Container, Graphics, Sprite, Text, type Application } from 'pixi.js';
 import { bus } from '../core/bus';
 import { hash2, noiseTile } from '../core/rng';
 import type { Legion, WorldObject } from '../core/types';
-import { campArt, castleArt, mountainArt, nodeArt, riftArt, riftVortex, ruinArt, soldierArt, titanArt, treeArt, hillArt } from '../art/worldArt';
+import { boatArt, campArt, castleArt, mountainArt, nodeArt, riftArt, riftVortex, ruinArt, soldierArt, titanArt, treeArt, hillArt } from '../art/worldArt';
 import { PALETTES } from '../art/buildings';
 import { iconSvg } from '../art/icons';
 import { FACTIONS, NODE_INFO } from '../data/world';
@@ -10,6 +10,7 @@ import { TROOPS } from '../data/troops';
 import type { Game } from '../game/game';
 import { T, type Terrain } from '../game/terrain';
 import { Camera } from './camera';
+import { WorldAmbience } from './ambience';
 import { Particles, floatText, ringTexture, softCircle, starSprite } from './fx';
 import { bake, canvasTexture, get, type Baked } from './textures';
 
@@ -61,6 +62,7 @@ export class WorldScene {
   perf: Record<string, number> = {};
   private lastFogPaint = -9;
   private lastSync = 0;
+  ambience: WorldAmbience | null = null;
 
   constructor(public app: Application, public game: Game) {
     this.ter = game.ter;
@@ -83,7 +85,7 @@ export class WorldScene {
     for (let v = 0; v < 3; v++) jobs.push(bake(`wcamp:${v}`, () => campArt(v)));
     for (const r of ['food', 'wood', 'stone', 'gold'] as const) jobs.push(bake(`wnode:${r}`, () => nodeArt(r, 0)));
     for (let v = 0; v < 3; v++) jobs.push(bake(`wruin:${v}`, () => ruinArt(v)));
-    jobs.push(bake('wrift', riftArt), bake('wvortex', riftVortex));
+    jobs.push(bake('wrift', riftArt), bake('wvortex', riftVortex), bake('wboat', () => boatArt(PALETTES[f].banner)));
     jobs.push(bake('wcity', () => castleArt(FACTIONS[f].color, f, 5, true)));
     for (const l of this.game.s.lords) jobs.push(bake(`wlord:${l.id}`, () => castleArt(l.color, l.faction, l.citadel)));
     for (const t of ['roc', 'golem', 'wyrm']) jobs.push(bake(`wtitan:${t}`, () => titanArt(t)));
@@ -109,6 +111,9 @@ export class WorldScene {
     t = performance.now();
     this.buildFog();
     this.perf.fog = Math.round(performance.now() - t);
+    this.ambience = new WorldAmbience(this);
+    this.world.addChildAt(this.ambience.layer, this.world.getChildIndex(this.marchL));
+    this.root.addChild(this.ambience.screen);
     this.syncObjects();
     this.syncLegions();
     bus.on('fog', () => { this.fogDirty = true; });
@@ -541,6 +546,7 @@ export class WorldScene {
     this.time += dt;
     this.camera.update();
     this.particles.update(dt);
+    this.ambience?.update(dt);
     if (this.fogDirty && this.time - this.lastFogPaint > 0.8) { this.lastFogPaint = this.time; this.paintFog(); this.syncObjects(); }
     // cull chunks
     const z = this.camera.zoom;
@@ -557,7 +563,13 @@ export class WorldScene {
       const lz = z / (window.innerHeight / 1200);
       if (!inView) continue;
       if (v.obj.kind === 'rift' && v.extra) v.extra.rotation += dt * 1.6;
-      if (v.obj.kind === 'titan' && v.extra) v.extra.y = Math.sin(this.time * 1.4 + v.obj.id) * 6 - 4;
+      if (v.obj.kind === 'titan' && v.extra) {
+        v.extra.y = Math.sin(this.time * 1.4 + v.obj.id) * 6 - 4;
+        // roc crackles with lightning: its glow flickers now and then
+        const glow = v.c.children[0] as Sprite;
+        if (v.obj.titanId === 'roc') glow.alpha = Math.random() < 0.02 ? 0.9 : Math.max(0.35, glow.alpha - dt * 2);
+      }
+      this.ambience?.objectFx(v.obj.kind, v.c.x, v.c.y, v.obj.titanId, dt);
       if (v.label) v.label.visible = lz > 0.45 || v.obj.kind === 'city' || v.obj.kind === 'titan' || v.obj.kind === 'lord';
     }
     // marches
