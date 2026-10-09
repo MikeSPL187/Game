@@ -45,9 +45,24 @@
 
 ## Как установить на телефон
 
-1. Откройте вкладку **Actions** репозитория → workflow **Android APK** → последний успешный запуск.
-2. Скачайте артефакт **Aetherfall-APK** (zip с файлом `.apk`).
-3. Скопируйте APK на телефон и установите. Возможно, понадобится разрешить «Установку из неизвестных источников».
+1. Откройте страницу **Releases** репозитория и выберите релиз «Aetherfall — свежая сборка».
+2. Скачайте файл **Aetherfall.apk** прямо на телефон.
+3. Откройте файл и установите. Возможно, понадобится разрешить «Установку из неизвестных источников».
+
+Обновления ставятся поверх прежней версии, прогресс сохраняется: все сборки подписаны одним ключом. Каждая сборка также лежит в Actions → Android APK → артефакт **Aetherfall-APK**.
+
+### Подпись для Google Play
+
+Для сборок вне магазина используется публичный ключ `android/keystore/aetherfall-sideload.jks`. Для публикации в Google Play задайте в секретах репозитория:
+
+| Секрет | Значение |
+|---|---|
+| `AETHERFALL_KEYSTORE_BASE64` | Ключ `.jks` в base64 |
+| `AETHERFALL_KEYSTORE_PASSWORD` | Пароль хранилища |
+| `AETHERFALL_KEY_ALIAS` | Псевдоним ключа |
+| `AETHERFALL_KEY_PASSWORD` | Пароль ключа |
+
+Если секреты заданы, CI подпишет релиз этим ключом.
 
 ## Разработка
 
@@ -77,6 +92,7 @@ npm run build
 npx cap sync android
 cd android && ./gradlew assembleDebug
 # APK: android/app/build/outputs/apk/debug/app-debug.apk
+# Релизная сборка: ./gradlew assembleRelease
 ```
 
 Открыть проект в Android Studio: `npx cap open android`.

@@ -10,6 +10,9 @@ concurrency:
   group: android-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,10 +35,12 @@ jobs:
         run: |
           echo "ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
           echo "ANDROID_SDK_ROOT=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
-          ls "${ANDROID_HOME:-/usr/local/lib/android/sdk}/platforms" || true
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
 
       - name: Unit tests
         run: npm test
@@ -46,19 +51,55 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Build debug APK
+      # Optional private release key (for Google Play). Without these secrets the
+      # public sideload key from the repository is used, so updates still install in place.
+      - name: Release keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.AETHERFALL_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "AETHERFALL_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build release APK
         working-directory: android
+        env:
+          AETHERFALL_KEYSTORE_PASSWORD: ${{ secrets.AETHERFALL_KEYSTORE_PASSWORD }}
+          AETHERFALL_KEY_ALIAS: ${{ secrets.AETHERFALL_KEY_ALIAS }}
+          AETHERFALL_KEY_PASSWORD: ${{ secrets.AETHERFALL_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: Rename APK
+      - name: Collect APK
         run: |
           mkdir -p out
-          cp android/app/build/outputs/apk/debug/app-debug.apk out/Aetherfall-${{ github.run_number }}-debug.apk
+          VERSION=$(node -p "require('./package.json').version")
+          cp android/app/build/outputs/apk/release/app-release.apk "out/Aetherfall-${VERSION}-build${{ github.run_number }}.apk"
+          cp android/app/build/outputs/apk/release/app-release.apk out/Aetherfall.apk
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@v4
         with:
           name: Aetherfall-APK
-          path: out/*.apk
+          path: out/Aetherfall-*.apk
           retention-days: 30
+
+      # Rolling pre-release with the newest build of this branch: one stable download link.
+      - name: Publish to GitHub Releases
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          TAG="latest-${BRANCH}"
+          NOTES="Сборка ${VERSION} (build ${{ github.run_number }}) из ветки ${GITHUB_REF_NAME}, коммит ${GITHUB_SHA::7}. Скачайте Aetherfall.apk и установите на Android."
+          git tag -f "$TAG"
+          git push -f origin "refs/tags/$TAG"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "Aetherfall ${VERSION} — свежая сборка (${GITHUB_REF_NAME})" --notes "$NOTES" --prerelease
+            gh release upload "$TAG" out/Aetherfall.apk --clobber
+          else
+            gh release create "$TAG" out/Aetherfall.apk --title "Aetherfall ${VERSION} — свежая сборка (${GITHUB_REF_NAME})" --notes "$NOTES" --prerelease
+          fi
