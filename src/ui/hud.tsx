@@ -101,7 +101,7 @@ export function Queues() {
             <div style={{ fontWeight: 800 }}>{BUILDINGS[g.building(j.plot!)!.type].name} → {j.toLevel}</div>
             <Bar value={Date.now() - j.start} max={j.end - j.start} h={10} label={fmtTime(j.end - Date.now())} />
           </div>
-          {j.end - Date.now() <= 180000 && <button class="btn small green" onClick={(e) => { e.stopPropagation(); g.freeFinish(j.id); sfx('complete'); }}>Free</button>}
+          {j.end - Date.now() <= 180000 && <button class="btn small green" onClick={(e) => { e.stopPropagation(); g.freeFinish(j.id); sfx('complete'); }}>Готово</button>}
         </div>
       ) : (
         <div class="queue act" style={{ opacity: 0.85 }} onClick={() => { const q = g.nextQuest(); if (q && q.go.kind === 'building') goTo(q.go); else goTo({ kind: 'building', type: 'citadel', action: 'upgrade' }); }}>
@@ -170,6 +170,9 @@ export function RaidAlert() {
         <div>Набег! {lord.name} идёт на город</div>
         <div style={{ fontSize: 13, opacity: 0.9 }}>{g.level('watchtower') >= 3 ? `Войска: ~${fmt(sumTroops(r.troops))} · ` : ''}Прибытие через <Timer end={r.arrive} /></div>
       </div>
+      {g.s.legions.some((l) => l.state !== 'return') && (
+        <button class="btn small" onClick={(e) => { e.stopPropagation(); const n = g.recallAll(); if (n) { sfx('horn'); haptic(true); } }}>Вернуть войска</button>
+      )}
     </div>
   );
 }

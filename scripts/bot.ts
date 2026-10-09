@@ -12,6 +12,7 @@ import type { BuildingId, TroopKey, WorldObject } from '../src/core/types';
 import { HEROES } from '../src/data/heroes';
 
 const HOURS = Number(process.argv[2] ?? 120);
+const CYCLE_H = Number(process.argv[3] ?? 2); // hours between sessions
 let now = 1_700_000_000_000;
 const realNow = Date.now;
 Date.now = () => now;
@@ -57,6 +58,9 @@ function wantBuild(): string[] {
 function bestTier() { return maxTier(g.citadel); }
 
 function act() {
+  // a sensible player brings the army home when the watchtower sounds the alarm
+  const raid = g.incomingRaid();
+  if (raid) { g.recallAll(now); return; }
   // collect
   g.collectAll();
   // claim
@@ -144,7 +148,7 @@ const end = now + HOURS * 3_600_000;
 const start = now;
 // Player session model: plays 20 minutes every 2 hours (online), offline otherwise
 while (now < end) {
-  const tInCycle = (now - start) % (2 * 3_600_000);
+  const tInCycle = (now - start) % (CYCLE_H * 3_600_000);
   const online = tInCycle < 20 * 60_000;
   now += online ? STEP : 60_000 * 5;
   g.tick(now, online);

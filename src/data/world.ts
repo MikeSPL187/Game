@@ -90,8 +90,8 @@ export function campTroops(level: number): Troops {
 }
 
 export function riftTroops(level: number): Troops {
-  const t = campTroops(level + 3);
-  for (const k of Object.keys(t) as TroopKey[]) t[k] = Math.round(t[k]! * 2.2);
+  const t = campTroops(level + 1);
+  for (const k of Object.keys(t) as TroopKey[]) t[k] = Math.round(t[k]! * 1.5);
   return t;
 }
 

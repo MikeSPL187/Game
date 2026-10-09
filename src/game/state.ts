@@ -50,6 +50,7 @@ export function newGame(faction: FactionId, name: string, seed = (Math.random() 
     lords: world.lords,
     raids: [],
     shieldUntil: 0,
+    raidCooldown: 0,
     inventory: { speed1: 5, speed5: 3, key_silver: 1, tome1: 2 },
     reports: [],
     stats: emptyStats(),

@@ -236,6 +236,7 @@ export function WallPanel() {
               <div class="row"><Icon name="skull" size={34} /><b class="grow" style={{ fontSize: 17 }}>Набег: {g.s.lords.find((l) => l.id === r.lordId)?.name}</b><b class="bad"><Timer end={r.arrive} /></b></div>
               <div class="mute" style={{ fontSize: 13 }}>{g.level('watchtower') >= 3 ? `Разведка: ~${fmt(sumTroops(r.troops))} воинов` : 'Улучшите Дозорную башню до 3 ур., чтобы узнать численность врага'}</div>
               <div class="mute" style={{ fontSize: 12 }}>Все войска в городе вступят в бой. Отзовите легионы домой, если нужно подкрепление.</div>
+              {g.s.legions.some((l) => l.state !== 'return') && <Btn kind="blue" onClick={() => { const n = g.recallAll(); act({ ok: n > 0, error: 'Нет легионов для отзыва' }, 'horn'); }}><Icon name="home" size={20} /> Вернуть все легионы</Btn>}
             </div>
           ) : <div class="card row"><Icon name="shieldItem" size={34} /><div class="grow"><b>{shield ? 'Город под защитой щита' : g.citadel < 6 ? 'Защита новичка' : 'Угроз не обнаружено'}</b><div class="mute" style={{ fontSize: 12 }}>{shield ? <>Щит активен ещё <Timer end={g.s.shieldUntil} /></> : g.citadel < 6 ? 'Лорды не нападают, пока Цитадель ниже 6 уровня' : 'Набеги возможны, только пока вы в игре — честные правила'}</div></div></div>}
           <div class="card col" style={{ gap: 2 }}>

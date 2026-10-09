@@ -215,6 +215,8 @@ export interface GameState {
   lords: AiLord[];
   raids: IncomingRaid[];
   shieldUntil: number;
+  /** no new raid from any lord before this time */
+  raidCooldown: number;
   inventory: Record<string, number>;
   reports: Report[];
   stats: Stats;

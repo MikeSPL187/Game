@@ -117,8 +117,9 @@ export function upgradeTimeSec(id: BuildingId, fromLevel: number): number {
   const L = Math.max(1, fromLevel);
   const base = fromLevel === 0 ? d.time * 0.6 : d.time * Math.pow(L, d.timeExp);
   // mid/late game pacing: each level past 8 takes noticeably longer
-  const late = fromLevel > 8 ? Math.pow(1.15, fromLevel - 8) : 1;
-  return Math.round(base * late);
+  const late = fromLevel > 8 ? Math.pow(1.25, fromLevel - 8) : 1;
+  // a single upgrade never takes more than 36 hours
+  return Math.round(Math.min(base * late, 36 * 3600 * (d.time / BUILDINGS.citadel.time)));
 }
 
 /** resource per hour of a production building */

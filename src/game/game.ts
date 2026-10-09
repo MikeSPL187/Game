@@ -130,6 +130,8 @@ export class Game {
   tick(now = this.now(), online = true) {
     this.online = online;
     const s = this.s;
+    // device clock moved backwards: accept the new time instead of freezing the world
+    if (now < s.lastTick - 60_000) { s.lastTick = now; s.world.lastRespawn = Math.min(s.world.lastRespawn, now); }
     const dt = Math.max(0, now - s.lastTick);
     if (dt <= 0) return;
     // production
@@ -660,6 +662,13 @@ export class Game {
     return this.command(legionId, 'return', this.cityPos(), null, now);
   }
 
+  /** Order every legion that is not already heading home to return. Returns how many were recalled. */
+  recallAll(now = this.now()): number {
+    let n = 0;
+    for (const l of [...this.s.legions]) if (l.state !== 'return' && l.state !== 'battle' && this.recall(l.id, now).ok) n++;
+    return n;
+  }
+
   private releaseNode(l: Legion) {
     for (const o of this.s.world.objects) if (o.occupant === l.id) o.occupant = null;
   }
@@ -845,8 +854,15 @@ export class Game {
     return null;
   }
 
+  /** Lords get their full garrison once; afterwards it only regrows over time (aiTick). */
   ensureLordTroops(lord: GameState['lords'][number]) {
-    if (sumTroops(lord.troops) <= 0) lord.troops = lordTroops(lord.citadel, mulberry32(lord.objId * 31 + lord.citadel)) as Troops;
+    if (lord.power > 0) return;
+    lord.troops = lordTroops(lord.citadel, mulberry32(lord.objId * 31 + lord.citadel)) as Troops;
+    lord.power = 1;
+  }
+
+  lordFullTroops(lord: GameState['lords'][number]): Troops {
+    return lordTroops(lord.citadel, mulberry32(lord.objId * 31 + lord.citadel)) as Troops;
   }
 
   /** Estimate outcome for UI: 'easy' | 'even' | 'hard' | 'deadly' */
@@ -930,18 +946,22 @@ export class Game {
       heroIds.forEach((id, i) => this.addHeroXp(id, i === 0 ? xp : Math.round(xp * 0.6)));
     } else if (o.kind === 'lord') {
       const lord = this.s.lords.find((x) => x.id === o.lordId)!;
+      // trophies scale with how rebuilt the garrison was — farming a beaten lord yields little
+      const garrison = Math.min(1, res.dStart / Math.max(1, sumTroops(this.lordFullTroops(lord))));
       for (const g of def.groups) lord.troops[g.key as TroopKey] = g.count;
       if (res.win) {
         title = `Победа над ${lord.name}`;
-        const loot = scaleRes({ food: 3000, wood: 3000, stone: 1500, gold: 800 }, lord.citadel);
+        const loot = mulBag(scaleRes({ food: 3000, wood: 3000, stone: 1500, gold: 800 }, lord.citadel), garrison);
         const load = this.legionLoad(l.troops, l.lead, l.deputy);
         const tot = sumBag(loot);
         const f = Math.min(1, load / Math.max(1, tot));
         for (const k of Object.keys(loot) as Res[]) l.carry[k] = (l.carry[k] ?? 0) + Math.round(loot[k]! * f);
-        rewards = { res: mulBag(loot, f), items: { chest_big: 1 } };
-        this.addItems({ chest_big: 1 });
+        const chest = garrison >= 0.6;
+        rewards = { res: mulBag(loot, f), items: chest ? { chest_big: 1 } : {} };
+        if (chest) this.addItems({ chest_big: 1 });
         lord.defeats++;
-        lord.troops = {};
+        // a defeated lord keeps only a token guard and rebuilds slowly
+        lord.troops = mulBag(this.lordFullTroops(lord) as ResBag, 0.1) as Troops;
         lord.nextRaidAt = Math.max(lord.nextRaidAt, t + 45 * 60_000);
         this.s.stats.lordsDefeated++;
       } else {
@@ -991,13 +1011,14 @@ export class Game {
           if (o) o.level = lord.citadel;
         }
         // regenerate troops
-        const full = lordTroops(lord.citadel, mulberry32(lord.objId * 31 + lord.citadel));
-        for (const [k, v] of Object.entries(full)) lord.troops[k as TroopKey] = Math.min(v, Math.round((lord.troops[k as TroopKey] ?? 0) + v * 0.3));
+        this.ensureLordTroops(lord);
+        const full = this.lordFullTroops(lord);
+        for (const [k, v] of Object.entries(full)) lord.troops[k as TroopKey] = Math.min(v!, Math.round((lord.troops[k as TroopKey] ?? 0) + v! * 0.3));
       }
     }
     // raids begin after citadel 6 and outside shield
     if (this.citadel < 6 || now < s.shieldUntil) return;
-    if (s.raids.length) return;
+    if (s.raids.length || now < s.raidCooldown) return;
     const city = this.cityPos();
     for (const lord of s.lords) {
       const o = this.obj(lord.objId);
@@ -1006,7 +1027,8 @@ export class Game {
       if (now < lord.nextRaidAt) continue;
       const dist = Math.hypot(o.x - city.x, o.y - city.y);
       if (dist > 60 || lord.citadel > this.citadel + 6) { lord.nextRaidAt = now + 30 * 60_000; continue; }
-      lord.nextRaidAt = now + (60 + Math.random() * 60) * 60_000;
+      lord.nextRaidAt = now + (90 + Math.random() * 90) * 60_000;
+      s.raidCooldown = now + (50 + Math.random() * 50) * 60_000;
       this.spawnRaid(lord.id, now);
       break;
     }
@@ -1102,6 +1124,7 @@ export class Game {
   private respawnTick(now: number) {
     const w = this.s.world;
     if (now - w.lastRespawn < 60_000) return;
+    const minutes = Math.min(24 * 60, (now - w.lastRespawn) / 60_000);
     w.lastRespawn = now;
     const rnd = mulberry32((now / 1000) | 0);
     const count = (k: string) => w.objects.filter((o) => o.kind === k).length;
@@ -1129,7 +1152,7 @@ export class Game {
       if (p) w.objects.push({ id: w.nextObjId++, kind: 'rift', x: p.x, y: p.y, level: Math.min(25, zoneLevel(this.ter, p.x, p.y) + 2), hp: 1 });
     }
     // titans & rifts regenerate slowly
-    for (const o of w.objects) if ((o.kind === 'titan' || o.kind === 'rift') && (o.hp ?? 1) < 1) o.hp = Math.min(1, (o.hp ?? 1) + 0.01);
+    for (const o of w.objects) if ((o.kind === 'titan' || o.kind === 'rift') && (o.hp ?? 1) < 1) o.hp = Math.min(1, (o.hp ?? 1) + 0.01 * minutes);
     bus.emit('world-obj', {});
   }
 
@@ -1356,6 +1379,7 @@ export function migrate(s: GameState) {
   if (!s.settings) s.settings = { sound: true, music: true, haptics: true, quality: 'high', dayNight: true };
   if (s.settings.dayNight == null) s.settings.dayNight = true;
   if (!s.raids) s.raids = [];
+  if (s.raidCooldown == null) s.raidCooldown = 0;
   if (!s.calendar) s.calendar = { day: 0, last: '' };
   for (const h of HEROES) if (!s.heroes[h.id]) s.heroes[h.id] = { id: h.id, level: 1, xp: 0, stars: 1, shards: 0, owned: false };
   s.version = SAVE_VERSION;

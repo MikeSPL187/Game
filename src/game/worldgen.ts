@@ -119,7 +119,7 @@ export function generateWorld(seed: number): { objects: WorldObject[]; lords: Ai
 
   // Rifts, ruins, camps, nodes
   for (let i = 0; i < TARGET_COUNTS.rift; i++) {
-    const p = randomFreeTile(ter, objs, rnd, { x: ter.start.x, y: ter.start.y, r: 90, min: 26 });
+    const p = randomFreeTile(ter, objs, rnd, { x: ter.start.x, y: ter.start.y, r: i === 0 ? 24 : 90, min: i === 0 ? 16 : 26 });
     if (p) objs.push({ id: id++, kind: 'rift', x: p.x, y: p.y, level: Math.min(25, zoneLevel(ter, p.x, p.y) + 2), hp: 1 });
   }
   for (let i = 0; i < TARGET_COUNTS.ruin; i++) {
