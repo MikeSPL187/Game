@@ -5,6 +5,7 @@ import type { Currency, Res } from '../core/types';
 import { portraitUrl } from '../art/portraits';
 import { BUILDINGS } from '../data/buildings';
 import { CHAPTERS } from '../data/quests';
+import { EVENTS } from '../data/events';
 import { TECH_BY_ID } from '../data/research';
 import { TROOPS } from '../data/troops';
 import { BUILDER_COUNT, sumTroops } from '../game/game';
@@ -41,7 +42,7 @@ export function TopBar() {
       <div class="lordplate act" onClick={() => { sfx('click'); ui.open('profile'); }}>
         <div class="crest"><img src={portraitUrl(lead)} /></div>
         <div class="lordinfo">
-          <div class="lordname">{g.s.player.name}</div>
+          <div class="row" style={{ gap: 6 }}><div class="lordname">{g.s.player.name}</div><button class="act" title="Настройки" style={{ width: 26, height: 26, borderRadius: 13, background: 'rgba(0,0,0,.45)', boxShadow: '0 0 0 1px rgba(232,184,74,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={(e) => { e.stopPropagation(); sfx('click'); ui.open('settings'); }}><Icon name="gear" size={18} /></button></div>
           <div class="power"><Icon name="power" size={22} />{fmt(g.power())}</div>
         </div>
       </div>
@@ -162,12 +163,12 @@ export function RaidAlert() {
   const g = useGame();
   const r = g.incomingRaid();
   if (!r) return null;
-  const lord = g.s.lords.find((l) => l.id === r.lordId)!;
+  const attacker = r.kind === 'hollow' ? `Волна Пустоты ${r.wave ?? ''}` : g.s.lords.find((l) => l.id === r.lordId)?.name ?? 'Враг';
   return (
     <div class="raid-alert act" onClick={() => ui.open('wall')}>
       <Icon name="skull" size={30} />
       <div>
-        <div>Набег! {lord.name} идёт на город</div>
+        <div>{r.kind === 'hollow' ? `${attacker} надвигается на город` : `Набег! ${attacker} идёт на город`}</div>
         <div style={{ fontSize: 13, opacity: 0.9 }}>{g.level('watchtower') >= 3 ? `Войска: ~${fmt(sumTroops(r.troops))} · ` : ''}Прибытие через <Timer end={r.arrive} /></div>
       </div>
       {g.s.legions.some((l) => l.state !== 'return') && (
@@ -183,12 +184,20 @@ export function SideRight() {
   return (
     <div class="side-right act">
       <IconBtn icon="quest" label="Задания" badge={g.hasClaimable()} onClick={() => ui.open('quests')} />
+      <EventButton />
       <IconBtn icon="gift" label="Награды" badge={g.calendarReady()} pulse={g.calendarReady()} onClick={() => ui.open('calendar')} />
       <IconBtn icon="mail" label="Отчёты" badge={unread || false} onClick={() => ui.open('reports')} />
       {g.level('sanctum') > 0 || Object.keys(g.s.titans.tamed).length ? <IconBtn icon="titan" label="Титаны" onClick={() => ui.open('titans')} /> : null}
-      <IconBtn icon="gear" label="Настройки" size={46} onClick={() => ui.open('settings')} />
     </div>
   );
+}
+
+function EventButton() {
+  const g = useGame();
+  const cur = g.currentEvent();
+  const ev = EVENTS[cur.type];
+  const ready = ev.milestones.some((m, i) => !g.s.event.claimed.includes(i) && g.s.event.points >= m.points);
+  return <IconBtn icon={ev.icon} label={ev.name.split(' ')[0]} badge={ready} pulse={ready} onClick={() => ui.open('event')} />;
 }
 
 export function BottomBar() {

@@ -110,7 +110,10 @@ export interface AiLord {
 
 export interface IncomingRaid {
   id: number;
+  /** empty for Hollow waves */
   lordId: string;
+  kind?: 'lord' | 'hollow';
+  wave?: number;
   troops: Troops;
   heroLevel: number;
   from: Point;
@@ -222,6 +225,7 @@ export interface GameState {
   /** no new raid from any lord before this time */
   raidCooldown: number;
   inventory: Record<string, number>;
+  event: { key: string; points: number; claimed: number[]; wave: number; nextWave: number };
   gear: { uid: number; bp: string; rarity: 0 | 1 | 2 | 3; hero: string | null }[];
   reports: Report[];
   stats: Stats;

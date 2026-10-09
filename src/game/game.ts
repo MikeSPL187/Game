@@ -17,6 +17,7 @@ import { TECH_BY_ID, techCost, techTime } from '../data/research';
 import { ROW_REQ, TALENT_BY_ID, emptyTalentFx, spentIn, talentFx, talentPointsTotal, type TalentFx } from '../data/talents';
 import { BLUEPRINT_BY_ID, SETS, itemStats, rollRarity, type GearItem, type SetId } from '../data/gear';
 import { PLOTS } from '../data/cityLayout';
+import { EVENTS, eventAt, rivalScore, type EventType } from '../data/events';
 import { TROOPS, TYPE_INFO } from '../data/troops';
 import { TITAN_BY_ID, campName, campTroops, nodeRate, riftTroops } from '../data/world';
 import { computeEffects, heroUtility, type Effects } from './bonuses';
@@ -160,6 +161,7 @@ export class Game {
     if (online) this.aiTick(now);
     this.respawnTick(now);
     this.dailyTick(now);
+    this.eventTick(now);
     if (this.fogDirty) { this.fogDirty = false; bus.emit('fog'); }
     s.lastTick = now;
   }
@@ -191,6 +193,7 @@ export class Game {
     b.stored -= amt;
     this.s.res[r] += amt;
     this.s.stats.collects++;
+    this.addEventPoints('harvest', amt / 400);
     bus.emit('collect', { plot, res: r, amount: amt });
     return amt;
   }
@@ -279,6 +282,7 @@ export class Game {
     } else if (j.kind === 'train') {
       addTroops(s.troops, { [j.troop!]: j.count! });
       s.stats.troopsTrained += j.count!;
+      this.addEventPoints('night', (TROOPS[j.troop!].power * j.count!) / 10);
       bus.emit('train-done', { troop: j.troop, count: j.count });
     } else if (j.kind === 'research') {
       s.research[j.tech!] = j.toLevel!;
@@ -898,6 +902,7 @@ export class Game {
     o.amount = (o.amount ?? 0) - got;
     l.carry[o.res!] = (l.carry[o.res!] ?? 0) + got;
     this.s.stats.gathered += got;
+    this.addEventPoints('harvest', (got / 100) * (o.res === 'gold' ? 4 : 1));
     if (l.lead) this.addHeroXp(l.lead, Math.round(got / 20));
     o.occupant = null;
     if ((o.amount ?? 0) <= 10) this.removeObj(o);
@@ -1017,12 +1022,14 @@ export class Game {
         this.grant(rewards);
         this.s.stats.campsDefeated++;
         this.s.stats.maxCampLevel = Math.max(this.s.stats.maxCampLevel, o.level);
+        this.addEventPoints('hunt', o.level * 10);
         this.removeObj(o);
       }
       const xp = Math.round(140 * Math.pow(o.level, 1.45) * (res.win ? 1 : 0.3));
       heroIds.forEach((id, i) => this.addHeroXp(id, i === 0 ? xp : Math.round(xp * 0.6)));
       if (rewards) rewards.heroXp = xp;
     } else if (o.kind === 'rift') {
+      this.addEventPoints('hunt', 150);
       const dealt = res.dStart > 0 ? (res.dStart - res.dEnd) / res.dStart : 1;
       o.hp = Math.max(0, (o.hp ?? 1) * (1 - dealt));
       title = res.win || o.hp <= 0.02 ? 'Разлом закрыт!' : `Разлом ослаблен (${Math.round((o.hp ?? 0) * 100)}%)`;
@@ -1035,6 +1042,7 @@ export class Game {
       const xp = Math.round(300 * Math.pow(o.level, 1.4));
       heroIds.forEach((id, i) => this.addHeroXp(id, i === 0 ? xp : Math.round(xp * 0.6)));
     } else if (o.kind === 'titan') {
+      this.addEventPoints('hunt', 250);
       const td = TITAN_BY_ID[o.titanId!];
       const dealt = res.dStart > 0 ? (res.dStart - res.dEnd) / res.dStart : 1;
       o.hp = Math.max(0, (o.hp ?? 1) * (1 - dealt * 0.9));
@@ -1123,6 +1131,12 @@ export class Game {
         for (const [k, v] of Object.entries(full)) lord.troops[k as TroopKey] = Math.min(v!, Math.round((lord.troops[k as TroopKey] ?? 0) + v! * 0.3));
       }
     }
+    // Hollow waves during "Night of the Void"
+    const ev = this.currentEvent(now);
+    if (ev.type === 'night' && this.citadel >= 4 && !s.raids.length && now >= s.event.nextWave) {
+      if (!s.event.nextWave) s.event.nextWave = now + 3 * 60_000;
+      else { this.spawnWave(now); s.event.nextWave = now + (25 + Math.random() * 15) * 60_000; return; }
+    }
     // raids begin after citadel 6 and outside shield
     if (this.citadel < 6 || now < s.shieldUntil) return;
     if (s.raids.length || now < s.raidCooldown) return;
@@ -1175,6 +1189,7 @@ export class Game {
   private resolveRaid(r: IncomingRaid) {
     const s = this.s;
     s.raids = s.raids.filter((x) => x !== r);
+    if (r.kind === 'hollow') { this.resolveWave(r); return; }
     const lord = s.lords.find((l) => l.id === r.lordId)!;
     const att: Army = { name: lord.name, kind: 'lord', groups: groupsFromTroops(r.troops), heroes: [{ id: lordHero(lord.faction), level: r.heroLevel, stars: 1 + Math.floor(lord.citadel / 6), lead: true }], mods: emptyMods(), retreatAt: 0.3, titan: null };
     applyHeroes(att);
@@ -1222,6 +1237,124 @@ export class Game {
       kind: 'defense', title: !res.win ? `Набег отражён: ${lord.name}` : `Город разграблен: ${lord.name}`, win: !res.win, text, rounds: res.rounds, rewards,
       attacker: { name: lord.name, heroes: att.heroes.map((h) => ({ id: h.id, level: h.level })), start: res.aStart, lost: sumNums(res.aLost), wounded: 0, survived: res.aEnd, power: aPow, kind: 'lord' },
       defender: { name: 'Гарнизон', heroes: def.heroes.map((h) => ({ id: h.id, level: h.level })), start, lost: dead, wounded, survived: sumTroops(s.troops), power: dPow, kind: 'player' },
+    });
+    bus.emit('raid-resolved', { win: !res.win });
+    bus.emit('state');
+  }
+
+  // ————————————————————————————————————————— events
+  currentEvent(now = this.s.lastTick) { return eventAt(now, this.s.created); }
+
+  addEventPoints(type: EventType, pts: number) {
+    if (pts <= 0 || this.currentEvent().type !== type) return;
+    this.s.event.points += pts;
+  }
+
+  eventRanking(now = this.s.lastTick) {
+    const ev = this.currentEvent(now);
+    const progress = (now - ev.start) / (ev.end - ev.start);
+    const scale = 3800 * (0.6 + this.citadel / 25);
+    const rows = this.s.lords.map((l, i) => ({ name: l.name, color: l.color, score: rivalScore(ev.index * 7 + i + 1, progress, scale), me: false }));
+    rows.push({ name: this.s.player.name, color: '#ffe29a', score: Math.floor(this.s.event.points), me: true });
+    return rows.sort((a, b) => b.score - a.score);
+  }
+
+  claimEventMilestone(i: number): Result {
+    const ev = EVENTS[this.currentEvent().type];
+    const m = ev.milestones[i];
+    if (!m) return fail('Нет награды');
+    if (this.s.event.claimed.includes(i)) return fail('Уже получено');
+    if (this.s.event.points < m.points) return fail('Недостаточно очков события');
+    this.s.event.claimed.push(i);
+    this.grant(m.reward);
+    bus.emit('state');
+    return OK;
+  }
+
+  private eventTick(now: number) {
+    const cur = this.currentEvent(now);
+    const e = this.s.event;
+    if (e.key === cur.key) return;
+    if (e.key) this.finishEvent(e.key, now);
+    this.s.event = { key: cur.key, points: 0, claimed: [], wave: 0, nextWave: 0 };
+    bus.emit('event-start', cur.type);
+  }
+
+  /** Close a finished event: hand out everything earned so nothing is lost. */
+  private finishEvent(key: string, now: number) {
+    const [type, idx] = key.split('#') as [EventType, string];
+    const def = EVENTS[type];
+    if (!def) return;
+    const e = this.s.event;
+    const items: Record<string, number> = {};
+    const res: ResBag = {};
+    const merge = (r: Reward) => {
+      for (const [k, v] of Object.entries(r.items ?? {})) items[k] = (items[k] ?? 0) + v;
+      for (const [k, v] of Object.entries(r.res ?? {})) res[k as Currency] = (res[k as Currency] ?? 0) + (v ?? 0);
+    };
+    def.milestones.forEach((m, i) => { if (!e.claimed.includes(i) && e.points >= m.points) merge(m.reward); });
+    const scale = 3800 * (0.6 + this.citadel / 25);
+    const scores = this.s.lords.map((_, i) => rivalScore(Number(idx) * 7 + i + 1, 1, scale));
+    const rank = 1 + scores.filter((sc) => sc > e.points).length;
+    if (rank <= 3) merge(def.rankRewards[rank - 1]);
+    const reward: Reward = { items, res };
+    this.grant(reward);
+    this.pushReport({ kind: 'system', title: `Итоги события «${def.name}»: ${rank} место`, text: `Вы набрали ${Math.floor(e.points)} очков и заняли ${rank} место среди лордов Расколотых земель.${rank <= 3 ? ' Награда за место уже в сумке.' : ''}`, rewards: reward }, true);
+    void now;
+  }
+
+  spawnWave(now = this.now()) {
+    const s = this.s;
+    const c = this.cityPos();
+    const wave = s.event.wave + 1;
+    const power = Math.max(120, this.troopPower(s.troops) * (0.25 + Math.min(0.35, wave * 0.04)));
+    const tier = maxTier(this.citadel);
+    const units = Math.round(power / [1, 3, 7, 14][tier - 1]);
+    const troops: Troops = {};
+    (['inf', 'arc', 'cav', 'mag'] as const).forEach((t, i) => { const n = Math.round(units * [0.4, 0.25, 0.25, 0.1][i]); if (n > 0) troops[(t + tier) as TroopKey] = n; });
+    const a = Math.random() * Math.PI * 2;
+    const from = { x: Math.round(c.x + Math.cos(a) * 12), y: Math.round(c.y + Math.sin(a) * 12) };
+    const raid: IncomingRaid = { id: this.uid(), lordId: '', kind: 'hollow', wave, troops, heroLevel: 0, from, start: now, arrive: now + 75_000 };
+    s.raids.push(raid);
+    bus.emit('raid', raid);
+    bus.emit('state');
+  }
+
+  private resolveWave(r: IncomingRaid) {
+    const s = this.s;
+    const att: Army = { name: 'Орда Пустоты', kind: 'monster', groups: groupsFromTroops(r.troops), heroes: [], mods: emptyMods(), retreatAt: 0.35, titan: null };
+    for (const g of att.groups) g.name = hollowName(g.type);
+    const def = this.cityDefenseArmy();
+    const start = sumTroops(s.troops);
+    const res = start < 1 ? { win: true, rounds: [], aLost: {}, dLost: {}, aStart: sumTroops(r.troops), dStart: 0, aEnd: sumTroops(r.troops), dEnd: 0 } : simulateBattle(att, def, r.id * 13);
+    let wounded = 0;
+    // monsters wound rather than kill: all garrison losses go to the infirmary when there is room
+    let cap = Math.max(0, this.infirmaryCapacity() - this.woundedCount());
+    let dead = 0;
+    for (const [k, lost] of Object.entries(res.dLost) as [TroopKey, number][]) {
+      if (!lost) continue;
+      s.troops[k] = Math.max(0, (s.troops[k] ?? 0) - lost);
+      if (!s.troops[k]) delete s.troops[k];
+      const w = Math.min(cap, lost);
+      cap -= w; wounded += w; dead += lost - w;
+      s.wounded[k] = (s.wounded[k] ?? 0) + w;
+    }
+    const wave = r.wave ?? 1;
+    let rewards: Reward | undefined;
+    if (!res.win) {
+      s.event.wave = wave;
+      this.addEventPoints('night', 120 * wave);
+      rewards = { res: scaleRes({ food: 800, wood: 800 }, Math.max(1, this.citadel)), items: { mat_bone: 1 + Math.floor(wave / 2) } };
+      this.grant(rewards);
+      s.stats.raidsDefended++;
+    } else {
+      s.event.wave = Math.max(0, wave - 2);
+    }
+    this.pushReport({
+      kind: 'defense', title: !res.win ? `Волна ${wave} отражена!` : `Волна ${wave} прорвалась`, win: !res.win, rounds: res.rounds, rewards,
+      text: !res.win ? 'Стены выстояли. Следующая волна будет сильнее.' : 'Твари прорвались, но отступили с рассветом. Укрепите гарнизон — ресурсы не тронуты.',
+      attacker: { name: 'Орда Пустоты', heroes: [], start: res.aStart, lost: sumNums(res.aLost), wounded: 0, survived: res.aEnd, power: armyPower(att), kind: 'monster' },
+      defender: { name: 'Гарнизон', heroes: def.heroes.map((h) => ({ id: h.id, level: h.level })), start, lost: dead, wounded, survived: sumTroops(s.troops), power: armyPower(def), kind: 'player' },
     });
     bus.emit('raid-resolved', { win: !res.win });
     bus.emit('state');
@@ -1498,6 +1631,7 @@ export function migrate(s: GameState) {
   if (s.raidCooldown == null) s.raidCooldown = 0;
   if (!s.flags) s.flags = {};
   if (!s.gear) s.gear = [];
+  if (!s.event) s.event = { key: '', points: 0, claimed: [], wave: 0, nextWave: 0 };
   if (s.stats.crafted == null) s.stats.crafted = 0;
   // plots added in later versions
   for (const p of PLOTS) if (!s.buildings.some((b) => b.plot === p.id)) s.buildings.push({ plot: p.id, type: p.type, level: 0, stored: 0 });

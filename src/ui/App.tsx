@@ -19,6 +19,7 @@ import { DispatchPanel, SearchPanel, WorldSheet } from './panels/world';
 import { ArmyPanel, CalendarPanel, InventoryPanel, ProfilePanel, QuestsPanel, RewardPopup, SettingsPanel, StoryDialog, TitansPanel, WallPanel, WelcomeBack } from './panels/misc';
 import { ReportsPanel } from './panels/reports';
 import { ForgePanel } from './panels/forge';
+import { EventPanel } from './panels/event';
 import { sfx } from '../audio/audio';
 import { CrashScreen, Guard } from './guard';
 import { Capacitor } from '@capacitor/core';
@@ -27,7 +28,7 @@ import { requestNotifications } from '../core/notify';
 const PANELS: Record<string, (p: any) => any> = {
   upgrade: UpgradePanel, speedup: SpeedupPanel, train: TrainPanel, research: ResearchPanel, heroes: HeroesPanel, tavern: TavernPanel,
   dispatch: DispatchPanel, search: SearchPanel, inventory: InventoryPanel, quests: QuestsPanel, reports: ReportsPanel, army: ArmyPanel,
-  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
+  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, event: EventPanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
 };
 
 // ———————————————————————————————————————— building context menu

@@ -53,6 +53,7 @@ export function newGame(faction: FactionId, name: string, seed = (Math.random() 
     raidCooldown: 0,
     inventory: { speed1: 5, speed5: 3, key_silver: 1, tome1: 2 },
     gear: [],
+    event: { key: '', points: 0, claimed: [], wave: 0, nextWave: 0 },
     reports: [],
     stats: emptyStats(),
     quests: { chapter: 1, claimed: [], chapterClaimed: [], dailyDate: dayKey(now), daily: { ...emptyStats() } as any, dailyClaimed: [], dailyChests: [], dailyPoints: 0 },

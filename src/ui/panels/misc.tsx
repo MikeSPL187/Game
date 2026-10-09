@@ -237,7 +237,7 @@ export function WallPanel() {
         <div class="col grow">
           {r ? (
             <div class="card hl col" style={{ boxShadow: '0 0 0 2px #ff6a4a' }}>
-              <div class="row"><Icon name="skull" size={34} /><b class="grow" style={{ fontSize: 17 }}>Набег: {g.s.lords.find((l) => l.id === r.lordId)?.name}</b><b class="bad"><Timer end={r.arrive} /></b></div>
+              <div class="row"><Icon name="skull" size={34} /><b class="grow" style={{ fontSize: 17 }}>{r.kind === 'hollow' ? `Волна Пустоты ${r.wave ?? ''}` : `Набег: ${g.s.lords.find((l) => l.id === r.lordId)?.name ?? 'враг'}`}</b><b class="bad"><Timer end={r.arrive} /></b></div>
               <div class="mute" style={{ fontSize: 13 }}>{g.level('watchtower') >= 3 ? `Разведка: ~${fmt(sumTroops(r.troops))} воинов` : 'Улучшите Дозорную башню до 3 ур., чтобы узнать численность врага'}</div>
               <div class="mute" style={{ fontSize: 12 }}>Все войска в городе вступят в бой. Отзовите легионы домой, если нужно подкрепление.</div>
               {g.s.legions.some((l) => l.state !== 'return') && <Btn kind="blue" onClick={() => { const n = g.recallAll(); act({ ok: n > 0, error: 'Нет легионов для отзыва' }, 'horn'); }}><Icon name="home" size={20} /> Вернуть все легионы</Btn>}

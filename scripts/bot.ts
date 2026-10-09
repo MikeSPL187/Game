@@ -72,6 +72,7 @@ function act() {
     chapterAt[n] = now;
   }
   if (g.calendarReady()) g.claimCalendar();
+  for (let i = 0; i < 5; i++) g.claimEventMilestone(i);
   // chests & items
   for (const id of ['chest_small', 'chest_big']) while ((g.s.inventory[id] ?? 0) > 0) g.useItem(id);
   // build
