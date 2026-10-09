@@ -1006,7 +1006,7 @@ export class Game {
       if (now < lord.nextRaidAt) continue;
       const dist = Math.hypot(o.x - city.x, o.y - city.y);
       if (dist > 60 || lord.citadel > this.citadel + 6) { lord.nextRaidAt = now + 30 * 60_000; continue; }
-      lord.nextRaidAt = now + (35 + Math.random() * 40) * 60_000;
+      lord.nextRaidAt = now + (60 + Math.random() * 60) * 60_000;
       this.spawnRaid(lord.id, now);
       break;
     }
@@ -1016,7 +1016,7 @@ export class Game {
     const lord = this.s.lords.find((l) => l.id === lordId)!;
     const o = this.obj(lord.objId)!;
     const myPower = this.troopPower(this.s.troops) + this.s.legions.reduce((a, l) => a + this.troopPower(l.troops), 0);
-    const strength = Math.max(200, myPower * (0.45 + Math.random() * 0.35));
+    const strength = Math.max(150, this.troopPower(this.s.troops) * (0.35 + Math.random() * 0.3) + myPower * 0.1);
     const tier = maxTier(Math.min(25, lord.citadel));
     const per = [1, 3, 7, 14][tier - 1];
     const units = Math.round(strength / per);
@@ -1037,7 +1037,7 @@ export class Game {
     const lead = this.s.defender && this.s.heroes[this.s.defender]?.owned && !this.busyHeroes().has(this.s.defender) ? this.s.defender : null;
     const a = this.legionArmy({ lead, deputy: null, troops: this.s.troops });
     a.name = 'Гарнизон';
-    const wb = wallBonus(this.level('wall')) + this.fx.city_def;
+    const wb = 0.15 + wallBonus(this.level('wall')) + this.fx.city_def;
     a.mods.def += wb; a.mods.hp += wb;
     a.retreatAt = 0;
     return a;

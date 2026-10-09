@@ -241,7 +241,7 @@ export function WallPanel() {
           <div class="card col" style={{ gap: 2 }}>
             <div class="h" style={{ color: 'var(--gold2)' }}>Гарнизон</div>
             <div class="statline"><span class="mute">Воинов в городе</span><b>{fmt(sumTroops(g.s.troops))}</b></div>
-            <div class="statline"><span class="mute">Бонус стены</span><b class="good">+{Math.round((wallBonus(g.level('wall')) + g.fx.city_def) * 100)}%</b></div>
+            <div class="statline"><span class="mute">Бонус стены</span><b class="good">+{Math.round((0.15 + wallBonus(g.level('wall')) + g.fx.city_def) * 100)}%</b></div>
             <div class="statline"><span class="mute">Хранилище защищает</span><b>{fmt(warehouseProtect(g.level('warehouse')))} каждого ресурса</b></div>
             <div class="statline"><span class="mute">Мощь обороны</span><b>{fmt(Math.round(g.troopPower(g.s.troops) * (1 + def.mods.def)))}</b></div>
           </div>
