@@ -1,0 +1,33 @@
+{
+  "name": "aetherfall",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Aetherfall: Age of Titans — a fantasy 4X strategy game for Android",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/app": "7.1.2",
+    "@capacitor/core": "7.6.9",
+    "@capacitor/haptics": "7.0.5",
+    "@capacitor/preferences": "7.0.4",
+    "@capacitor/status-bar": "7.0.6",
+    "pixi.js": "8.22.0",
+    "preact": "10.29.8"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.9",
+    "@preact/preset-vite": "2.10.6",
+    "typescript": "5.9.3",
+    "vite": "6.4.4",
+    "vitest": "3.2.7"
+  }
+}
