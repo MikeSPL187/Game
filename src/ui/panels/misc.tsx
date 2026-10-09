@@ -11,6 +11,7 @@ import { infirmaryRate, legionSlots, wallBonus, warehouseProtect } from '../../d
 import { HERO_BY_ID, HEROES } from '../../data/heroes';
 import { sumTroops } from '../../game/game';
 import { clearSave, exportCode, importCode, writeSave } from '../../core/storage';
+import { APP_VERSION } from '../../core/errors';
 import { Bar, Btn, Icon, Panel, RewardList, Stars, Timer, Toggle, act, ga, haptic, toast, ui, useGame } from '../core';
 import { goTo, findWorldTarget } from '../nav';
 import { initAudio, setMusic, setSound, sfx } from '../../audio/audio';
@@ -323,7 +324,7 @@ export function SettingsPanel() {
             }}>Импорт</Btn>
           </div>
         </div>
-        <div class="mute" style={{ fontSize: 12, textAlign: 'center' }}>Aetherfall: Эпоха Титанов · v0.1 · Вся графика и звук созданы процедурно</div>
+        <div class="mute" style={{ fontSize: 12, textAlign: 'center' }}>Aetherfall: Эпоха Титанов · v{APP_VERSION} · Вся графика и звук созданы процедурно</div>
       </div>
     </Panel>
   );

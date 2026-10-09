@@ -19,6 +19,7 @@ import { DispatchPanel, SearchPanel, WorldSheet } from './panels/world';
 import { ArmyPanel, CalendarPanel, InventoryPanel, ProfilePanel, QuestsPanel, RewardPopup, SettingsPanel, StoryDialog, TitansPanel, WallPanel, WelcomeBack } from './panels/misc';
 import { ReportsPanel } from './panels/reports';
 import { sfx } from '../audio/audio';
+import { CrashScreen, Guard } from './guard';
 
 const PANELS: Record<string, (p: any) => any> = {
   upgrade: UpgradePanel, speedup: SpeedupPanel, train: TrainPanel, research: ResearchPanel, heroes: HeroesPanel, tavern: TavernPanel,
@@ -230,17 +231,18 @@ export function App({ welcome }: { welcome?: { away: number; gained: Record<stri
   const P = top ? PANELS[top.id] : null;
   return (
     <div style={{ position: 'absolute', inset: 0 }} class="pass">
-      <HUD />
-      <BuildingMenu />
-      <div class="act"><WorldSheet /></div>
-      <Notes />
-      {P && <div class="act" style={{ position: 'absolute', inset: 0 }}><P {...(top!.props ?? {})} key={top!.id + JSON.stringify(top!.props ?? {})} /></div>}
+      <Guard name="hud"><HUD /></Guard>
+      <Guard name="bmenu"><BuildingMenu /></Guard>
+      <div class="act"><Guard name="sheet"><WorldSheet /></Guard></div>
+      <Guard name="notes"><Notes /></Guard>
+      {P && <div class="act" style={{ position: 'absolute', inset: 0 }}><Guard name={top!.id} key={top!.id + JSON.stringify(top!.props ?? {})} onError={() => ui.close()}><P {...(top!.props ?? {})} /></Guard></div>}
       {wb && !story && <div class="act" style={{ position: 'absolute', inset: 0 }}><WelcomeBack away={wb.away} gained={wb.gained} onClose={() => setWb(null)} /></div>}
       {story && <div class="act" style={{ position: 'absolute', inset: 0 }}><StoryDialog lines={story} onDone={() => setStory(null)} /></div>}
       {reward && <div class="act" style={{ position: 'absolute', inset: 0 }}><RewardPopup r={reward.r} title={reward.title} onClose={() => setReward(null)} /></div>}
       {!story && !reward && !wb && <Tutorial />}
       <FlyRes />
       <Toasts />
+      <CrashScreen />
     </div>
   );
 }

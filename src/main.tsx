@@ -18,6 +18,7 @@ import { Game } from './game/game';
 import { GameApp } from './app';
 import { App } from './ui/App';
 import { setGa, toast, ui } from './ui/core';
+import { APP_VERSION, errorReport, installGlobalHandlers, reportError } from './core/errors';
 import { IntroScreen } from './ui/panels/misc';
 import { initAudio, setMusic, setSound, suspendAudio } from './audio/audio';
 import { PRODUCTION_RES } from './data/buildings';
@@ -134,4 +135,18 @@ async function boot() {
   }} />, uiRoot);
 }
 
-boot();
+installGlobalHandlers();
+boot().catch((err) => {
+  reportError('boot', err);
+  // last-resort screen: the save is untouched, so a reload is safe
+  const el = document.getElementById('boot')!;
+  el.style.display = 'flex'; el.style.opacity = '1';
+  el.innerHTML = `<div class="t" style="font-size:28px">Не удалось запустить игру</div>
+    <div class="tip" style="opacity:.8;max-width:70vw">Прогресс не потерян. Попробуйте перезапустить. Версия ${APP_VERSION}.</div>
+    <div style="display:flex;gap:12px;margin-top:20px">
+      <button id="bootretry" style="padding:10px 22px;border-radius:10px;border:0;background:#e8b84a;font-weight:800">Перезапустить</button>
+      <button id="bootcopy" style="padding:10px 22px;border-radius:10px;border:0;background:#34406a;color:#fff;font-weight:800">Скопировать отчёт</button>
+    </div>`;
+  document.getElementById('bootretry')!.onclick = () => location.reload();
+  document.getElementById('bootcopy')!.onclick = () => { const t = errorReport(); navigator.clipboard?.writeText(t).catch(() => prompt('Отчёт:', t)); };
+});

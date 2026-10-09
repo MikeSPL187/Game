@@ -1,6 +1,7 @@
 import { Application } from 'pixi.js';
 import { bus } from './core/bus';
 import { writeSave } from './core/storage';
+import { reportError } from './core/errors';
 import { Game } from './game/game';
 import { CityScene } from './render/cityScene';
 import { WorldScene } from './render/worldScene';
@@ -32,6 +33,14 @@ export class GameApp {
       powerPreference: 'high-performance',
     });
     stage.appendChild(this.app.canvas);
+    // GPU context loss (backgrounded app, driver reset): save, pause, and rebuild on restore
+    this.app.canvas.addEventListener('webglcontextlost', (e) => {
+      e.preventDefault();
+      this.paused = true;
+      this.save();
+      bus.emit('gl-lost');
+    });
+    this.app.canvas.addEventListener('webglcontextrestored', () => { this.save().finally(() => location.reload()); });
     this.city = new CityScene(this.app, this.game);
     await this.city.init((f) => progress(f * 0.6, 'Возведение крепости…'));
     this.world = new WorldScene(this.app, this.game);
@@ -43,18 +52,41 @@ export class GameApp {
     bus.on('state', () => { this.city.refresh(); this.world.refresh(); });
   }
 
+  /** set after repeated failures; the crash screen decides what happens next */
+  crashed = false;
+
   frame(dt: number) {
     dt = Math.min(dt, 0.1);
-    if (this.paused) return;
-    this.simAcc += dt;
-    if (this.simAcc >= 0.25) {
-      this.simAcc = 0;
-      this.game.tick(Date.now());
-      bus.emit('tick');
+    if (this.paused || this.crashed) return;
+    try {
+      this.simAcc += dt;
+      if (this.simAcc >= 0.25) {
+        this.simAcc = 0;
+        this.game.tick(Date.now());
+        bus.emit('tick');
+      }
+      this.saveAcc += dt;
+      if (this.saveAcc > 15) { this.saveAcc = 0; this.save(); }
+    } catch (err) {
+      if (reportError('simulation', err)) this.crash();
     }
-    this.saveAcc += dt;
-    if (this.saveAcc > 15) { this.saveAcc = 0; this.save(); }
-    if (this.view === 'city') this.city.update(dt); else this.world.update(dt);
+    try {
+      if (this.view === 'city') this.city.update(dt); else this.world.update(dt);
+    } catch (err) {
+      if (reportError('render', err)) this.crash();
+    }
+  }
+
+  crash() {
+    if (this.crashed) return;
+    this.crashed = true;
+    this.save();
+    bus.emit('crash');
+  }
+
+  resume() {
+    this.crashed = false;
+    this.paused = false;
   }
 
   setView(v: View) {
@@ -71,6 +103,6 @@ export class GameApp {
   async save() {
     if (this.noSave) return;
     this.game.s.lastSave = Date.now();
-    await writeSave(this.game.serialize());
+    try { await writeSave(this.game.serialize()); } catch (err) { reportError('save', err); }
   }
 }
