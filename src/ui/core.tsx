@@ -64,7 +64,7 @@ export function useNow(ms = 250) {
 
 // ———————————————————————————————————————— feedback
 export function haptic(strong = false) {
-  if (!game().s.settings.haptics) return;
+  if (ga && !ga.game.s.settings.haptics) return;
   if (Capacitor.isNativePlatform()) Haptics.impact({ style: strong ? ImpactStyle.Medium : ImpactStyle.Light }).catch(() => {});
   else if (navigator.vibrate) navigator.vibrate(strong ? 18 : 8);
 }

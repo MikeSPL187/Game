@@ -535,6 +535,12 @@ export class CityScene {
     const g = this.game;
     const q = g.s.settings.quality === 'high';
     for (const v of this.views.values()) {
+      const job = g.jobForPlot(v.plot.id);
+      if (job?.kind === 'build') {
+        const { x, y } = v.plot;
+        if (Math.random() < 0.5) this.particles.emit({ x: x + (Math.random() - 0.5) * 120, y: y - Math.random() * 40, vy: -20, vx: (Math.random() - 0.5) * 20, tint: 0xc8b48a, alpha: 0.45, scale: 0.3, grow: 0.5, life: 1.4 });
+        if (Math.random() < 0.25) this.particles.emit({ x: x + (Math.random() - 0.5) * 80, y: y - 30 - Math.random() * 60, tex: starSprite(), tint: 0xffd76a, scale: 0.2, life: 0.4, blend: 'add', spread: 60 });
+      }
       if (v.level <= 0) continue;
       const { x, y } = v.plot;
       const t = tierOf(v.level);
