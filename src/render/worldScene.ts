@@ -1,6 +1,6 @@
 import { Container, Graphics, Sprite, Text, type Application } from 'pixi.js';
 import { bus } from '../core/bus';
-import { fbm, hash2 } from '../core/rng';
+import { hash2, noiseTile } from '../core/rng';
 import type { Legion, WorldObject } from '../core/types';
 import { campArt, castleArt, mountainArt, nodeArt, riftArt, riftVortex, ruinArt, soldierArt, titanArt, treeArt, hillArt } from '../art/worldArt';
 import { PALETTES } from '../art/buildings';
@@ -15,7 +15,7 @@ import { bake, canvasTexture, get, type Baked } from './textures';
 
 export const TILE = 64;
 const CHUNK = 16;
-const TEX_PER_TILE = 12;
+let TEX_PER_TILE = 12;
 
 const BASE: Record<number, [number, number, number]> = {
   // water tiles blend as wet sand; water itself is painted from the continuous height field
@@ -58,6 +58,7 @@ export class WorldScene {
   private selRing: Sprite | null = null;
   private selMarker: Container | null = null;
   private time = 0;
+  perf: Record<string, number> = {};
   private lastFogPaint = -9;
   private lastSync = 0;
 
@@ -76,6 +77,7 @@ export class WorldScene {
   }
 
   async init(progress?: (f: number) => void) {
+    TEX_PER_TILE = this.game.s.settings.quality === 'low' ? 8 : 12;
     const jobs: Promise<unknown>[] = [];
     const f = this.game.s.player.faction;
     for (let v = 0; v < 3; v++) jobs.push(bake(`wcamp:${v}`, () => campArt(v)));
@@ -97,10 +99,16 @@ export class WorldScene {
     let done = 0;
     jobs.forEach((j) => j.then(() => progress?.(++done / (jobs.length + 2))));
     await Promise.all(jobs);
+    let t = performance.now();
     this.paintTerrain();
+    this.perf.terrain = Math.round(performance.now() - t);
+    t = performance.now();
     progress?.((done + 1) / (jobs.length + 2));
     this.buildDecor();
+    this.perf.decor = Math.round(performance.now() - t);
+    t = performance.now();
     this.buildFog();
+    this.perf.fog = Math.round(performance.now() - t);
     this.syncObjects();
     this.syncLegions();
     bus.on('fog', () => { this.fogDirty = true; });
@@ -120,6 +128,8 @@ export class WorldScene {
     const d = img.data;
     const t = this.ter.t, h = this.ter.h;
     const seed = this.ter.seed;
+    // tile period: 32 px per lattice cell at octave 0 → scale k = 32 / featureSize
+    const NA = noiseTile(seed + 5, 256, 3, 8), NB = noiseTile(seed + 9, 256, 3, 8);
     const H = (x: number, y: number) => {
       x = Math.max(0, Math.min(n - 1.001, x)); y = Math.max(0, Math.min(n - 1.001, y));
       const xi = Math.floor(x), yi = Math.floor(y), ax = x - xi, ay = y - yi;
@@ -131,22 +141,24 @@ export class WorldScene {
       for (let px = 0; px < W; px++) {
         const fx = px / P - 0.5;
         const x0 = Math.max(0, Math.min(n - 1, Math.floor(fx))), x1 = Math.min(n - 1, x0 + 1), kx = Math.max(0, Math.min(1, fx - x0));
-        // jitter blend weights with noise for organic borders
-        const jn = fbm(px / 9, py / 9, seed + 5, 2) - 0.5;
-        const kxj = Math.max(0, Math.min(1, kx + jn * 0.7)), kyj = Math.max(0, Math.min(1, ky + jn * 0.7));
+        // bilinear blend of the four surrounding tiles…
         const c00 = BASE[t[y0 * n + x0]], c10 = BASE[t[y0 * n + x1]], c01 = BASE[t[y1 * n + x0]], c11 = BASE[t[y1 * n + x1]];
+        // …mixed with a domain-warped nearest tile, which turns square tile borders into organic shapes
+        const wx = Math.round(fx + (NA(px * 1.6, py * 1.6) - 0.5) * 3.2 + (NB(px * 5, py * 5) - 0.5) * 1.3);
+        const wy = Math.round(fy + (NA(px * 1.6 + 53, py * 1.6 + 29) - 0.5) * 3.2 + (NB(px * 5 + 31, py * 5 + 17) - 0.5) * 1.3);
+        const cw = BASE[t[Math.max(0, Math.min(n - 1, wy)) * n + Math.max(0, Math.min(n - 1, wx))]];
         let r = 0, g = 0, b = 0;
         for (let k = 0; k < 3; k++) {
-          const top = c00[k] * (1 - kxj) + c10[k] * kxj;
-          const bot = c01[k] * (1 - kxj) + c11[k] * kxj;
-          const v = top * (1 - kyj) + bot * kyj;
+          const top = c00[k] * (1 - kx) + c10[k] * kx;
+          const bot = c01[k] * (1 - kx) + c11[k] * kx;
+          const v = (top * (1 - ky) + bot * ky) * 0.35 + cw[k] * 0.65;
           if (k === 0) r = v; else if (k === 1) g = v; else b = v;
         }
         // continuous height for shading & water
         const hh = H(fx, fy);
         const hx = H(fx + 0.6, fy) - H(fx - 0.6, fy), hy = H(fx, fy + 0.6) - H(fx, fy - 0.6);
-        const detail = fbm(px / 3.5, py / 3.5, seed + 9, 2) - 0.5;
-        const wn = (fbm(px / 14, py / 14, seed + 11, 2) - 0.5) * 0.02;
+        const detail = NB(px * 9.1, py * 9.1) - 0.5;
+        const wn = (NB(px * 2.3 + 97, py * 2.3 + 41) - 0.5) * 0.02;
         if (hh + wn < 0.39) {
           const depth = Math.max(0, Math.min(1, (0.39 - hh) / 0.2));
           r = 70 - depth * 46 + detail * 8; g = 140 - depth * 70 + detail * 10; b = 168 - depth * 40 + detail * 10;
@@ -154,7 +166,7 @@ export class WorldScene {
         } else {
           const shadeV = (-hx - hy) * 140;
           r += shadeV + detail * 22; g += shadeV + detail * 22; b += shadeV * 0.8 + detail * 14;
-          const macro = fbm(px / 60, py / 60, seed + 17, 3) - 0.5;
+          const macro = NA(px * 0.53 + 131, py * 0.53 + 77) - 0.5;
           r += macro * 26; g += macro * 22; b += macro * 10;
         }
         const i = (py * W + px) * 4;
@@ -235,6 +247,7 @@ export class WorldScene {
 
   private cloudCanvas: HTMLCanvasElement | null = null;
   private maskCanvas: HTMLCanvasElement | null = null;
+  private blurCanvas: HTMLCanvasElement | null = null;
   private paintFog() {
     const n = this.ter.size, P = 6, W = n * P;
     if (!this.cloudCanvas) {
@@ -242,8 +255,9 @@ export class WorldScene {
       cc.width = cc.height = W;
       const cx = cc.getContext('2d')!;
       const img = cx.createImageData(W, W);
+      const CN = noiseTile(777, 256, 5, 4);
       for (let y = 0; y < W; y++) for (let x = 0; x < W; x++) {
-        const v = fbm(x / 40, y / 40, 777, 4);
+        const v = CN(x * 0.34, y * 0.34);
         const i = (y * W + x) * 4;
         img.data[i] = 150 + v * 90; img.data[i + 1] = 162 + v * 84; img.data[i + 2] = 186 + v * 64; img.data[i + 3] = 255;
       }
@@ -261,12 +275,24 @@ export class WorldScene {
     m.clearRect(0, 0, W, W);
     m.fillStyle = '#000';
     const fog = this.game.fog;
-    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (fog[y * n + x]) m.fillRect(x * P - 1, y * P - 1, P + 2, P + 2);
+    // round brushes give organic edges; interior tiles use cheap rects
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      if (!fog[y * n + x]) continue;
+      const edge = x === 0 || y === 0 || x === n - 1 || y === n - 1 || !fog[y * n + x - 1] || !fog[y * n + x + 1] || !fog[(y - 1) * n + x] || !fog[(y + 1) * n + x];
+      if (edge) { m.beginPath(); m.arc(x * P + P / 2, y * P + P / 2, P * 0.9, 0, Math.PI * 2); m.fill(); }
+      else m.fillRect(x * P - 1, y * P - 1, P + 2, P + 2);
+    }
+    // soft edge without ctx.filter (unsupported on some WebViews): downscale, then upscale with smoothing
+    if (!this.blurCanvas) { this.blurCanvas = document.createElement('canvas'); this.blurCanvas.width = this.blurCanvas.height = Math.ceil(W / 6); }
+    const bc = this.blurCanvas, bx = bc.getContext('2d')!;
+    bx.imageSmoothingEnabled = true;
+    bx.clearRect(0, 0, bc.width, bc.height);
+    bx.drawImage(mask, 0, 0, bc.width, bc.height);
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.filter = 'blur(7px)';
-    ctx.drawImage(mask, 0, 0);
-    ctx.drawImage(mask, 0, 0);
-    ctx.filter = 'none';
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bc, 0, 0, W, W);
+    ctx.drawImage(bc, 0, 0, W, W);
     ctx.globalCompositeOperation = 'source-over';
     const old = this.fogSprite.texture;
     this.fogSprite.texture = canvasTexture(this.fogCanvas);

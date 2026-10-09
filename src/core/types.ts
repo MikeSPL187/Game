@@ -164,6 +164,8 @@ export interface Settings {
   haptics: boolean;
   quality: 'high' | 'low';
   dayNight: boolean;
+  showFps: boolean;
+  notifications: boolean;
 }
 
 export interface Stats {

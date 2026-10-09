@@ -66,6 +66,7 @@ export class CityScene {
   selected: string | null = null;
   private selGlow: Sprite | null = null;
   private time = 0;
+  perf: Record<string, number> = {};
   private emitAcc = 0;
   night = 0;
   private faction: FactionId;
@@ -85,9 +86,12 @@ export class CityScene {
   }
 
   async init(progress?: (f: number) => void) {
-    const groundTex = canvasTexture(paintCityGround(0.5));
+    const tg = performance.now();
+    const gScale = this.game.s.settings.quality === 'low' ? 0.35 : 0.5;
+    const groundTex = canvasTexture(paintCityGround(gScale));
+    this.perf.ground = Math.round(performance.now() - tg);
     const g = new Sprite(groundTex);
-    g.scale.set(2);
+    g.scale.set(1 / gScale);
     this.ground.addChild(g);
     // texture preload
     const jobs: Promise<unknown>[] = [];

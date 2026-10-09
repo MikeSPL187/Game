@@ -206,6 +206,12 @@ function Tutorial() {
   );
 }
 
+function FpsMeter() {
+  const g = useGame(['fps', 'state']);
+  if (!g.s.settings.showFps) return null;
+  return <div class="pass" style={{ position: 'absolute', left: 300, top: 6, padding: '2px 8px', borderRadius: 6, background: 'rgba(0,0,0,.6)', fontSize: 12, fontWeight: 800, color: ga.fps >= 50 ? '#9cf27a' : ga.fps >= 30 ? '#ffb84a' : '#ff6a5a' }}>{ga.fps} FPS · ×{ga.res.toFixed(2)}</div>;
+}
+
 // ———————————————————————————————————————— root
 export function App({ welcome }: { welcome?: { away: number; gained: Record<string, number> } | null }) {
   const store = useStore();
@@ -242,6 +248,7 @@ export function App({ welcome }: { welcome?: { away: number; gained: Record<stri
       {!story && !reward && !wb && <Tutorial />}
       <FlyRes />
       <Toasts />
+      <FpsMeter />
       <CrashScreen />
     </div>
   );

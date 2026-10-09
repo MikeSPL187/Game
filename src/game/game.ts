@@ -1376,7 +1376,9 @@ export function migrate(s: GameState) {
   if (!s.stats) s.stats = emptyStats();
   for (const [k, v] of Object.entries(emptyStats())) if ((s.stats as any)[k] == null) (s.stats as any)[k] = v;
   if (!s.titans) s.titans = { tamed: {}, active: null };
-  if (!s.settings) s.settings = { sound: true, music: true, haptics: true, quality: 'high', dayNight: true };
+  if (!s.settings) s.settings = { sound: true, music: true, haptics: true, quality: 'high', dayNight: true, showFps: false, notifications: true };
+  if (s.settings.showFps == null) s.settings.showFps = false;
+  if (s.settings.notifications == null) s.settings.notifications = true;
   if (s.settings.dayNight == null) s.settings.dayNight = true;
   if (!s.raids) s.raids = [];
   if (s.raidCooldown == null) s.raidCooldown = 0;

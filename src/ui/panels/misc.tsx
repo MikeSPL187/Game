@@ -292,7 +292,7 @@ export function SettingsPanel() {
   return (
     <Panel title="Настройки" width={640} icon="gear">
       <div class="col">
-        {([['sound', 'Звуковые эффекты'], ['music', 'Музыка'], ['haptics', 'Вибрация'], ['dayNight', 'Смена дня и ночи']] as const).map(([k, l]) => (
+        {([['sound', 'Звуковые эффекты'], ['music', 'Музыка'], ['haptics', 'Вибрация'], ['dayNight', 'Смена дня и ночи'], ['showFps', 'Показывать FPS']] as const).map(([k, l]) => (
           <div class="card row"><b class="grow">{l}</b><Toggle on={!!s[k]} onChange={(v) => set(k, v)} /></div>
         ))}
         <div class="card row"><b class="grow">Качество графики</b>

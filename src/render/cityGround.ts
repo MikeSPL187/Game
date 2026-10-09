@@ -1,4 +1,4 @@
-import { fbm, hash2 } from '../core/rng';
+import { hash2, noiseTile } from '../core/rng';
 import { CITY_CENTER, CITY_H, CITY_W, GATE, PLOTS, WALL_RX, WALL_RY } from '../data/cityLayout';
 
 export type Pt = { x: number; y: number };
@@ -48,8 +48,10 @@ export function inWall(x: number, y: number, margin = 0): boolean {
   return Math.abs(x - CITY_CENTER.x) / (WALL_RX + margin) + Math.abs(y - CITY_CENTER.y) / (WALL_RY + margin / 2) < 1;
 }
 
+let LN: ((x: number, y: number) => number) | null = null;
 export function lakeDist(x: number, y: number): number {
-  const n = fbm(x / 160, y / 160, 99, 3);
+  LN ??= noiseTile(99, 128, 3, 4);
+  const n = LN(x * 0.2, y * 0.2);
   const dx = (x - LAKE.x) / 1.6, dy = y - LAKE.y;
   return Math.sqrt(dx * dx + dy * dy) / (LAKE.r * (0.75 + n * 0.5));
 }
@@ -62,15 +64,16 @@ export function paintCityGround(scale = 0.5): HTMLCanvasElement {
   const ctx = c.getContext('2d')!;
   const img = ctx.createImageData(W, H);
   const d = img.data;
+  const N1 = noiseTile(7, 256, 4, 8), N2 = noiseTile(13, 256, 2, 8), N3 = noiseTile(21, 256, 3, 8);
   for (let py = 0; py < H; py++) {
     for (let px = 0; px < W; px++) {
       const x = px / scale, y = py / scale;
-      const n = fbm(x / 220, y / 220, 7, 4);
-      const n2 = fbm(x / 40, y / 40, 13, 2);
+      const n = N1(x * 0.145, y * 0.145);
+      const n2 = N2(x * 0.8, y * 0.8);
       // grass
       let r = 88 + n * 50 + n2 * 14, g = 128 + n * 46 + n2 * 16, b = 52 + n * 18;
       // dry patches
-      const dry = fbm(x / 300, y / 300, 21, 3);
+      const dry = N3(x * 0.107, y * 0.107);
       if (dry > 0.58) { const t = Math.min(1, (dry - 0.58) * 5); r += 30 * t; g += 12 * t; b += 4 * t; }
       // inner city stone
       if (inWall(x, y, -24)) {

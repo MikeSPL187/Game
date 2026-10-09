@@ -78,8 +78,8 @@ async function start(game: Game, welcome: { away: number; gained: Record<string,
   window.addEventListener('pointerdown', unlock);
   // lifecycle
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { ga.save(); suspendAudio(true); ga.paused = true; }
-    else { ga.paused = false; suspendAudio(false); ga.game.tick(Date.now(), false); }
+    if (document.hidden) { ga.save(); suspendAudio(true); ga.paused = true; ga.setBackground(true); }
+    else { ga.paused = false; suspendAudio(false); ga.game.tick(Date.now(), false); ga.setBackground(false); }
   });
   window.addEventListener('beforeunload', () => { ga.save(); });
   if (Capacitor.isNativePlatform()) {

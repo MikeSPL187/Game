@@ -18,6 +18,7 @@ export class GameApp {
   private simAcc = 0;
   private saveAcc = 0;
   paused = false;
+  timings: Record<string, number> = {};
 
   constructor(public game: Game) {}
 
@@ -41,15 +42,55 @@ export class GameApp {
       bus.emit('gl-lost');
     });
     this.app.canvas.addEventListener('webglcontextrestored', () => { this.save().finally(() => location.reload()); });
+    let t0 = performance.now();
     this.city = new CityScene(this.app, this.game);
     await this.city.init((f) => progress(f * 0.6, 'Возведение крепости…'));
+    this.timings.city = Math.round(performance.now() - t0);
+    t0 = performance.now();
     this.world = new WorldScene(this.app, this.game);
     await this.world.init((f) => progress(0.6 + f * 0.4, 'Пробуждение земель…'));
+    this.timings.world = Math.round(performance.now() - t0);
     this.app.stage.addChild(this.city.root, this.world.root);
     this.world.leave();
     this.city.enter();
-    this.app.ticker.add((t) => this.frame(t.deltaMS / 1000));
+    if (low) this.app.ticker.maxFPS = 30;
+    this.maxRes = this.app.renderer.resolution;
+    this.res = this.maxRes;
+    this.app.ticker.add((t) => { this.measure(t.deltaMS); this.frame(t.deltaMS / 1000); });
     bus.on('state', () => { this.city.refresh(); this.world.refresh(); });
+  }
+
+  // ———————————————— performance: FPS meter & adaptive render resolution
+  fps = 60;
+  res = 1;
+  private maxRes = 1;
+  private frames = 0;
+  private fpsT = 0;
+  private slow = 0;
+  private fast = 0;
+
+  private measure(ms: number) {
+    this.frames++;
+    this.fpsT += ms;
+    if (this.fpsT < 1000) return;
+    this.fps = Math.round((this.frames * 1000) / this.fpsT);
+    this.frames = 0;
+    this.fpsT = 0;
+    bus.emit('fps', this.fps);
+    if (this.paused || document.hidden) return;
+    const target = this.app.ticker.maxFPS ? this.app.ticker.maxFPS : 60;
+    if (this.fps < target * 0.65) { this.slow++; this.fast = 0; } else if (this.fps > target * 0.93) { this.fast++; this.slow = 0; } else { this.slow = 0; this.fast = 0; }
+    if (this.slow >= 3 && this.res > 1) { this.setResolution(this.res - 0.25); this.slow = 0; }
+    else if (this.fast >= 15 && this.res < this.maxRes) { this.setResolution(this.res + 0.25); this.fast = 0; }
+  }
+
+  setResolution(r: number) {
+    this.res = Math.max(1, Math.min(this.maxRes, r));
+    this.app.renderer.resize(window.innerWidth, window.innerHeight, this.res);
+  }
+
+  setBackground(hidden: boolean) {
+    if (hidden) this.app.ticker.stop(); else this.app.ticker.start();
   }
 
   /** set after repeated failures; the crash screen decides what happens next */
