@@ -58,6 +58,7 @@ export class WorldScene {
   private selRing: Sprite | null = null;
   private selMarker: Container | null = null;
   private time = 0;
+  private lastFogPaint = -9;
   private lastSync = 0;
 
   constructor(public app: Application, public game: Game) {
@@ -233,6 +234,7 @@ export class WorldScene {
   }
 
   private cloudCanvas: HTMLCanvasElement | null = null;
+  private maskCanvas: HTMLCanvasElement | null = null;
   private paintFog() {
     const n = this.ter.size, P = 6, W = n * P;
     if (!this.cloudCanvas) {
@@ -253,9 +255,10 @@ export class WorldScene {
     ctx.clearRect(0, 0, W, W);
     ctx.drawImage(this.cloudCanvas, 0, 0);
     // cut revealed area (blurred)
-    const mask = document.createElement('canvas');
-    mask.width = mask.height = W;
+    if (!this.maskCanvas) { this.maskCanvas = document.createElement('canvas'); this.maskCanvas.width = this.maskCanvas.height = W; }
+    const mask = this.maskCanvas;
     const m = mask.getContext('2d')!;
+    m.clearRect(0, 0, W, W);
     m.fillStyle = '#000';
     const fog = this.game.fog;
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (fog[y * n + x]) m.fillRect(x * P - 1, y * P - 1, P + 2, P + 2);
@@ -512,7 +515,7 @@ export class WorldScene {
     this.time += dt;
     this.camera.update();
     this.particles.update(dt);
-    if (this.fogDirty) { this.paintFog(); this.syncObjects(); }
+    if (this.fogDirty && this.time - this.lastFogPaint > 0.8) { this.lastFogPaint = this.time; this.paintFog(); this.syncObjects(); }
     // cull chunks
     const z = this.camera.zoom;
     const hw = this.camera.sw / 2 / z, hh = this.camera.sh / 2 / z;
