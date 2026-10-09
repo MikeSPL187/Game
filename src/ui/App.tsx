@@ -20,6 +20,8 @@ import { ArmyPanel, CalendarPanel, InventoryPanel, ProfilePanel, QuestsPanel, Re
 import { ReportsPanel } from './panels/reports';
 import { sfx } from '../audio/audio';
 import { CrashScreen, Guard } from './guard';
+import { Capacitor } from '@capacitor/core';
+import { requestNotifications } from '../core/notify';
 
 const PANELS: Record<string, (p: any) => any> = {
   upgrade: UpgradePanel, speedup: SpeedupPanel, train: TrainPanel, research: ResearchPanel, heroes: HeroesPanel, tavern: TavernPanel,
@@ -206,6 +208,32 @@ function Tutorial() {
   );
 }
 
+/** Ask for notification permission at a meaningful moment: the first long timer. */
+function NotifyPrompt() {
+  const g = useGame(['state', 'job-start']);
+  const [show, setShow] = useState(false);
+  useEffect(() => bus.on('job-start', (j: { start: number; end: number }) => {
+    if (!Capacitor.isNativePlatform() || ga.game.s.flags.notifAsked || !ga.game.s.settings.notifications) return;
+    if (j.end - j.start >= 10 * 60_000) setShow(true);
+  }), []);
+  if (!show) return null;
+  const done = (yes: boolean) => {
+    g.s.flags.notifAsked = true;
+    setShow(false);
+    if (yes) requestNotifications().then((ok) => { if (!ok) g.s.settings.notifications = false; });
+    else g.s.settings.notifications = false;
+  };
+  return (
+    <div class="card act" style={{ position: 'absolute', left: '50%', top: 90, transform: 'translateX(-50%)', width: 460, background: 'rgba(14,18,32,.97)', boxShadow: '0 0 0 2px var(--gold), 0 10px 30px rgba(0,0,0,.6)', animation: 'panelin .25s' }}>
+      <div class="row"><Icon name="clock" size={40} /><div class="grow"><b>Напомнить, когда всё будет готово?</b><div class="mute" style={{ fontSize: 13 }}>Сообщим о завершении строек, исследований и возвращении легионов. Никакой рекламы.</div></div></div>
+      <div class="row" style={{ justifyContent: 'flex-end', marginTop: 8 }}>
+        <button class="btn small dark" onClick={() => done(false)}>Не нужно</button>
+        <button class="btn small green" onClick={() => done(true)}>Напоминать</button>
+      </div>
+    </div>
+  );
+}
+
 function FpsMeter() {
   const g = useGame(['fps', 'state']);
   if (!g.s.settings.showFps) return null;
@@ -248,6 +276,7 @@ export function App({ welcome }: { welcome?: { away: number; gained: Record<stri
       {!story && !reward && !wb && <Tutorial />}
       <FlyRes />
       <Toasts />
+      <NotifyPrompt />
       <FpsMeter />
       <CrashScreen />
     </div>

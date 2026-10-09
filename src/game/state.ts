@@ -62,6 +62,7 @@ export function newGame(faction: FactionId, name: string, seed = (Math.random() 
     settings: { sound: true, music: true, haptics: true, quality: 'high', dayNight: true, showFps: false, notifications: true },
     nextId: 1,
     introSeen: false,
+    flags: {},
   };
   return s;
 }

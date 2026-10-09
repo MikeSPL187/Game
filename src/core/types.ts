@@ -230,4 +230,6 @@ export interface GameState {
   settings: Settings;
   nextId: number;
   introSeen: boolean;
+  /** one-time UI flags (prompts shown, hints dismissed) */
+  flags: Record<string, boolean>;
 }

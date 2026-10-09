@@ -5,6 +5,9 @@ const config: CapacitorConfig = {
   appName: 'Aetherfall',
   webDir: 'dist',
   backgroundColor: '#0b0f1a',
+  plugins: {
+    LocalNotifications: { smallIcon: 'ic_stat_aether', iconColor: '#E8B84A' },
+  },
   android: {
     allowMixedContent: false,
     captureInput: true,

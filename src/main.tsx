@@ -22,6 +22,7 @@ import { APP_VERSION, errorReport, installGlobalHandlers, reportError } from './
 import { IntroScreen } from './ui/panels/misc';
 import { initAudio, setMusic, setSound, suspendAudio } from './audio/audio';
 import { PRODUCTION_RES } from './data/buildings';
+import { cancelReminders, scheduleReminders } from './core/notify';
 import type { FactionId } from './core/types';
 
 const UI_H = 560;
@@ -76,10 +77,11 @@ async function start(game: Game, welcome: { away: number; gained: Record<string,
   showBoot(false);
   const unlock = () => { initAudio(); window.removeEventListener('pointerdown', unlock); };
   window.addEventListener('pointerdown', unlock);
+  cancelReminders();
   // lifecycle
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { ga.save(); suspendAudio(true); ga.paused = true; ga.setBackground(true); }
-    else { ga.paused = false; suspendAudio(false); ga.game.tick(Date.now(), false); ga.setBackground(false); }
+    if (document.hidden) { ga.save(); suspendAudio(true); ga.paused = true; ga.setBackground(true); scheduleReminders(ga.game); }
+    else { ga.paused = false; suspendAudio(false); ga.game.tick(Date.now(), false); ga.setBackground(false); cancelReminders(); }
   });
   window.addEventListener('beforeunload', () => { ga.save(); });
   if (Capacitor.isNativePlatform()) {

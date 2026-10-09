@@ -373,7 +373,9 @@ export class Game {
     if (!this.has(cost)) return fail('Недостаточно ресурсов');
     this.pay(cost);
     const t = this.trainTime(troop, count, building);
-    this.s.jobs.push({ id: this.uid(), kind: 'train', start: now, end: now + t, plot: building, troop, count });
+    const job: Job = { id: this.uid(), kind: 'train', start: now, end: now + t, plot: building, troop, count };
+    this.s.jobs.push(job);
+    bus.emit('job-start', job);
     bus.emit('state');
     return OK;
   }
@@ -395,7 +397,9 @@ export class Game {
     if (this.jobsOf('research').length) return fail('Академия занята');
     if (!this.has(st.cost)) return fail('Недостаточно ресурсов');
     this.pay(st.cost);
-    this.s.jobs.push({ id: this.uid(), kind: 'research', start: now, end: now + st.time, tech: id, toLevel: st.lvl + 1, plot: 'academy' });
+    const job: Job = { id: this.uid(), kind: 'research', start: now, end: now + st.time, tech: id, toLevel: st.lvl + 1, plot: 'academy' };
+    this.s.jobs.push(job);
+    bus.emit('job-start', job);
     bus.emit('state');
     return OK;
   }
@@ -1382,6 +1386,7 @@ export function migrate(s: GameState) {
   if (s.settings.dayNight == null) s.settings.dayNight = true;
   if (!s.raids) s.raids = [];
   if (s.raidCooldown == null) s.raidCooldown = 0;
+  if (!s.flags) s.flags = {};
   if (!s.calendar) s.calendar = { day: 0, last: '' };
   for (const h of HEROES) if (!s.heroes[h.id]) s.heroes[h.id] = { id: h.id, level: 1, xp: 0, stars: 1, shards: 0, owned: false };
   s.version = SAVE_VERSION;

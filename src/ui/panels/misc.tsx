@@ -12,6 +12,8 @@ import { HERO_BY_ID, HEROES } from '../../data/heroes';
 import { sumTroops } from '../../game/game';
 import { clearSave, exportCode, importCode, writeSave } from '../../core/storage';
 import { APP_VERSION } from '../../core/errors';
+import { requestNotifications } from '../../core/notify';
+import { Capacitor } from '@capacitor/core';
 import { Bar, Btn, Icon, Panel, RewardList, Stars, Timer, Toggle, act, ga, haptic, toast, ui, useGame } from '../core';
 import { goTo, findWorldTarget } from '../nav';
 import { initAudio, setMusic, setSound, sfx } from '../../audio/audio';
@@ -288,11 +290,11 @@ export function CalendarPanel() {
 export function SettingsPanel() {
   const g = useGame();
   const s = g.s.settings;
-  const set = (k: keyof typeof s, v: any) => { (s as any)[k] = v; bus.emit('state'); if (k === 'sound') setSound(v); if (k === 'music') { initAudio(); setMusic(v); } };
+  const set = (k: keyof typeof s, v: any) => { (s as any)[k] = v; bus.emit('state'); if (k === 'sound') setSound(v); if (k === 'notifications' && v) { g.s.flags.notifAsked = true; requestNotifications().then((ok) => { if (!ok) { s.notifications = false; bus.emit('state'); toast('Разрешите уведомления в настройках Android', true); } }); } if (k === 'music') { initAudio(); setMusic(v); } };
   return (
     <Panel title="Настройки" width={640} icon="gear">
       <div class="col">
-        {([['sound', 'Звуковые эффекты'], ['music', 'Музыка'], ['haptics', 'Вибрация'], ['dayNight', 'Смена дня и ночи'], ['showFps', 'Показывать FPS']] as const).map(([k, l]) => (
+        {([['sound', 'Звуковые эффекты'], ['music', 'Музыка'], ['haptics', 'Вибрация'], ['dayNight', 'Смена дня и ночи'], ...(Capacitor.isNativePlatform() ? [['notifications', 'Уведомления о готовности'] as const] : []), ['showFps', 'Показывать FPS']] as const).map(([k, l]) => (
           <div class="card row"><b class="grow">{l}</b><Toggle on={!!s[k]} onChange={(v) => set(k, v)} /></div>
         ))}
         <div class="card row"><b class="grow">Качество графики</b>
