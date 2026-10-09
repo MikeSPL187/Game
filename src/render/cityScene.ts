@@ -76,7 +76,9 @@ export class CityScene {
     this.root.addChild(this.world);
     this.world.addChild(this.ground, this.objs, this.particles.layer, this.fxLayer, this.uiLayer);
     this.objs.sortableChildren = true;
-    this.camera = new Camera(this.world, app.canvas as HTMLCanvasElement, { worldW: CITY_W, worldH: CITY_H, minZoom: 0.38, maxZoom: 1.6, zoom: 0.7 });
+    const sh = window.innerHeight, sw = window.innerWidth;
+    const fit = Math.max(sh / CITY_H, sw / CITY_W);
+    this.camera = new Camera(this.world, app.canvas as HTMLCanvasElement, { worldW: CITY_W, worldH: CITY_H, minZoom: fit, maxZoom: Math.max(1.2, sh / 500), zoom: Math.max(fit, sh / 1080) });
     this.camera.x = CITY_CENTER.x; this.camera.y = CITY_CENTER.y + 60;
     this.camera.onTap = (x, y) => this.tap(x, y);
     this.camera.onMove = () => bus.emit('city-cam');
@@ -271,8 +273,8 @@ export class CityScene {
     }
     const b = get(key);
     if (!b) {
-      this.bakeBuilding(type, level).then(() => { if (v.key === key) { v.key = ''; this.refresh(); } });
       v.key = '';
+      this.bakeBuilding(type, level).then(() => { if (v.key === '') this.refresh(); });
       return;
     }
     v.sprite = sprite(b, v.plot.scale ?? 1);
@@ -435,7 +437,7 @@ export class CityScene {
     return { x: p.x, y: p.y, top: p.y - h * this.camera.zoom };
   }
 
-  focusPlot(plot: string, zoom = 0.9) {
+  focusPlot(plot: string, zoom = Math.max(this.camera.zoom, window.innerHeight / 900)) {
     const p = PLOT_BY_ID[plot];
     this.camera.flyTo(p.x, p.y - 80, zoom, 700);
   }

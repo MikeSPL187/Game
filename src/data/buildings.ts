@@ -124,7 +124,7 @@ export function upgradeTimeSec(id: BuildingId, fromLevel: number): number {
 /** resource per hour of a production building */
 export function productionPerHour(level: number): number {
   if (level <= 0) return 0;
-  return Math.round(360 * Math.pow(level, 1.55));
+  return Math.round(900 * Math.pow(level, 1.45));
 }
 
 /** internal storage before collection, in hours of production */

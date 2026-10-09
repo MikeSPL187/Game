@@ -1,0 +1,14 @@
+import { createRequire } from 'module'; const require = createRequire('/opt/node22/lib/node_modules/'); const { chromium } = require('playwright');
+const out = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist', '--enable-unsafe-swiftshader'] });
+const ctx = await b.newContext({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+const p = await ctx.newPage();
+p.on('pageerror', (e) => console.log('pageerror:', e.message));
+await p.goto('http://localhost:5173/' + (process.argv[3] ?? '?new=wild&skipintro'));
+await p.waitForTimeout(10000);
+await p.screenshot({ path: `${out}/p1.png` });
+await p.evaluate(`ui.open('upgrade', {plot:'citadel'})`); await p.waitForTimeout(800);
+await p.screenshot({ path: `${out}/p2.png` });
+await p.evaluate(`ui.closeAll(); ga.setView('world')`); await p.waitForTimeout(2500);
+await p.screenshot({ path: `${out}/p3.png` });
+await b.close();

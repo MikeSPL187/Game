@@ -65,6 +65,9 @@ async function start(game: Game, welcome: { away: number; gained: Record<string,
   const ga = new GameApp(game);
   setGa(ga);
   (window as any).ga = ga;
+  (window as any).ui = ui;
+  (window as any).bus = (await import('./core/bus')).bus;
+  (window as any).nav = await import('./ui/nav');
   setSound(game.s.settings.sound);
   setMusic(game.s.settings.music);
   await ga.init(document.getElementById('stage')!, (f, m) => { bar.style.width = `${Math.round(f * 100)}%`; if (m) tip.textContent = m; });
@@ -113,7 +116,8 @@ async function boot() {
   }
   const quick = params.get('new');
   if (quick && ['order', 'wild', 'ash'].includes(quick)) {
-    const g = Game.create(quick as FactionId, 'Лорд');
+    const seed = params.get('seed');
+    const g = Game.create(quick as FactionId, 'Лорд', seed ? Number(seed) : undefined);
     if (params.has('skipintro')) { g.s.introSeen = true; g.s.tutorial.done = true; }
     await start(g, null);
     return;

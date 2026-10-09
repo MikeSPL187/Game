@@ -27,8 +27,8 @@ export function newGame(faction: FactionId, name: string, seed = (Math.random() 
   const buildings = PLOTS.map((p) => ({ plot: p.id, type: p.type, level: 0, stored: 0 }));
   const lvl = (id: string, l: number) => { const b = buildings.find((x) => x.plot === id)!; b.level = l; };
   lvl('citadel', 1); lvl('wall', 1); lvl('farm1', 1); lvl('saw1', 1); lvl('barracks', 1); lvl('tavern', 1);
-  buildings.find((b) => b.plot === 'farm1')!.stored = 260;
-  buildings.find((b) => b.plot === 'saw1')!.stored = 220;
+  buildings.find((b) => b.plot === 'farm1')!.stored = 820;
+  buildings.find((b) => b.plot === 'saw1')!.stored = 640;
 
   const s: GameState = {
     version: SAVE_VERSION,
@@ -36,7 +36,7 @@ export function newGame(faction: FactionId, name: string, seed = (Math.random() 
     lastTick: now,
     lastSave: now,
     player: { name, faction, crest: 0 },
-    res: { food: 1500, wood: 1500, stone: 600, gold: 300, aether: 120 },
+    res: { food: 3000, wood: 3000, stone: 1200, gold: 600, aether: 150 },
     buildings,
     jobs: [],
     troops: { inf1: 120, arc1: 60 },

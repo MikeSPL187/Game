@@ -40,10 +40,10 @@ const STATS: Record<TroopType, { atk: number[]; def: number[]; hp: number[]; spe
 };
 
 const BASE_COST: Record<TroopType, ResBag> = {
-  inf: { food: 50, wood: 40 },
-  arc: { food: 40, wood: 55 },
-  cav: { food: 60, wood: 30, stone: 25 },
-  mag: { food: 40, wood: 20, stone: 20, gold: 15 },
+  inf: { food: 20, wood: 16 },
+  arc: { food: 16, wood: 22 },
+  cav: { food: 24, wood: 12, stone: 10 },
+  mag: { food: 16, wood: 8, stone: 8, gold: 6 },
 };
 
 const TIER_MUL = [1, 2.4, 5.5, 11];
@@ -56,7 +56,7 @@ for (const type of TROOP_TYPES) {
     const s = STATS[type];
     const cost: ResBag = {};
     for (const [k, v] of Object.entries(BASE_COST[type])) cost[k as keyof ResBag] = Math.round(v! * TIER_MUL[tier - 1]);
-    if (tier >= 3) cost.gold = (cost.gold ?? 0) + Math.round(20 * TIER_MUL[tier - 1]);
+    if (tier >= 3) cost.gold = (cost.gold ?? 0) + Math.round(8 * TIER_MUL[tier - 1]);
     const key = `${type}${tier}` as TroopKey;
     TROOPS[key] = {
       key, type, tier, name: NAMES[type][tier - 1],

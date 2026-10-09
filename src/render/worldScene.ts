@@ -18,7 +18,8 @@ const CHUNK = 16;
 const TEX_PER_TILE = 12;
 
 const BASE: Record<number, [number, number, number]> = {
-  [T.Deep]: [28, 66, 112], [T.Shallow]: [52, 118, 150], [T.Sand]: [214, 196, 140], [T.Grass]: [104, 150, 66],
+  // water tiles blend as wet sand; water itself is painted from the continuous height field
+  [T.Deep]: [190, 176, 128], [T.Shallow]: [196, 182, 132], [T.Sand]: [214, 196, 140], [T.Grass]: [104, 150, 66],
   [T.Forest]: [62, 110, 52], [T.Hills]: [128, 140, 82], [T.Mountain]: [128, 118, 104], [T.Snow]: [226, 232, 240],
   [T.Ash]: [84, 66, 62], [T.Swamp]: [70, 84, 64], [T.Meadow]: [132, 168, 78],
 };
@@ -66,7 +67,7 @@ export class WorldScene {
     this.objL.sortableChildren = true;
     this.marchL.sortableChildren = true;
     const size = this.ter.size * TILE;
-    this.camera = new Camera(this.world, app.canvas as HTMLCanvasElement, { worldW: size, worldH: size, minZoom: 0.14, maxZoom: 1.25, zoom: 0.55 });
+    this.camera = new Camera(this.world, app.canvas as HTMLCanvasElement, { worldW: size, worldH: size, minZoom: Math.max(0.08, window.innerHeight / 5200), maxZoom: Math.max(1, window.innerHeight / 600), zoom: window.innerHeight / 1050 });
     const c = game.cityPos();
     this.camera.x = (c.x + 0.5) * TILE; this.camera.y = (c.y + 0.5) * TILE;
     this.camera.onTap = (x, y) => this.tap(x, y);
@@ -494,7 +495,8 @@ export class WorldScene {
   screenOf(tx: number, ty: number) { return this.camera.toScreen((tx + 0.5) * TILE, (ty + 0.5) * TILE); }
 
   focusTile(x: number, y: number, zoom?: number) {
-    this.camera.flyTo((x + 0.5) * TILE, (y + 0.5) * TILE, zoom ?? Math.max(this.camera.zoom, 0.6), 800);
+    const base = window.innerHeight / 1200;
+    this.camera.flyTo((x + 0.5) * TILE, (y + 0.5) * TILE, zoom != null ? zoom * base / 0.6 : Math.max(this.camera.zoom, base), 800);
   }
 
   refresh() {
@@ -518,15 +520,16 @@ export class WorldScene {
     const cn = Math.ceil(this.ter.size / CHUNK), cs = CHUNK * TILE;
     this.chunks.forEach((c, i) => {
       const cx = (i % cn) * cs, cy = Math.floor(i / cn) * cs;
-      c.visible = cx + cs > x0 && cx < x1 && cy + cs > y0 && cy < y1 && z > 0.16;
+      c.visible = cx + cs > x0 && cx < x1 && cy + cs > y0 && cy < y1 && z > 0.1;
     });
     for (const v of this.objViews.values()) {
       const inView = v.c.x > x0 && v.c.x < x1 && v.c.y > y0 && v.c.y < y1 + 200;
       v.c.renderable = inView;
+      const lz = z / (window.innerHeight / 1200);
       if (!inView) continue;
       if (v.obj.kind === 'rift' && v.extra) v.extra.rotation += dt * 1.6;
       if (v.obj.kind === 'titan' && v.extra) v.extra.y = Math.sin(this.time * 1.4 + v.obj.id) * 6 - 4;
-      if (v.label) v.label.visible = z > 0.28 || v.obj.kind === 'city' || v.obj.kind === 'titan' || v.obj.kind === 'lord';
+      if (v.label) v.label.visible = lz > 0.45 || v.obj.kind === 'city' || v.obj.kind === 'titan' || v.obj.kind === 'lord';
     }
     // marches
     const now = Date.now();
