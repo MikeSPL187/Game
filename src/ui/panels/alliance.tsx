@@ -90,7 +90,7 @@ function Home() {
                   return <div class="col center" style={{ width: 74, gap: 2 }}><Icon name="gift" size={40} /><span style={{ fontSize: 11, textAlign: 'center' }}>{m?.name ?? 'Союзник'}</span></div>;
                 })}
               </div>
-              <Btn kind="green" wide class="pulse" onClick={() => { const r = g.claimGifts(); if (r) showReward(r, 'Подарки союза'); }}>Забрать все</Btn>
+              <Btn kind="green" wide class="pulse" onClick={() => { const r = g.claimGifts(); if (r) showReward(r, 'Подарки союза', 'chest'); }}>Забрать все</Btn>
             </>
           ) : <div class="mute" style={{ fontSize: 13 }}>Союзники присылают подарки каждые несколько часов — даже пока вас нет в игре.</div>}
         </div>

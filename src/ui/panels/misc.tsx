@@ -19,7 +19,7 @@ import { goTo, findWorldTarget } from '../nav';
 import { initAudio, setMusic, setSound, sfx } from '../../audio/audio';
 import { HeroCard } from './heroes';
 
-export function showReward(r: Reward, title = 'Награда') { bus.emit('show-reward', { r, title }); }
+export function showReward(r: Reward, title = 'Награда', chest?: 'chest' | 'chest_gold') { bus.emit('show-reward', { r, title, chest }); }
 
 // ———————————————————————————————————————— inventory
 export function InventoryPanel() {
@@ -29,6 +29,12 @@ export function InventoryPanel() {
   const [sel, setSel] = useState<string | null>(list[0]?.id ?? null);
   const it = sel && (g.s.inventory[sel] ?? 0) > 0 ? ITEM_BY_ID[sel] : list[0];
   const n = it ? g.s.inventory[it.id] ?? 0 : 0;
+  const useIt = (count: number) => {
+    if (!it) return;
+    const r = g.useItem(it.id, count);
+    if (!act(r, it.id.startsWith('chest') ? 'click' : 'collect')) return;
+    if (r.ok && r.reward) showReward(r.reward, count > 1 ? `${it.name} ×${count}` : it.name, it.id === 'chest_big' ? 'chest_gold' : 'chest');
+  };
   return (
     <Panel title="Сумка" width={940} icon="bag" tabs={[{ id: 'all', label: 'Все' }, { id: 'speed', label: 'Ускорения' }, { id: 'res', label: 'Ресурсы' }, { id: 'hero', label: 'Герои' }, { id: 'mat', label: 'Материалы' }, { id: 'special', label: 'Особое' }]} tab={cat} onTab={(c) => setCat(c as any)}>
       <div class="row" style={{ alignItems: 'stretch', gap: 14 }}>
@@ -44,7 +50,7 @@ export function InventoryPanel() {
           <div class="card col" style={{ width: 300, flex: 'none' }}>
             <div class="row"><div class={`icell r-${it.rarity}`} style={{ width: 70 }}><Icon name={it.icon} size={50} /></div><div><b style={{ fontSize: 17 }}>{it.name}</b><div class="mute">В наличии: {fmt(n)}</div></div></div>
             <div style={{ fontSize: 14 }}>{it.desc}</div>
-            {it.usable && <div class="row"><Btn kind="green" wide onClick={() => { if (act(g.useItem(it.id, 1), 'collect')) { if (it.id.startsWith('chest')) toast('Сундук открыт!'); } }}>Использовать</Btn>{n > 1 && <Btn kind="dark" onClick={() => act(g.useItem(it.id, Math.min(n, 10)), 'collect')}>×{Math.min(n, 10)}</Btn>}</div>}
+            {it.usable && <div class="row"><Btn kind="green" wide onClick={() => useIt(1)}>Использовать</Btn>{n > 1 && <Btn kind="dark" onClick={() => useIt(Math.min(n, 10))}>×{Math.min(n, 10)}</Btn>}</div>}
             {it.cat === 'speed' && <div class="mute" style={{ fontSize: 12 }}>Применяется через кнопку «Ускорить» у строительства, обучения или исследования.</div>}
             {it.cat === 'hero' && <Btn kind="dark" onClick={() => { ui.close(); ui.open(it.id.startsWith('key') ? 'tavern' : 'heroes'); }}>{it.id.startsWith('key') ? 'В таверну' : 'К героям'}</Btn>}
             {it.id === 'titan_food' && <Btn kind="dark" onClick={() => { ui.close(); ui.open('titans'); }}>К титанам</Btn>}
@@ -112,7 +118,7 @@ export function QuestsPanel() {
                 const open = g.s.quests.dailyChests.includes(i);
                 const ready = !open && g.s.quests.dailyPoints >= c.points;
                 return (
-                  <button class={ready ? 'pulse' : ''} style={{ position: 'absolute', left: `calc(${c.points}% - 30px)`, top: 0, width: 56, height: 56, borderRadius: 12, opacity: open ? 0.4 : 1 }} onClick={() => { if (ready && act(g.claimDailyChest(i), 'collect')) showReward(c.reward, 'Сундук активности'); else if (!ready && !open) toast(`Нужно ${c.points} очков активности`); }}>
+                  <button class={ready ? 'pulse' : ''} style={{ position: 'absolute', left: `calc(${c.points}% - 30px)`, top: 0, width: 56, height: 56, borderRadius: 12, opacity: open ? 0.4 : 1 }} onClick={() => { if (ready && act(g.claimDailyChest(i), 'collect')) showReward(c.reward, 'Сундук активности', i === 4 ? 'chest_gold' : 'chest'); else if (!ready && !open) toast(`Нужно ${c.points} очков активности`); }}>
                     <Icon name={i === 4 ? 'chest_gold' : 'chest'} size={50} />
                   </button>
                 );
@@ -435,13 +441,32 @@ export function StoryDialog({ lines, onDone }: { lines: string[]; onDone: () => 
 }
 
 // ———————————————————————————————————————— reward popup
-export function RewardPopup({ r, title, onClose }: { r: Reward; title: string; onClose: () => void }) {
+export function RewardPopup({ r, title, chest, onClose }: { r: Reward; title: string; chest?: 'chest' | 'chest_gold'; onClose: () => void }) {
+  const [open, setOpen] = useState(!chest);
+  useEffect(() => {
+    if (!chest) return;
+    sfx('click');
+    const t = setTimeout(() => { setOpen(true); sfx(chest === 'chest_gold' ? 'legendary' : 'levelup'); haptic(true); }, 950);
+    return () => clearTimeout(t);
+  }, []);
+  const gold = chest === 'chest_gold';
   return (
-    <div class="overlay" onClick={onClose}>
-      <div class="col center" style={{ gap: 18 }} onClick={(e) => e.stopPropagation()}>
-        <div class="ribbon win" style={{ animation: 'panelin .4s' }}>{title}</div>
-        <RewardList r={r} />
-        <Btn kind="gold" size="big" onClick={onClose}>Отлично!</Btn>
+    <div class="overlay" onClick={() => (open ? onClose() : setOpen(true))}>
+      <div class={'chest-rays' + (gold ? ' gold' : '') + (open ? ' on' : '')} />
+      <div class="col center" style={{ gap: 18, position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+        {!open ? (
+          <div class="chest-wrap" onClick={() => { setOpen(true); sfx(gold ? 'legendary' : 'levelup'); }}>
+            <div class="chest-shake"><Icon name={chest!} size={150} /></div>
+            <div class="mute" style={{ textAlign: 'center' }}>Нажмите, чтобы открыть</div>
+          </div>
+        ) : (
+          <>
+            {chest && <div class="chest-burst"><Icon name={chest} size={110} /></div>}
+            <div class="ribbon win" style={{ animation: 'panelin .4s' }}>{title}</div>
+            <RewardList r={r} />
+            <Btn kind="gold" size="big" onClick={onClose}>Отлично!</Btn>
+          </>
+        )}
       </div>
     </div>
   );

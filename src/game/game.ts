@@ -558,7 +558,7 @@ export class Game {
   }
 
   // ————————————————————————————————————————— items
-  useItem(id: string, count = 1): Result {
+  useItem(id: string, count = 1): Result & { reward?: Reward } {
     const it = ITEM_BY_ID[id];
     const have = this.s.inventory[id] ?? 0;
     if (!it || have < count) return fail('Нет предметов');
@@ -568,7 +568,11 @@ export class Game {
     if (id === 'shield8') this.s.shieldUntil = Math.max(this.now(), this.s.shieldUntil) + 8 * 3_600_000 * count;
     if (id === 'chest_small' || id === 'chest_big') {
       const rnd = Math.random;
-      for (let i = 0; i < count; i++) this.grant(chestReward(id === 'chest_big', this.citadel, rnd));
+      const total: Reward = {};
+      for (let i = 0; i < count; i++) mergeReward(total, chestReward(id === 'chest_big', this.citadel, rnd));
+      this.grant(total);
+      bus.emit('state');
+      return { ok: true, reward: total };
     }
     bus.emit('state');
     return OK;
@@ -1782,6 +1786,15 @@ const RUIN_TEXTS = [
   'Заброшенный караван-сарай. Торговцы бежали, но товар остался.',
 ];
 function ruinText(rnd: () => number) { return RUIN_TEXTS[Math.floor(rnd() * RUIN_TEXTS.length)]; }
+
+/** Adds b into a (resources, items, shards, hero xp). */
+export function mergeReward(a: Reward, b: Reward): Reward {
+  for (const [k, v] of Object.entries(b.res ?? {})) { a.res ??= {}; a.res[k as Currency] = (a.res[k as Currency] ?? 0) + (v ?? 0); }
+  for (const [k, v] of Object.entries(b.items ?? {})) { a.items ??= {}; a.items[k] = (a.items[k] ?? 0) + v; }
+  for (const [k, v] of Object.entries(b.shards ?? {})) { a.shards ??= {}; a.shards[k] = (a.shards[k] ?? 0) + v; }
+  if (b.heroXp) a.heroXp = (a.heroXp ?? 0) + b.heroXp;
+  return a;
+}
 
 export function chestReward(big: boolean, citadel: number, rnd: () => number): Reward {
   const m = (big ? 4 : 1) * (1 + citadel * 0.35);

@@ -18,18 +18,39 @@ const RES: Currency[] = ['food', 'wood', 'stone', 'gold'];
 
 function ResItem({ k, rate }: { k: Currency; rate?: number }) {
   const g = ga.game;
-  const [bump, setBump] = useState(0);
-  const prev = useRef(g.s.res[k]);
+  const v = g.s.res[k];
+  const [shown, setShown] = useState(v);
+  const [gains, setGains] = useState<{ id: number; n: number }[]>([]);
+  const prev = useRef(v);
+  const tw = useRef({ from: v, to: v, t0: 0, raf: 0 });
   useEffect(() => {
-    const v = g.s.res[k];
-    if (v > prev.current + 0.5) setBump((b) => b + 1);
+    const d = v - prev.current;
     prev.current = v;
+    if (Math.abs(d) < 0.5) return;
+    if (d >= 1) {
+      const id = Math.random();
+      setGains((l) => [...l.slice(-2), { id, n: d }]);
+      setTimeout(() => setGains((l) => l.filter((x) => x.id !== id)), 1300);
+    }
+    // count towards the new value instead of jumping
+    const t = tw.current;
+    cancelAnimationFrame(t.raf);
+    t.from = shown; t.to = v; t.t0 = performance.now();
+    const step = (now: number) => {
+      const k2 = Math.min(1, (now - t.t0) / 700);
+      const e = 1 - Math.pow(1 - k2, 3);
+      setShown(t.from + (t.to - t.from) * e);
+      if (k2 < 1) t.raf = requestAnimationFrame(step);
+    };
+    t.raf = requestAnimationFrame(step);
   });
+  useEffect(() => () => cancelAnimationFrame(tw.current.raf), []);
   return (
-    <div class={'res' + (k === 'aether' ? ' aether' : '')} data-r={k} key={k + bump} style={bump ? { animation: 'bump .45s' } : undefined}>
-      <Icon name={k} size={28} />
-      <span>{fmt(g.s.res[k])}</span>
+    <div class={'res' + (k === 'aether' ? ' aether' : '')} data-r={k}>
+      <span key={gains.length ? gains[gains.length - 1].id : 0} style={{ display: 'flex', animation: gains.length ? 'pop .45s' : undefined }}><Icon name={k} size={28} /></span>
+      <span>{fmt(Math.round(shown))}</span>
       {rate != null && rate > 0 && <span class="rate">+{fmt(rate)}/ч</span>}
+      {gains.map((x) => <span class="gain" key={x.id}>+{fmt(Math.round(x.n))}</span>)}
     </div>
   );
 }

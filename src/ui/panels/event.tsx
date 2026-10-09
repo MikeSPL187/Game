@@ -38,7 +38,7 @@ export function EventPanel() {
                 const ready = !got && pts >= m.points;
                 return (
                   <button class={ready ? 'pulse' : ''} style={{ position: 'absolute', left: `calc(${((i + 1) / n) * 100}% - 46px)`, top: 0, width: 56, textAlign: 'center', opacity: got ? 0.4 : 1, borderRadius: 12 }}
-                    onClick={() => { if (ready && act(g.claimEventMilestone(i), 'collect')) showReward(m.reward, 'Награда события'); }}>
+                    onClick={() => { if (ready && act(g.claimEventMilestone(i), 'collect')) showReward(m.reward, 'Награда события', i >= 3 ? 'chest_gold' : 'chest'); }}>
                     <Icon name={i >= 3 ? 'chest_gold' : 'chest'} size={46} />
                     <div style={{ fontSize: 11, fontWeight: 800 }}>{fmt(m.points)}</div>
                   </button>

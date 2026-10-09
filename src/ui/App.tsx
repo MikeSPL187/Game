@@ -100,6 +100,34 @@ function BuildingMenu() {
   );
 }
 
+// ———————————————————————————————————————— city ↔ world clouds
+const PUFFS = Array.from({ length: 9 }, (_, i) => {
+  const a = (i / 9) * Math.PI * 2 + 0.4;
+  const r = i % 2 ? 22 : 34;
+  return { x: 50 + Math.cos(a) * r, y: 50 + Math.sin(a) * r * 0.8, dx: `${Math.cos(a) * 60}vw`, dy: `${Math.sin(a) * 50}vh`, d: (i % 3) * 0.04 };
+});
+
+function CloudVeil() {
+  const [n, setN] = useState(0);
+  useEffect(() => bus.on('view', () => {
+    setN((x) => x + 1);
+    sfx('open');
+  }), []);
+  useEffect(() => {
+    if (!n) return;
+    const t = setTimeout(() => setN(0), 850);
+    return () => clearTimeout(t);
+  }, [n]);
+  if (!n) return null;
+  return (
+    <div class="clouds" key={n}>
+      <div class="veil" />
+      {PUFFS.map((p) => <div class="puff" style={{ left: `${p.x}%`, top: `${p.y}%`, '--dx': p.dx, '--dy': p.dy, animationDelay: `${p.d}s` } as any} />)}
+      <div class="puff" style={{ left: '50%', top: '50%', '--dx': '0px', '--dy': '-10vh' } as any} />
+    </div>
+  );
+}
+
 // ———————————————————————————————————————— toasts & notes
 function Toasts() {
   const [list, setList] = useState<{ id: number; text: string; err?: boolean }[]>([]);
@@ -251,7 +279,7 @@ function FpsMeter() {
 // ———————————————————————————————————————— root
 export function App({ welcome }: { welcome?: { away: number; gained: Record<string, number> } | null }) {
   const store = useStore();
-  const [reward, setReward] = useState<{ r: Reward; title: string } | null>(null);
+  const [reward, setReward] = useState<{ r: Reward; title: string; chest?: 'chest' | 'chest_gold' } | null>(null);
   const [story, setStory] = useState<string[] | null>(null);
   const [wb, setWb] = useState(welcome ?? null);
   useEffect(() => {
@@ -273,6 +301,7 @@ export function App({ welcome }: { welcome?: { away: number; gained: Record<stri
   const P = top ? PANELS[top.id] : null;
   return (
     <div style={{ position: 'absolute', inset: 0 }} class="pass">
+      <CloudVeil />
       <Guard name="hud"><HUD /></Guard>
       <Guard name="bmenu"><BuildingMenu /></Guard>
       <div class="act"><Guard name="sheet"><WorldSheet /></Guard></div>
@@ -280,7 +309,7 @@ export function App({ welcome }: { welcome?: { away: number; gained: Record<stri
       {P && <div class="act" style={{ position: 'absolute', inset: 0 }}><Guard name={top!.id} key={top!.id + JSON.stringify(top!.props ?? {})} onError={() => ui.close()}><P {...(top!.props ?? {})} /></Guard></div>}
       {wb && !story && <div class="act" style={{ position: 'absolute', inset: 0 }}><WelcomeBack away={wb.away} gained={wb.gained} onClose={() => setWb(null)} /></div>}
       {story && <div class="act" style={{ position: 'absolute', inset: 0 }}><StoryDialog lines={story} onDone={() => setStory(null)} /></div>}
-      {reward && <div class="act" style={{ position: 'absolute', inset: 0 }}><RewardPopup r={reward.r} title={reward.title} onClose={() => setReward(null)} /></div>}
+      {reward && <div class="act" style={{ position: 'absolute', inset: 0 }}><RewardPopup key={reward.title + JSON.stringify(reward.r)} r={reward.r} title={reward.title} chest={reward.chest} onClose={() => setReward(null)} /></div>}
       {!story && !reward && !wb && <Tutorial />}
       <FlyRes />
       <Toasts />
