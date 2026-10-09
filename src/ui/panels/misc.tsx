@@ -10,7 +10,7 @@ import { FACTIONS, TITANS, TITAN_BY_ID } from '../../data/world';
 import { infirmaryRate, legionSlots, wallBonus, warehouseProtect } from '../../data/buildings';
 import { HERO_BY_ID, HEROES } from '../../data/heroes';
 import { sumTroops } from '../../game/game';
-import { clearSave } from '../../core/storage';
+import { clearSave, exportCode, importCode, writeSave } from '../../core/storage';
 import { Bar, Btn, Icon, Panel, RewardList, Stars, Timer, Toggle, act, ga, haptic, toast, ui, useGame } from '../core';
 import { goTo, findWorldTarget } from '../nav';
 import { initAudio, setMusic, setSound, sfx } from '../../audio/audio';
@@ -301,7 +301,28 @@ export function SettingsPanel() {
         <div class="mute" style={{ fontSize: 12 }}>Качество графики применяется после перезапуска игры.</div>
         <div class="sep" />
         <div class="row"><Btn kind="dark" onClick={() => { ga.save(); toast('Прогресс сохранён'); }}>Сохранить</Btn><div class="grow" />
-          <Btn kind="red" size="small" onClick={async () => { if (confirm('Начать игру заново? Весь прогресс будет удалён.')) { ga.paused = true; await clearSave(); location.href = location.pathname; } }}>Начать заново</Btn></div>
+          <Btn kind="red" size="small" onClick={async () => { if (confirm('Начать игру заново? Весь прогресс будет удалён.')) { ga.paused = true; ga.noSave = true; await clearSave(); location.href = location.pathname; } }}>Начать заново</Btn></div>
+        <div class="card col" style={{ gap: 6 }}>
+          <b>Перенос прогресса</b>
+          <div class="mute" style={{ fontSize: 12 }}>Код сохранения позволяет перенести игру на другое устройство или сделать резервную копию вручную.</div>
+          <div class="row">
+            <Btn kind="dark" size="small" onClick={async () => {
+              const code = await exportCode(g.serialize());
+              try { await navigator.clipboard.writeText(code); toast('Код сохранения скопирован в буфер обмена'); }
+              catch { prompt('Скопируйте код сохранения:', code); }
+            }}>Экспорт</Btn>
+            <Btn kind="dark" size="small" onClick={async () => {
+              const code = prompt('Вставьте код сохранения:');
+              if (!code) return;
+              const json = await importCode(code);
+              if (!json) { toast('Код повреждён или не подходит', true); return; }
+              if (!confirm('Заменить текущий прогресс загруженным?')) return;
+              ga.paused = true; ga.noSave = true;
+              await writeSave(json);
+              location.href = location.pathname;
+            }}>Импорт</Btn>
+          </div>
+        </div>
         <div class="mute" style={{ fontSize: 12, textAlign: 'center' }}>Aetherfall: Эпоха Титанов · v0.1 · Вся графика и звук созданы процедурно</div>
       </div>
     </Panel>

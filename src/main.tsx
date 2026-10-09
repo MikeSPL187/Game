@@ -13,11 +13,11 @@ import { render } from 'preact';
 import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';
 import { StatusBar } from '@capacitor/status-bar';
-import { loadSave } from './core/storage';
+import { loadSaveCandidates } from './core/storage';
 import { Game } from './game/game';
 import { GameApp } from './app';
 import { App } from './ui/App';
-import { setGa, ui } from './ui/core';
+import { setGa, toast, ui } from './ui/core';
 import { IntroScreen } from './ui/panels/misc';
 import { initAudio, setMusic, setSound, suspendAudio } from './audio/audio';
 import { PRODUCTION_RES } from './data/buildings';
@@ -97,9 +97,12 @@ async function boot() {
   bar.style.width = '10%';
   const params = new URLSearchParams(location.search);
   let game: Game | null = null;
+  let restoredFromBackup = false;
   if (!params.has('new')) {
-    const json = await loadSave();
-    if (json) game = Game.deserialize(json);
+    for (const c of await loadSaveCandidates()) {
+      game = Game.deserialize(c.json);
+      if (game) { if (c.slot === 'backup') restoredFromBackup = true; break; }
+    }
   }
   if (game) {
     // offline progress
@@ -112,6 +115,7 @@ async function boot() {
     for (const b of game.s.buildings) { const r = PRODUCTION_RES[b.type]; if (r) gained[r] = (gained[r] ?? 0) + b.stored; }
     for (const k of Object.keys(gained)) { gained[k] = Math.max(0, Math.round(gained[k] - before[k] + (game.s.res[k as 'food'] - resBefore[k as 'food']))); if (!gained[k]) delete gained[k]; }
     await start(game, away > 5 * 60_000 && Object.keys(gained).length ? { away, gained } : null);
+    if (restoredFromBackup) setTimeout(() => toast('Основное сохранение повреждено — прогресс восстановлен из резервной копии'), 1500);
     return;
   }
   const quick = params.get('new');

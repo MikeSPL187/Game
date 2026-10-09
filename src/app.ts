@@ -65,7 +65,11 @@ export class GameApp {
     bus.emit('view', v);
   }
 
+  /** set when the save is being wiped or replaced, so nothing writes it back */
+  noSave = false;
+
   async save() {
+    if (this.noSave) return;
     this.game.s.lastSave = Date.now();
     await writeSave(this.game.serialize());
   }
