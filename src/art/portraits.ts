@@ -1,4 +1,5 @@
 import { HERO_BY_ID, RARITY_INFO } from '../data/heroes';
+import { artUrl, hasArt } from './manifest';
 import { Svg, shade, svgUrl } from './svg';
 
 const W = 240, H = 300;
@@ -163,6 +164,6 @@ const cache = new Map<string, string>();
 export function portraitUrl(id: string, bg = true): string {
   const k = id + (bg ? '' : ':nobg');
   let u = cache.get(k);
-  if (!u) { u = svgUrl(portraitSvg(id, { bg })); cache.set(k, u); }
+  if (!u) { u = bg && hasArt('hero_' + id) ? artUrl('hero_' + id) : svgUrl(portraitSvg(id, { bg })); cache.set(k, u); }
   return u;
 }

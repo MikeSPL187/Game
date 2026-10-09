@@ -22,6 +22,7 @@ import { ForgePanel } from './panels/forge';
 import { EventPanel } from './panels/event';
 import { AlliancePanel } from './panels/alliance';
 import { AchievementsPanel } from './panels/achievements';
+import { ArtCheckPanel } from './panels/artcheck';
 import { ACHIEVEMENT_BY_ID } from '../data/achievements';
 import { sfx } from '../audio/audio';
 import { CrashScreen, Guard } from './guard';
@@ -31,7 +32,7 @@ import { requestNotifications } from '../core/notify';
 const PANELS: Record<string, (p: any) => any> = {
   upgrade: UpgradePanel, speedup: SpeedupPanel, train: TrainPanel, research: ResearchPanel, heroes: HeroesPanel, tavern: TavernPanel,
   dispatch: DispatchPanel, search: SearchPanel, inventory: InventoryPanel, quests: QuestsPanel, reports: ReportsPanel, army: ArmyPanel,
-  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, event: EventPanel, alliance: AlliancePanel, achievements: AchievementsPanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
+  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, event: EventPanel, alliance: AlliancePanel, achievements: AchievementsPanel, artcheck: ArtCheckPanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
 };
 
 // ———————————————————————————————————————— building context menu
@@ -106,6 +107,12 @@ const PUFFS = Array.from({ length: 9 }, (_, i) => {
   const r = i % 2 ? 22 : 34;
   return { x: 50 + Math.cos(a) * r, y: 50 + Math.sin(a) * r * 0.8, dx: `${Math.cos(a) * 60}vw`, dy: `${Math.sin(a) * 50}vh`, d: (i % 3) * 0.04 };
 });
+
+/** Cinematic edge darkening that gives the scene depth (high quality only, pure CSS). */
+function Vignette() {
+  const g = useGame(['state']);
+  return g.s.settings.quality === 'high' ? <div class="vignette" /> : null;
+}
 
 function CloudVeil() {
   const [n, setN] = useState(0);
@@ -301,6 +308,7 @@ export function App({ welcome }: { welcome?: { away: number; gained: Record<stri
   const P = top ? PANELS[top.id] : null;
   return (
     <div style={{ position: 'absolute', inset: 0 }} class="pass">
+      <Vignette />
       <CloudVeil />
       <Guard name="hud"><HUD /></Guard>
       <Guard name="bmenu"><BuildingMenu /></Guard>

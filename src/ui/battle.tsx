@@ -6,6 +6,8 @@ import { HERO_BY_ID } from '../data/heroes';
 import { TITAN_BY_ID } from '../data/world';
 import { sfx } from '../audio/audio';
 import { ga } from './core';
+import { artEntry, artUrl, hasArt } from '../art/manifest';
+import { unitArtName } from '../art/artMap';
 
 /**
  * Animated battle replay. The simulation already stored the troops left per type after every round,
@@ -147,7 +149,59 @@ const VOID: Record<string, Painter> = {
 
 /** Bake every sprite once at 2× for crisp scaling. */
 const spriteCache = new Map<string, HTMLCanvasElement>();
+const rasterLoading = new Set<string>();
+
+/** Shift blue cloth to red for enemy human armies (one raster set serves both sides). */
+function recolorFoe(c: CanvasRenderingContext2D, w: number, h: number) {
+  const d = c.getImageData(0, 0, w, h), p = d.data;
+  for (let i = 0; i < p.length; i += 4) {
+    if (!p[i + 3]) continue;
+    const r = p[i] / 255, g = p[i + 1] / 255, b = p[i + 2] / 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, dd = mx - mn;
+    if (dd < 0.08 || mx !== b) continue;
+    const s = dd / (1 - Math.abs(2 * l - 1) || 1);
+    if (s < 0.25) continue;
+    let hue = (60 * ((r - g) / dd) + 240) % 360;
+    if (hue < 190 || hue > 265) continue;
+    hue = 2; // red
+    const C = (1 - Math.abs(2 * l - 1)) * s, X = C * (1 - Math.abs(((hue / 60) % 2) - 1)), m = l - C / 2;
+    p[i] = (C + m) * 255; p[i + 1] = (X + m) * 255; p[i + 2] = m * 255;
+  }
+  c.putImageData(d, 0, 0);
+}
+
+/** Raster unit art (art/unit_*.webp) replaces the painted sprite once it has loaded. */
+function rasterSprite(type: string, v: Variant): HTMLCanvasElement | null {
+  if (type === 'beast') return null;
+  const name = unitArtName(`${v === 'void' ? 'void' : 'order'}_${type}`);
+  if (!hasArt(name)) return null;
+  const k = 'r' + type + v;
+  const have = spriteCache.get(k);
+  if (have) return have;
+  if (!rasterLoading.has(k)) {
+    rasterLoading.add(k);
+    const e = artEntry(name)!;
+    const im = new Image();
+    im.onload = () => {
+      const cv = document.createElement('canvas');
+      cv.width = 96; cv.height = 96;
+      const c = cv.getContext('2d')!;
+      // fit to ~40 logical px tall with the feet on the sprite origin (24, 44)
+      const sc = Math.min(80 / im.height, 88 / im.width);
+      const dw = im.width * sc, dh = im.height * sc;
+      c.imageSmoothingQuality = 'high';
+      c.drawImage(im, 48 - e.ax * dw, 88 - e.ay * dh, dw, dh);
+      if (v === 'foe') recolorFoe(c, 96, 96);
+      spriteCache.set(k, cv);
+    };
+    im.src = artUrl(name);
+  }
+  return null;
+}
+
 function sprite(type: string, v: Variant): HTMLCanvasElement {
+  const r = rasterSprite(type, v);
+  if (r) return r;
   const k = type + v;
   let cv = spriteCache.get(k);
   if (cv) return cv;

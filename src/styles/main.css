@@ -318,3 +318,6 @@ img { -webkit-user-drag: none; user-select: none; }
 /* ——— rolling resource gains ——— */
 .res .gain { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); font-size: 13px; font-weight: 800; color: #9cf27a; text-shadow: 0 1px 0 #000, 0 0 6px rgba(0,0,0,.8); white-space: nowrap; pointer-events: none; animation: gainup 1.3s ease-out forwards; }
 @keyframes gainup { 0% { opacity: 0; transform: translate(-50%, 6px); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 22px); } }
+
+/* ——— scene depth ——— */
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 75% 70% at 50% 52%, transparent 55%, rgba(8,10,24,.28) 82%, rgba(6,8,18,.5) 100%); }

@@ -1,4 +1,5 @@
 import { Svg, crystal, shade, svgUrl } from './svg';
+import { artUrl, hasArt } from './manifest';
 
 type Draw = (s: Svg) => void;
 
@@ -340,7 +341,7 @@ export function iconSvg(name: string, size = 64): string {
 
 export function iconUrl(name: string): string {
   let u = cache.get(name);
-  if (!u) { u = svgUrl(iconSvg(name)); cache.set(name, u); }
+  if (!u) { u = hasArt('icon_' + name) ? artUrl('icon_' + name) : svgUrl(iconSvg(name)); cache.set(name, u); }
   return u;
 }
 

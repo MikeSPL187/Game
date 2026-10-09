@@ -12,7 +12,9 @@ import { T, type Terrain } from '../game/terrain';
 import { Camera } from './camera';
 import { WorldAmbience } from './ambience';
 import { Particles, floatText, ringTexture, softCircle, starSprite } from './fx';
-import { bake, canvasTexture, get, type Baked } from './textures';
+import { bake, bakeOr, canvasTexture, get, type Baked } from './textures';
+import { worldArtName } from '../art/artMap';
+import type { ArtResult } from '../art/buildings';
 
 export const TILE = 64;
 const CHUNK = 16;
@@ -82,16 +84,17 @@ export class WorldScene {
     TEX_PER_TILE = this.game.s.settings.quality === 'low' ? 8 : 12;
     const jobs: Promise<unknown>[] = [];
     const f = this.game.s.player.faction;
-    for (let v = 0; v < 3; v++) jobs.push(bake(`wcamp:${v}`, () => campArt(v)));
-    for (const r of ['food', 'wood', 'stone', 'gold'] as const) jobs.push(bake(`wnode:${r}`, () => nodeArt(r, 0)));
-    for (let v = 0; v < 3; v++) jobs.push(bake(`wruin:${v}`, () => ruinArt(v)));
-    jobs.push(bake('wrift', riftArt), bake('wvortex', riftVortex), bake('wboat', () => boatArt(PALETTES[f].banner)));
-    jobs.push(bake('wcity', () => castleArt(FACTIONS[f].color, f, 5, true)));
-    for (const l of this.game.s.lords) jobs.push(bake(`wlord:${l.id}`, () => castleArt(l.color, l.faction, l.citadel)));
-    for (const t of ['roc', 'golem', 'wyrm']) jobs.push(bake(`wtitan:${t}`, () => titanArt(t)));
-    for (let v = 0; v < 3; v++) { jobs.push(bake(`wmtn:${v}`, () => mountainArt(v, false))); jobs.push(bake(`wsnow:${v}`, () => mountainArt(v, true))); }
-    jobs.push(bake('whill:0', () => hillArt(0)), bake('whill:1', () => hillArt(1)));
-    for (const k of ['pine', 'oak', 'dead', 'ash', 'birch'] as const) for (let v = 0; v < 2; v++) jobs.push(bake(`wtree:${k}:${v}`, () => treeArt(k, v), 1));
+    const B = (key: string, art: () => ArtResult, res?: number) => bakeOr(key, worldArtName(key, f), art, res);
+    for (let v = 0; v < 3; v++) jobs.push(B(`wcamp:${v}`, () => campArt(v)));
+    for (const r of ['food', 'wood', 'stone', 'gold'] as const) jobs.push(B(`wnode:${r}`, () => nodeArt(r, 0)));
+    for (let v = 0; v < 3; v++) jobs.push(B(`wruin:${v}`, () => ruinArt(v)));
+    jobs.push(B('wrift', riftArt), bake('wvortex', riftVortex), B('wboat', () => boatArt(PALETTES[f].banner)));
+    jobs.push(B('wcity', () => castleArt(FACTIONS[f].color, f, 5, true)));
+    for (const l of this.game.s.lords) jobs.push(bakeOr(`wlord:${l.id}`, `wobj_city_${l.faction}`, () => castleArt(l.color, l.faction, l.citadel)));
+    for (const t of ['roc', 'golem', 'wyrm']) jobs.push(B(`wtitan:${t}`, () => titanArt(t)));
+    for (let v = 0; v < 3; v++) { jobs.push(B(`wmtn:${v}`, () => mountainArt(v, false))); jobs.push(B(`wsnow:${v}`, () => mountainArt(v, true))); }
+    jobs.push(B('whill:0', () => hillArt(0)), B('whill:1', () => hillArt(1)));
+    for (const k of ['pine', 'oak', 'dead', 'ash', 'birch'] as const) for (let v = 0; v < 2; v++) jobs.push(B(`wtree:${k}:${v}`, () => treeArt(k, v), 1));
     const pc = PALETTES[f].banner;
     for (const t of ['inf', 'arc', 'cav', 'mag'] as const) {
       jobs.push(bake(`wsold:${t}:me`, () => soldierArt(pc, t)));

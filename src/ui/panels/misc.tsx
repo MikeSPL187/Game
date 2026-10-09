@@ -18,6 +18,7 @@ import { Bar, Btn, Icon, Panel, RewardList, Stars, Timer, Toggle, act, ga, hapti
 import { goTo, findWorldTarget } from '../nav';
 import { initAudio, setMusic, setSound, sfx } from '../../audio/audio';
 import { HeroCard } from './heroes';
+import { artUrl, hasArt } from '../../art/manifest';
 
 export function showReward(r: Reward, title = 'Награда', chest?: 'chest' | 'chest_gold') { bus.emit('show-reward', { r, title, chest }); }
 
@@ -228,7 +229,7 @@ export function TitansPanel() {
 import { titanArt } from '../../art/worldArt';
 import { svgUrl } from '../../art/svg';
 const tCache = new Map<string, string>();
-function titanImg(id: string) { let u = tCache.get(id); if (!u) { u = svgUrl(titanArt(id).svg); tCache.set(id, u); } return u; }
+function titanImg(id: string) { let u = tCache.get(id); if (!u) { u = hasArt(`titan_${id}_art`) ? artUrl(`titan_${id}_art`) : svgUrl(titanArt(id).svg); tCache.set(id, u); } return u; }
 
 // ———————————————————————————————————————— wall / defense
 export function WallPanel() {

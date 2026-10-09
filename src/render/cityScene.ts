@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite, Text, Texture, type Application } from 'pixi.js';
+import { Container, Graphics, Matrix, Sprite, Text, Texture, type Application } from 'pixi.js';
 import { bus } from '../core/bus';
 import { fmtTime } from '../core/format';
 import { hash2 } from '../core/rng';
@@ -13,7 +13,9 @@ import type { Game } from '../game/game';
 import { Camera } from './camera';
 import { ROAD_PATHS, distToRoads, inWall, lakeDist, paintCityGround, LAKE } from './cityGround';
 import { Particles, floatText, ringTexture, softCircle, starSprite } from './fx';
-import { bake, canvasTexture, get, type Baked } from './textures';
+import { bake, bakeOr, canvasTexture, get, shadowTexture, type Baked } from './textures';
+import { bldArtName } from '../art/artMap';
+import { artEntry, type ArtFx } from '../art/manifest';
 
 interface PlotView {
   plot: Plot;
@@ -29,6 +31,9 @@ interface PlotView {
   timerText: Text | null;
   timerFill: Graphics | null;
   light: Sprite;
+  /** raster art: ground shadow and emitters */
+  shadow: Container | null;
+  fx: ArtFx[] | null;
 }
 
 const bubbleIcons = new Map<string, Texture>();
@@ -97,7 +102,7 @@ export class CityScene {
     const jobs: Promise<unknown>[] = [];
     const s = this.game.s;
     for (const b of s.buildings) if (b.level > 0) jobs.push(this.bakeBuilding(b.type, b.level));
-    jobs.push(bake('site', constructionSite(1)));
+    jobs.push(bakeOr('site', 'bld_construction', constructionSite(1)));
     for (const k of ['pine', 'oak', 'birch'] as const) for (let v = 0; v < 3; v++) jobs.push(bake(`tree:${k}:${v}`, () => treeArt(k, v)));
     for (let v = 0; v < 3; v++) { jobs.push(bake(`rock:${v}`, () => rockArt(v))); jobs.push(bake(`mtn:${v}`, () => mountainArt(v, v === 1))); }
     for (const t of ['inf', 'arc', 'cav', 'mag'] as const) jobs.push(bake(`villager:${t}`, () => soldierArt(['#8a6a4a', '#5a7a3a', '#7a4a3a', '#4a5a8a'][['inf', 'arc', 'cav', 'mag'].indexOf(t)], t)));
@@ -117,7 +122,7 @@ export class CityScene {
   private bakeBuilding(type: BuildingId, level: number) {
     const t = tierOf(level);
     const rep = [1, 1, 5, 10, 15][t];
-    return bake(`b:${type}:${t}:${this.faction}`, () => buildingArt(type, rep, this.faction));
+    return bakeOr(`b:${type}:${t}:${this.faction}`, bldArtName(type, this.faction, t), () => buildingArt(type, rep, this.faction));
   }
 
   // ———————————————————————————————————————— static decor
@@ -200,7 +205,7 @@ export class CityScene {
         this.walls.push(s);
       }
     }
-    const tb = await bake(`walltower:${tier}:${this.faction}`, () => wallTower(tier, pal));
+    const tb = await bakeOr(`walltower:${tier}:${this.faction}`, `bld_wall_tower_${this.faction}`, () => wallTower(tier, pal));
     const towerPts = [T, R, B, L, { x: (T.x + R.x) / 2, y: (T.y + R.y) / 2 }, { x: (L.x + T.x) / 2, y: (L.y + T.y) / 2 }, { x: (B.x + R.x) / 2, y: (B.y + R.y) / 2 }];
     for (const p of towerPts) {
       const s = sprite(tb, 1.1);
@@ -225,7 +230,7 @@ export class CityScene {
     light.position.set(p.x, p.y - 50);
     light.alpha = 0;
     this.fxLayer.addChild(light);
-    this.views.set(p.id, { plot: p, root, sprite: null, glow: null, key: '', level: -1, marker: null, bubble: null, bubbleKind: '', timer: null, timerText: null, timerFill: null, light });
+    this.views.set(p.id, { plot: p, root, sprite: null, glow: null, key: '', level: -1, marker: null, bubble: null, bubbleKind: '', timer: null, timerText: null, timerFill: null, light, shadow: null, fx: null });
   }
 
   refresh() {
@@ -250,6 +255,8 @@ export class CityScene {
     v.key = key;
     v.sprite?.destroy(); v.sprite = null;
     v.marker?.destroy(); v.marker = null;
+    v.shadow?.destroy(); v.shadow = null;
+    v.fx = null;
     if (key === 'hidden') return;
     if (key === 'empty' || key === 'locked') {
       const m = new Container();
@@ -271,8 +278,10 @@ export class CityScene {
       return;
     }
     if (key === 'site') {
-      v.sprite = sprite(get('site')!, 1);
+      const sb = get('site')!;
+      v.sprite = sprite(sb, 1);
       v.root.addChild(v.sprite);
+      this.addGroundShadow(v, sb, 1);
       return;
     }
     const b = get(key);
@@ -283,6 +292,28 @@ export class CityScene {
     }
     v.sprite = sprite(b, v.plot.scale ?? 1);
     v.root.addChildAt(v.sprite, 0);
+    this.addGroundShadow(v, b, v.plot.scale ?? 1);
+    if (b.raster) v.fx = artEntry(b.raster)?.fx ?? [];
+  }
+
+  /** Raster buildings come without ground or shadow: add a soft contact shadow and a cast shadow to the lower right. */
+  private addGroundShadow(v: PlotView, b: Baked, scale: number) {
+    const st = shadowTexture(b);
+    if (!st) return;
+    const c = new Container();
+    const ao = new Sprite(softCircle());
+    ao.anchor.set(0.5); ao.tint = 0x000000; ao.alpha = 0.45;
+    ao.scale.set((b.w * scale * 0.62) / 64, (b.w * scale * 0.3) / 64);
+    c.addChild(ao);
+    const cast = new Sprite(st);
+    cast.anchor.set(b.ax, b.ay);
+    const k = (b.w * scale) / st.width;
+    // flatten onto the ground and lean away from the light (sun upper-left → shadow lower-right)
+    cast.setFromMatrix(new Matrix(k, 0, -0.75 * k, 0.42 * k, 0, 0));
+    cast.alpha = 0.32;
+    c.addChild(cast);
+    v.root.addChildAt(c, 0);
+    v.shadow = c;
   }
 
   private updateBubble(v: PlotView) {
@@ -494,7 +525,10 @@ export class CityScene {
     const tint = lerpColor(0xffffff, 0x4a5a98, this.night * 0.85);
     this.ground.tint = tint;
     this.objs.tint = tint;
-    for (const v of this.views.values()) v.light.alpha = v.level > 0 ? this.night * 0.38 : 0;
+    for (const v of this.views.values()) {
+      v.light.alpha = v.level > 0 ? this.night * 0.38 : 0;
+      if (v.shadow) v.shadow.alpha = 1 - this.night * 0.7;
+    }
     // bubbles bob
     for (const v of this.views.values()) if (v.bubble) v.bubble.y = (v.bubble as any).baseY + Math.sin(this.time * 3 + v.plot.x) * 6;
     // timers once per 250ms
@@ -546,6 +580,7 @@ export class CityScene {
         if (Math.random() < 0.25) this.particles.emit({ x: x + (Math.random() - 0.5) * 80, y: y - 30 - Math.random() * 60, tex: starSprite(), tint: 0xffd76a, scale: 0.2, life: 0.4, blend: 'add', spread: 60 });
       }
       if (v.level <= 0) continue;
+      if (v.fx) { if (v.sprite) this.emitArtFx(v, q); continue; }
       const { x, y } = v.plot;
       const t = tierOf(v.level);
       switch (v.plot.type) {
@@ -575,6 +610,22 @@ export class CityScene {
     if (q && Math.random() < 0.6) {
       const s = this.sparkles[Math.floor(Math.random() * this.sparkles.length)];
       if (s) this.particles.emit({ x: s.x, y: s.y, tex: starSprite(), tint: 0xffffff, scale: 0.25, life: 0.8, blend: 'add', alpha: 0.8 });
+    }
+  }
+
+  /** emitters placed on raster art (normalized image coordinates from the manifest) */
+  private emitArtFx(v: PlotView, q: boolean) {
+    const s = v.sprite!;
+    const w = s.width, h = s.height;
+    for (const f of v.fx!) {
+      const x = v.plot.x + (f.x - s.anchor.x) * w, y = v.plot.y + (f.y - s.anchor.y) * h;
+      switch (f.kind) {
+        case 'smoke': if (Math.random() < 0.5) this.particles.emit({ x, y, vx: 10, vy: -26, tint: 0xcfcfcf, alpha: 0.5, scale: 0.25, grow: 0.5, life: 3 }); break;
+        case 'fire': if (Math.random() < 0.7) this.particles.emit({ x: x + (Math.random() - 0.5) * 6, y, vy: -36, tint: 0xff8a2a, scale: 0.22, life: 0.7, blend: 'add' }); break;
+        case 'magic': if (q && Math.random() < 0.5) this.particles.emit({ x: x + (Math.random() - 0.5) * 40, y: y - Math.random() * 30, vy: -20, tint: 0x7fe3ff, scale: 0.16, life: 1.6, blend: 'add', tex: starSprite() }); break;
+        case 'gold': if (q && Math.random() < 0.25) this.particles.emit({ x: x + (Math.random() - 0.5) * 40, y, vy: -18, tint: 0xffd24a, scale: 0.14, life: 1.2, blend: 'add', tex: starSprite() }); break;
+        case 'sparkle': if (q && Math.random() < 0.3) this.particles.emit({ x: x + (Math.random() - 0.5) * 30, y: y + (Math.random() - 0.5) * 30, tex: starSprite(), tint: 0xffffff, scale: 0.22, life: 0.8, blend: 'add' }); break;
+      }
     }
   }
 

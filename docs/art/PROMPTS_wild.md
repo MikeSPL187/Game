@@ -6,7 +6,8 @@
 Для **ChatGPT** копируйте только сам промпт; эталон загрузите в начале чата.
 
 > Midjourney не умеет прозрачный фон: в его промптах замените фразу
-> `isolated on a transparent background` на `isolated on a plain flat light grey background` — фон я вырежу сам.
+> `isolated on a transparent background` на `isolated on a solid flat pure green (#00FF00) chroma key background` — фон я вырежу сам.
+> Не используйте серый или белый фон: светлый камень зданий сольётся с ним.
 
 ## Цитадель (Дикий Завет)
 

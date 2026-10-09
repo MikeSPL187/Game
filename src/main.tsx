@@ -127,6 +127,7 @@ async function boot() {
     const g = Game.create(quick as FactionId, 'Лорд', seed ? Number(seed) : undefined);
     if (params.has('skipintro')) { g.s.introSeen = true; g.s.tutorial.done = true; }
     await start(g, null);
+    if (params.has('artcheck')) setTimeout(() => ui.open('artcheck'), 800);
     return;
   }
   showBoot(false);
