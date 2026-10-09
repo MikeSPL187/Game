@@ -1,0 +1,10 @@
+import { createRequire } from 'module'; const require = createRequire('/opt/node22/lib/node_modules/'); const { chromium } = require('playwright');
+const [,, url, out, w = '1600', h = '1200', wait = '500'] = process.argv;
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'] });
+const p = await b.newPage({ viewport: { width: +w, height: +h } });
+p.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') console.log('console:', m.type(), m.text()); });
+p.on('pageerror', (e) => console.log('pageerror:', e.message));
+await p.goto(url);
+await p.waitForTimeout(+wait);
+await p.screenshot({ path: out, fullPage: true });
+await b.close();

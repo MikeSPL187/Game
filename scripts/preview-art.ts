@@ -1,0 +1,10 @@
+import { writeFileSync } from 'fs';
+import { portraitSvg } from '../src/art/portraits';
+import { iconSvg, ICON_NAMES } from '../src/art/icons';
+import { HEROES } from '../src/data/heroes';
+const u = (s: string) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+let html = '<html><body style="background:#1a1f2e;margin:0;display:flex;flex-wrap:wrap;gap:6px;padding:6px">';
+for (const h of HEROES) html += `<img src="${u(portraitSvg(h.id))}" width="180"/>`;
+html += '<div style="width:100%"></div>';
+for (const n of ICON_NAMES) html += `<div style="text-align:center;color:#aaa;font:10px sans-serif"><img src="${u(iconSvg(n))}" width="56"/><br>${n}</div>`;
+writeFileSync(process.argv[2], html + '</body></html>');

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0f1a" />
+    <link rel="icon" href="data:," />
+    <title>Aetherfall — Эпоха Титанов</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #0b0f1a; overflow: hidden; touch-action: none; }
+      #boot { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 40%, #1d2a4a 0%, #0b0f1a 70%); color: #e8d9b0; font-family: Georgia, serif; z-index: 100; transition: opacity .6s; }
+      #boot .t { font-size: 44px; letter-spacing: 6px; text-shadow: 0 0 24px rgba(127,227,255,.5); }
+      #boot .s { font-size: 14px; letter-spacing: 4px; opacity: .7; margin-top: 6px; }
+      #boot .bar { width: 260px; height: 8px; border-radius: 6px; background: rgba(255,255,255,.08); margin-top: 32px; overflow: hidden; border: 1px solid rgba(232,184,74,.4); }
+      #boot .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #e8b84a, #fff1b8); transition: width .2s; }
+      #boot .tip { font-size: 13px; margin-top: 14px; opacity: .6; max-width: 80vw; text-align: center; font-family: system-ui, sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div id="stage"></div>
+    <div id="ui"></div>
+    <div id="boot"><div class="t">AETHERFALL</div><div class="s">ЭПОХА ТИТАНОВ</div><div class="bar"><i id="bootbar"></i></div><div class="tip" id="boottip">Пробуждение мира…</div></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
