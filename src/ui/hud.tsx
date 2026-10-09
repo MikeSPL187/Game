@@ -194,7 +194,7 @@ export function SideRight() {
 export function BottomBar() {
   const g = useGame();
   const view = ga.view;
-  const heroBadge = Object.values(g.s.heroes).some((h) => h.owned && h.level < g.heroCap(h.id) && Object.keys(g.s.inventory).some((k) => k.startsWith('tome') && g.s.inventory[k] > 0));
+  const heroBadge = Object.values(g.s.heroes).some((h) => h.owned && ((h.level < g.heroCap(h.id) && Object.keys(g.s.inventory).some((k) => k.startsWith('tome') && g.s.inventory[k] > 0)) || g.talentPoints(h.id) >= 3));
   return (
     <div class="hud-bottom">
       <div class="menubar act">

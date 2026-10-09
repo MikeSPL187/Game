@@ -4,7 +4,8 @@ import { portraitUrl } from '../../art/portraits';
 import { HEROES, HERO_BY_ID, RARITY_INFO, shardsForNextStar, xpForLevel, type HeroDef } from '../../data/heroes';
 import { TYPE_INFO } from '../../data/troops';
 import { FACTIONS } from '../../data/world';
-import { Bar, Btn, Icon, Panel, Stars, act, ga, ui, useGame } from '../core';
+import { Bar, Btn, Icon, Panel, Stars, act, ga, haptic, toast, ui, useGame } from '../core';
+import { BRANCHES, ROW_REQ, TALENTS, spentIn } from '../../data/talents';
 import { sfx } from '../../audio/audio';
 
 export function HeroCard({ id, onClick, sel, busy, small }: { id: string; onClick?: () => void; sel?: boolean; busy?: boolean; small?: boolean }) {
@@ -15,6 +16,7 @@ export function HeroCard({ id, onClick, sel, busy, small }: { id: string; onClic
     <div class={`hcard ${h.rarity}${st.owned ? '' : ' locked'}${sel ? ' sel' : ''}${busy ? ' busy' : ''}`} style={small ? { width: 96 } : undefined} onClick={() => { sfx('click'); onClick?.(); }}>
       <img src={portraitUrl(id)} />
       {st.owned && <span class="lv">Ур. {st.level}</span>}
+      {st.owned && !small && g.talentPoints(id) > 0 && <span class="badge" style={{ top: 30, right: 4 }}>{g.talentPoints(id)}</span>}
       <span class="spec"><Icon name={h.spec} size={small ? 22 : 26} /></span>
       <div class="nm">
         <b>{h.name}</b>
@@ -62,8 +64,12 @@ function HeroDetail({ id, onBack }: { id: string; onBack: () => void }) {
   const starMul = 1 + (st.stars - 1) * 0.06;
   const lvl = st.level * 0.35;
   const univ = g.s.inventory.shard_any ?? 0;
+  const [tab, setTab] = useState<'info' | 'talents'>('info');
+  const pts = st.owned ? g.talentPoints(id) : 0;
   return (
-    <Panel title={<span>{h.name} <span style={{ color: rar.color, fontSize: 16 }}>· {h.title}</span></span>} width={1000} onClose={onBack}>
+    <Panel title={<span>{h.name} <span style={{ color: rar.color, fontSize: 16 }}>· {h.title}</span></span>} width={1000} onClose={onBack}
+      tabs={st.owned ? [{ id: 'info', label: 'Обзор' }, { id: 'talents', label: `Таланты${pts ? ` (${pts})` : ''}`, badge: pts > 0 }] : undefined} tab={tab} onTab={(t) => setTab(t as any)}>
+      {tab === 'talents' && st.owned ? <TalentTree id={id} /> : (
       <div class="row" style={{ alignItems: 'stretch', gap: 16 }}>
         <div class={'hcard ' + h.rarity} style={{ width: 250, flex: 'none', aspectRatio: '4/5', cursor: 'default' }}>
           <img src={portraitUrl(id)} style={{ filter: st.owned ? undefined : 'grayscale(1) brightness(.5)' }} />
@@ -122,7 +128,52 @@ function HeroDetail({ id, onBack }: { id: string; onBack: () => void }) {
           {st.owned && <div class="row"><Btn kind={g.s.defender === id ? 'dark' : 'blue'} size="small" onClick={() => { g.s.defender = id; act({ ok: true }); }}>{g.s.defender === id ? '✓ Защитник города' : 'Назначить защитником города'}</Btn></div>}
         </div>
       </div>
+      )}
     </Panel>
+  );
+}
+
+function TalentTree({ id }: { id: string }) {
+  const g = useGame();
+  const h = HERO_BY_ID[id];
+  const st = g.s.heroes[id];
+  const pts = g.talentPoints(id);
+  const busy = g.busyHeroes().has(id);
+  return (
+    <div class="col" style={{ gap: 10 }}>
+      <div class="row">
+        <Icon name="star" size={28} />
+        <b class="grow">Свободных очков: <span style={{ color: pts ? 'var(--good)' : 'var(--mute)', fontSize: 18 }}>{pts}</span> <span class="mute" style={{ fontSize: 12 }}>· очко за каждый уровень героя · действуют, когда герой — командир легиона</span></b>
+        <Btn size="small" kind="dark" off={busy || !spentIn(st.talents)} onClick={() => { if (confirm('Сбросить все таланты? Очки вернутся.')) act(g.resetTalents(id), 'page'); }}>Сбросить</Btn>
+      </div>
+      {busy && <div class="warn" style={{ fontSize: 13 }}>Герой в походе — таланты можно менять, когда он вернётся.</div>}
+      <div class="row" style={{ alignItems: 'stretch', gap: 10 }}>
+        {BRANCHES.map((br) => {
+          const spent = spentIn(st.talents, br.id);
+          return (
+            <div class="card col" style={{ flex: 1, gap: 6, borderColor: br.color + '66' }}>
+              <div class="row"><Icon name={br.icon} size={26} /><b class="h grow" style={{ color: br.color, fontSize: 17 }}>{br.name}</b><span class="mute" style={{ fontSize: 12 }}>{spent} очк.</span></div>
+              {TALENTS.filter((n) => n.branch === br.id).map((n) => {
+                const rank = st.talents?.[n.id] ?? 0;
+                const open = spent >= ROW_REQ[n.row];
+                const can = g.canLearn(id, n.id).ok;
+                return (
+                  <button class={'card row' + (can ? ' hl' : '')} style={{ gap: 8, padding: '6px 8px', textAlign: 'left', opacity: open ? 1 : 0.45, background: rank ? `linear-gradient(90deg, ${br.color}22, transparent)` : undefined }}
+                    onClick={() => { const r = g.learnTalent(id, n.id); if (r.ok) { sfx('levelup'); haptic(); } else toast(r.error, true); }}>
+                    <Icon name={open ? n.icon : 'lock'} size={30} />
+                    <div class="grow">
+                      <div style={{ fontWeight: 800, fontSize: 13 }}>{n.name}</div>
+                      <div class="mute" style={{ fontSize: 11 }}>{n.desc(h.spec)}{n.max > 1 ? ' за ранг' : ''}{!open ? ` · нужно ${ROW_REQ[n.row]} очк.` : ''}</div>
+                    </div>
+                    <b style={{ color: rank >= n.max ? 'var(--good)' : 'var(--gold2)', fontSize: 13 }}>{rank}/{n.max}</b>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

@@ -14,6 +14,7 @@ import { HERO_BY_ID, HEROES, heroLevelCap, shardsForNextStar, xpForLevel, type R
 import { ITEM_BY_ID } from '../data/items';
 import { CALENDAR, CHAPTERS, DAILIES, DAILY_CHESTS } from '../data/quests';
 import { TECH_BY_ID, techCost, techTime } from '../data/research';
+import { ROW_REQ, TALENT_BY_ID, emptyTalentFx, spentIn, talentFx, talentPointsTotal, type TalentFx } from '../data/talents';
 import { TROOPS, TYPE_INFO } from '../data/troops';
 import { TITAN_BY_ID, campName, campTroops, nodeRate, riftTroops } from '../data/world';
 import { computeEffects, heroUtility, type Effects } from './bonuses';
@@ -563,14 +564,51 @@ export class Game {
   // ————————————————————————————————————————— legions & marches
   legionCapacity(lead: string | null): number {
     const lvl = lead ? this.s.heroes[lead].level : 0;
-    return Math.round(800 + lvl * 120 + this.citadel * 150 + this.fx.capacity);
+    return Math.round(800 + lvl * 120 + this.citadel * 150 + this.fx.capacity + this.tal(lead).capacity);
+  }
+
+  // ————————————————————————————————————————— talents
+  tal(heroId: string | null): TalentFx {
+    return heroId && this.s.heroes[heroId] ? talentFx(this.s.heroes[heroId].talents) : emptyTalentFx();
+  }
+  talentPoints(heroId: string): number {
+    const h = this.s.heroes[heroId];
+    return talentPointsTotal(h.level) - spentIn(h.talents);
+  }
+  canLearn(heroId: string, nodeId: string): Result {
+    const h = this.s.heroes[heroId];
+    const n = TALENT_BY_ID[nodeId];
+    if (!h?.owned || !n) return fail('Недоступно');
+    if (this.busyHeroes().has(heroId)) return fail('Герой в походе');
+    const rank = h.talents?.[nodeId] ?? 0;
+    if (rank >= n.max) return fail('Талант изучен полностью');
+    if (this.talentPoints(heroId) <= 0) return fail('Нет очков талантов — повышайте уровень героя');
+    if (spentIn(h.talents, n.branch) < ROW_REQ[n.row]) return fail(`Вложите ${ROW_REQ[n.row]} очков в эту ветку`);
+    return OK;
+  }
+  learnTalent(heroId: string, nodeId: string): Result {
+    const r = this.canLearn(heroId, nodeId);
+    if (!r.ok) return r;
+    const h = this.s.heroes[heroId];
+    h.talents = { ...(h.talents ?? {}), [nodeId]: (h.talents?.[nodeId] ?? 0) + 1 };
+    bus.emit('state');
+    return OK;
+  }
+  resetTalents(heroId: string): Result {
+    const h = this.s.heroes[heroId];
+    if (!h?.owned) return fail('Недоступно');
+    if (this.busyHeroes().has(heroId)) return fail('Герой в походе');
+    if (!spentIn(h.talents)) return fail('Нечего сбрасывать');
+    h.talents = {};
+    bus.emit('state');
+    return OK;
   }
   legionSpeed(troops: Troops, lead: string | null, deputy: string | null): number {
     let min = Infinity;
     for (const [k, n] of Object.entries(troops)) if (n && n > 0) min = Math.min(min, TROOPS[k as TroopKey].speed);
     if (min === Infinity) min = 1;
     const hu = heroUtility(lead, deputy);
-    return BASE_MARCH_SPEED * min * (1 + this.fx.march_speed + hu.speed);
+    return BASE_MARCH_SPEED * min * (1 + this.fx.march_speed + hu.speed + this.tal(lead).speed);
   }
   legionLoad(troops: Troops, lead: string | null, deputy: string | null): number {
     let l = 0;
@@ -784,7 +822,7 @@ export class Game {
   gatherRate(l: Legion, o: WorldObject): number {
     const hu = heroUtility(l.lead, l.deputy);
     const troopsFactor = Math.min(1.6, 0.5 + sumTroops(l.troops) / 1200);
-    return nodeRate(o.level, o.res!) * troopsFactor * (1 + this.fx.gather_speed + hu.gather);
+    return nodeRate(o.level, o.res!) * troopsFactor * (1 + this.fx.gather_speed + hu.gather + this.tal(l.lead).gather);
   }
 
   private stopGather(l: Legion, t: number) {
@@ -804,7 +842,7 @@ export class Game {
 
   /** Build the player's army from a legion */
   legionArmy(l: { lead: string | null; deputy: string | null; troops: Troops }, kind: 'player' = 'player'): Army {
-    const heroes = [l.lead, l.deputy].filter(Boolean).map((id, i) => ({ id: id!, level: this.s.heroes[id!].level, stars: this.s.heroes[id!].stars, lead: i === 0 }));
+    const heroes = [l.lead, l.deputy].filter(Boolean).map((id, i) => ({ id: id!, level: this.s.heroes[id!].level, stars: this.s.heroes[id!].stars, lead: i === 0, tal: i === 0 ? this.tal(id!) : undefined }));
     const a: Army = { name: this.s.player.name, kind, groups: groupsFromTroops(l.troops), heroes, mods: emptyMods(), retreatAt: 0.25, titan: null };
     a.mods.atk += this.fx.atk; a.mods.def += this.fx.def; a.mods.hp += this.fx.hp;
     a.mods.typeDef.inf = this.fx.inf_def; a.mods.typeHp.inf = this.fx.inf_hp;

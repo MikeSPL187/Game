@@ -101,6 +101,7 @@ function act() {
   for (const h of HEROES) if (g.s.heroes[h.id].owned) {
     for (const t of ['tome3', 'tome2', 'tome1']) while ((g.s.inventory[t] ?? 0) > 0 && g.useTome(h.id, t).ok) { /* */ }
     g.starUp(h.id);
+    for (const n of ['m_atk', 'm_rage', 'm_skill', 'm_hunt', 'm_cap', 's_atk', 's_def', 's_hp', 's_road', 's_cap', 'g_def', 'g_hp', 'g_heal', 'g_cap', 'g_end']) while (g.learnTalent(h.id, n).ok) { /* spend */ }
   }
   for (const t of Object.keys(g.s.titans.tamed)) while ((g.s.inventory.titan_food ?? 0) > 0) g.feedTitan(t);
   // heal when cheap

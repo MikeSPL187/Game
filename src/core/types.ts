@@ -43,6 +43,7 @@ export interface HeroState {
   stars: number;
   shards: number;
   owned: boolean;
+  talents?: Record<string, number>;
 }
 
 export type LegionState = 'idle' | 'march' | 'gather' | 'station' | 'return' | 'battle';

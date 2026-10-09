@@ -3,6 +3,7 @@ import type { BattleRound, TroopKey, Troops, TroopType } from '../core/types';
 import { HERO_BY_ID } from '../data/heroes';
 import { TITAN_BY_ID } from '../data/world';
 import { TROOPS, counterMult } from '../data/troops';
+import type { TalentFx } from '../data/talents';
 
 export type GroupType = TroopType | 'beast';
 
@@ -17,7 +18,7 @@ export interface CombatGroup {
   power: number;
 }
 
-export interface CombatHero { id: string; level: number; stars: number; lead: boolean }
+export interface CombatHero { id: string; level: number; stars: number; lead: boolean; tal?: TalentFx }
 
 export interface Mods {
   atk: number; def: number; hp: number;
@@ -77,6 +78,15 @@ export function applyHeroes(army: Army) {
     if (h.lead) {
       army.mods.typeAtk[def.spec] = (army.mods.typeAtk[def.spec] ?? 0) + 0.05;
       army.mods.typeDef[def.spec] = (army.mods.typeDef[def.spec] ?? 0) + 0.05;
+      // talents work only for the commander
+      const t = h.tal;
+      if (t) {
+        army.mods.atk += t.atk; army.mods.def += t.def; army.mods.hp += t.hp;
+        army.mods.typeAtk[def.spec] = (army.mods.typeAtk[def.spec] ?? 0) + t.typeAtk;
+        army.mods.typeDef[def.spec] = (army.mods.typeDef[def.spec] ?? 0) + t.typeDef;
+        army.mods.typeHp[def.spec] = (army.mods.typeHp[def.spec] ?? 0) + t.typeHp;
+        army.mods.vsMonster += t.monster;
+      }
     }
     for (const p of def.passives) {
       const m = share * starMul;
@@ -189,19 +199,20 @@ export function simulateBattle(attacker: Army, defender: Army, seed = 1, maxRoun
     // skills
     for (const [side, other, isA] of [[A, D, true], [D, A, false]] as const) {
       side.army.heroes.forEach((h, i) => {
-        side.rage[i] += h.lead ? 340 : 260;
+        side.rage[i] += (h.lead ? 340 : 260) + (h.tal?.rage ?? 0);
         if (side.rage[i] >= 1000) {
           side.rage[i] = 0;
           const def = HERO_BY_ID[h.id];
           if (!def) return;
           const sk = def.skill;
           const lvlMul = 1 + (h.stars - 1) * 0.12 + h.level * 0.004;
+          const skillMul = 1 + (h.tal?.skill ?? 0), healMul = 1 + (h.tal?.heal ?? 0);
           if (sk.dmg) {
             const raw = rawDamage(side, isA ? vsMonsterA : vsMonsterD);
-            const k = distribute(raw, other, sk.dmg * 0.75 * lvlMul, rnd);
+            const k = distribute(raw, other, sk.dmg * 0.75 * lvlMul * skillMul, rnd);
             applyKills(other, k);
           }
-          if (sk.heal) heal(side, sk.heal * lvlMul);
+          if (sk.heal) heal(side, Math.min(0.5, sk.heal * lvlMul * healMul));
           if (sk.atkBuff) side.atkBuff.push({ v: sk.atkBuff * lvlMul, r: (sk.rounds ?? 2) + 1 });
           if (sk.defBuff) side.defBuff.push({ v: sk.defBuff * lvlMul, r: (sk.rounds ?? 2) + 1 });
           events.push(`${isA ? 'A' : 'D'}|skill|${h.id}|${sk.name}`);
