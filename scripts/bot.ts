@@ -45,7 +45,7 @@ function wantBuild(): string[] {
   for (const r of ci.reqs) if (!r.ok && r.go) out.push(r.go);
   out.push('citadel');
   // military/support essentials
-  for (const t of ['barracks', 'range', 'stable', 'academy', 'infirmary', 'warehouse', 'wall', 'sanctum', 'tavern', 'watchtower', 'spire'] as BuildingId[]) {
+  for (const t of ['barracks', 'range', 'stable', 'academy', 'infirmary', 'warehouse', 'wall', 'sanctum', 'tavern', 'watchtower', 'spire', 'forge'] as BuildingId[]) {
     const b = plotsOf(t)[0];
     if (b && PLOT_BY_ID[b.plot].unlock <= g.citadel && b.level < g.citadel) out.push(b.plot);
   }
@@ -102,6 +102,15 @@ function act() {
     for (const t of ['tome3', 'tome2', 'tome1']) while ((g.s.inventory[t] ?? 0) > 0 && g.useTome(h.id, t).ok) { /* */ }
     g.starUp(h.id);
     for (const n of ['m_atk', 'm_rage', 'm_skill', 'm_hunt', 'm_cap', 's_atk', 's_def', 's_hp', 's_road', 's_cap', 'g_def', 'g_hp', 'g_heal', 'g_cap', 'g_end']) while (g.learnTalent(h.id, n).ok) { /* spend */ }
+  }
+  // forge: craft the best set available and dress the strongest heroes
+  if (g.level('forge') > 0) {
+    for (const set of ['void', 'storm', 'sun']) for (const slot of ['weapon', 'armor', 'helm', 'gloves', 'boots', 'trinket']) {
+      const owned = g.s.gear.filter((x) => x.bp === `${set}_${slot}`).length;
+      if (owned < 2) g.craft(`${set}_${slot}`);
+    }
+    const top = HEROES.filter((h) => g.s.heroes[h.id].owned && !g.busyHeroes().has(h.id)).sort((a, b) => g.s.heroes[b.id].level - g.s.heroes[a.id].level).slice(0, 2);
+    for (const h of top) for (const it of [...g.s.gear].sort((a, b) => b.rarity - a.rarity)) if (!it.hero) g.equip(it.uid, h.id);
   }
   for (const t of Object.keys(g.s.titans.tamed)) while ((g.s.inventory.titan_food ?? 0) > 0) g.feedTitan(t);
   // heal when cheap

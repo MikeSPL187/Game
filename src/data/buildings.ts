@@ -94,6 +94,11 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     desc: 'Раньше предупреждает о набегах и расширяет обзор на карте мира.',
     cost: { wood: 140, stone: 80 }, costExp: 2.2, time: 4, timeExp: 2.1,
   },
+  forge: {
+    id: 'forge', name: 'Кузница', category: 'military', maxLevel: 25,
+    desc: 'Мастера куют снаряжение для героев из руды, кожи, костей Пустоты и эфирных кристаллов. Чем выше уровень, тем чаще выходят редкие вещи.',
+    cost: { wood: 300, stone: 300, gold: 100 }, costExp: 2.3, time: 6, timeExp: 2.15,
+  },
   sanctum: {
     id: 'sanctum', name: 'Святилище титанов', category: 'support', maxLevel: 25,
     desc: 'Обитель прирученных титанов. Усиливает связь с титаном и его мощь в бою.',
@@ -184,6 +189,7 @@ export function buildingPerks(id: BuildingId, level: number): { label: string; v
     case 'wall': return [{ label: 'Бонус защитникам', value: '+' + Math.round(wallBonus(level) * 100) + '%' }];
     case 'watchtower': return [{ label: 'Радиус обзора', value: watchRange(level) + ' кл.' }];
     case 'sanctum': return [{ label: 'Сила титана', value: '+' + level * 4 + '%' }];
+    case 'forge': return [{ label: 'Шанс эпических и легендарных', value: Math.round((Math.min(0.12, 0.01 + (level - 1) * 0.005) + Math.min(0.35, 0.08 + (level - 1) * 0.012)) * 100) + '%' }];
   }
   return [];
 }

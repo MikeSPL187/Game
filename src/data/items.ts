@@ -5,7 +5,7 @@ export interface ItemDef {
   name: string;
   desc: string;
   icon: string;
-  cat: 'speed' | 'res' | 'hero' | 'special';
+  cat: 'speed' | 'res' | 'hero' | 'special' | 'mat';
   speedMs?: number;
   res?: Res;
   amount?: number;
@@ -39,6 +39,10 @@ export const ITEMS: ItemDef[] = [
   { id: 'shield8', name: 'Щит мира (8 ч)', desc: 'Защищает город от набегов на 8 часов.', icon: 'shieldItem', cat: 'special', rarity: 'rare', usable: true },
   { id: 'chest_small', name: 'Сундук путника', desc: 'Содержит случайные ресурсы и ускорения.', icon: 'chest', cat: 'special', rarity: 'rare', usable: true },
   { id: 'chest_big', name: 'Сундук лорда', desc: 'Содержит ценные ресурсы, ключи и свитки.', icon: 'chest_gold', cat: 'special', rarity: 'epic', usable: true },
+  { id: 'mat_iron', name: 'Железная руда', desc: 'Материал для Кузницы. Основа любого снаряжения.', icon: 'ore', cat: 'mat', rarity: 'common', usable: false },
+  { id: 'mat_leather', name: 'Дублёная кожа', desc: 'Материал для Кузницы: перчатки, сапоги, лёгкие доспехи.', icon: 'leather', cat: 'mat', rarity: 'common', usable: false },
+  { id: 'mat_bone', name: 'Кость Пустоты', desc: 'Редкий материал из сильных тварей, разломов и титанов.', icon: 'bone', cat: 'mat', rarity: 'rare', usable: false },
+  { id: 'mat_crystal', name: 'Эфирный кристалл', desc: 'Редкий материал из руин, разломов и титанов.', icon: 'crystalMat', cat: 'mat', rarity: 'epic', usable: false },
   { id: 'titan_food', name: 'Эфирная эссенция', desc: '+300 опыта титану', icon: 'essence', cat: 'special', rarity: 'epic', usable: false },
 ];
 

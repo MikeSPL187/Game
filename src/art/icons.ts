@@ -278,6 +278,35 @@ const ICONS: Record<string, Draw> = {
   },
   speed: (s) => ICONS.hourglass(s),
   home: (s) => ICONS.castle(s),
+  gauntlet: (s) => {
+    s.path('M16 58 L14 34 Q14 26 20 24 L22 10 Q22 6 26 6 Q30 6 30 10 L30 22 L32 8 Q32 4 36 4 Q40 4 40 8 L40 22 L42 10 Q42 6 46 6 Q50 6 50 10 L50 34 L48 58 Z', steel(s), OUT);
+    s.rect(14, 44, 36, 8, gold(s), 'stroke="#5a3a08" stroke-width="1.5"');
+  },
+  amulet: (s) => {
+    s.path('M14 6 Q32 34 50 6', 'none', 'stroke="#c8902a" stroke-width="3"');
+    s.circle(32, 40, 16, gold(s), OUT);
+    s.circle(32, 40, 9, s.rad([[0, '#e8fbff'], [0.6, '#5ad8ff'], [1, '#1a5aa8']]), 'stroke="#20160e" stroke-width="1.5"');
+    s.circle(29, 37, 2.4, '#fff', 'opacity=".8"');
+  },
+  ore: (s) => {
+    s.poly([[8, 46], [16, 22], [34, 12], [54, 24], [58, 46], [40, 56], [18, 56]], s.lin([[0, '#9a948a'], [1, '#3a3632']], 0, 0, 1, 1), OUT);
+    for (const [x, y] of [[24, 30], [40, 26], [34, 42], [46, 40], [22, 46]]) s.poly([[x, y - 5], [x + 5, y], [x, y + 5], [x - 5, y]], s.lin([[0, '#e8f0ff'], [1, '#7a8aa8']]), 'stroke="#2a3040" stroke-width="1"');
+  },
+  leather: (s) => {
+    s.path('M10 14 Q20 8 32 12 Q44 8 54 14 Q50 26 56 36 Q46 46 50 56 Q32 50 14 56 Q18 44 8 36 Q14 26 10 14 Z', s.lin([[0, '#c8905a'], [1, '#6a3e1c']]), OUT);
+    s.path('M18 22 Q32 28 46 22 M18 42 Q32 36 46 42', 'none', 'stroke="#4a2a12" stroke-width="1.6" stroke-dasharray="3 3"');
+  },
+  bone: (s) => {
+    const g = s.lin([[0, '#fff8e8'], [1, '#bfae8a']]);
+    s.path('M14 48 L44 18', 'none', 'stroke="#20160e" stroke-width="12" stroke-linecap="round"');
+    s.path('M14 48 L44 18', 'none', `stroke="${g}" stroke-width="8" stroke-linecap="round"`);
+    for (const [x, y] of [[10, 44], [18, 52], [40, 14], [48, 22]]) s.circle(x, y, 7, g, OUT);
+    s.circle(30, 32, 16, s.rad([[0, '#c27bff', 0.4], [1, '#c27bff', 0]]));
+  },
+  crystalMat: (s) => {
+    crystal(s, 24, 56, 34, '#7fe3ff');
+    crystal(s, 42, 58, 26, '#b56cff');
+  },
   move: (s) => {
     s.path('M32 6 Q48 6 48 22 Q48 34 32 58 Q16 34 16 22 Q16 6 32 6 Z', s.lin([[0, '#ff7a6a'], [1, '#a01a1a']]), OUT);
     s.circle(32, 22, 6, '#fff');

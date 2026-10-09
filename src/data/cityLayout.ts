@@ -30,6 +30,7 @@ export const PLOTS: Plot[] = [
   { id: 'stable', type: 'stable', x: 2090, y: 1210, unlock: 7 },
   { id: 'sanctum', type: 'sanctum', x: 1400, y: 1440, unlock: 8 },
   { id: 'spire', type: 'spire', x: 2330, y: 1110, unlock: 10 },
+  { id: 'forge', type: 'forge', x: 1770, y: 1250, unlock: 6 },
 
   { id: 'farm1', type: 'farm', x: 640, y: 1080, unlock: 1 },
   { id: 'farm2', type: 'farm', x: 430, y: 960, unlock: 1 },

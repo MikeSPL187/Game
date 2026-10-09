@@ -15,6 +15,8 @@ import { ITEM_BY_ID } from '../data/items';
 import { CALENDAR, CHAPTERS, DAILIES, DAILY_CHESTS } from '../data/quests';
 import { TECH_BY_ID, techCost, techTime } from '../data/research';
 import { ROW_REQ, TALENT_BY_ID, emptyTalentFx, spentIn, talentFx, talentPointsTotal, type TalentFx } from '../data/talents';
+import { BLUEPRINT_BY_ID, SETS, itemStats, rollRarity, type GearItem, type SetId } from '../data/gear';
+import { PLOTS } from '../data/cityLayout';
 import { TROOPS, TYPE_INFO } from '../data/troops';
 import { TITAN_BY_ID, campName, campTroops, nodeRate, riftTroops } from '../data/world';
 import { computeEffects, heroUtility, type Effects } from './bonuses';
@@ -568,9 +570,72 @@ export class Game {
   }
 
   // ————————————————————————————————————————— talents
+  /** Combined commander bonuses: talents + equipped gear + set bonuses. */
   tal(heroId: string | null): TalentFx {
-    return heroId && this.s.heroes[heroId] ? talentFx(this.s.heroes[heroId].talents) : emptyTalentFx();
+    if (!heroId || !this.s.heroes[heroId]) return emptyTalentFx();
+    const fx = talentFx(this.s.heroes[heroId].talents);
+    const add = (p: Partial<TalentFx>) => { for (const [k, v] of Object.entries(p)) (fx as any)[k] += v ?? 0; };
+    const sets: Partial<Record<SetId, number>> = {};
+    for (const it of this.s.gear) {
+      if (it.hero !== heroId) continue;
+      add(itemStats(it));
+      const set = BLUEPRINT_BY_ID[it.bp].set;
+      sets[set] = (sets[set] ?? 0) + 1;
+    }
+    for (const [set, n] of Object.entries(sets) as [SetId, number][]) for (const b of SETS[set].bonus) if (n >= b.n) add(b.fx);
+    return fx;
   }
+
+  // ————————————————————————————————————————— forge & gear
+  craft(bpId: string, rnd = Math.random): { ok: boolean; error?: string; item?: GearItem } {
+    const bp = BLUEPRINT_BY_ID[bpId];
+    const lvl = this.level('forge');
+    if (!bp) return { ok: false, error: 'Нет чертежа' };
+    if (lvl <= 0) return { ok: false, error: 'Постройте Кузницу' };
+    if (lvl < bp.forge) return { ok: false, error: `Требуется Кузница ${bp.forge} ур.` };
+    if (this.s.gear.length >= 60) return { ok: false, error: 'Арсенал полон — разберите ненужное' };
+    for (const [m, n] of Object.entries(bp.cost)) if ((this.s.inventory[m] ?? 0) < (n ?? 0)) return { ok: false, error: 'Недостаточно материалов' };
+    for (const [m, n] of Object.entries(bp.cost)) this.s.inventory[m] -= n ?? 0;
+    const item: GearItem = { uid: this.uid(), bp: bpId, rarity: rollRarity(lvl, rnd()), hero: null };
+    this.s.gear.push(item);
+    this.s.stats.crafted = (this.s.stats.crafted ?? 0) + 1;
+    bus.emit('craft', item);
+    bus.emit('state');
+    return { ok: true, item };
+  }
+  salvage(uid: number): Result {
+    const it = this.s.gear.find((g) => g.uid === uid);
+    if (!it) return fail('Нет предмета');
+    if (it.hero && this.busyHeroes().has(it.hero)) return fail('Герой в походе');
+    const bp = BLUEPRINT_BY_ID[it.bp];
+    const back: Record<string, number> = {};
+    for (const [m, n] of Object.entries(bp.cost)) back[m] = Math.floor((n ?? 0) * (0.5 + it.rarity * 0.1));
+    this.addItems(back);
+    this.s.gear = this.s.gear.filter((g) => g !== it);
+    bus.emit('state');
+    return OK;
+  }
+  equip(uid: number, heroId: string): Result {
+    const it = this.s.gear.find((g) => g.uid === uid);
+    const h = this.s.heroes[heroId];
+    if (!it || !h?.owned) return fail('Недоступно');
+    const busy = this.busyHeroes();
+    if (busy.has(heroId) || (it.hero && busy.has(it.hero))) return fail('Герой в походе');
+    const slot = BLUEPRINT_BY_ID[it.bp].slot;
+    for (const g of this.s.gear) if (g.hero === heroId && BLUEPRINT_BY_ID[g.bp].slot === slot) g.hero = null;
+    it.hero = heroId;
+    bus.emit('state');
+    return OK;
+  }
+  unequip(uid: number): Result {
+    const it = this.s.gear.find((g) => g.uid === uid);
+    if (!it?.hero) return fail('Не надет');
+    if (this.busyHeroes().has(it.hero)) return fail('Герой в походе');
+    it.hero = null;
+    bus.emit('state');
+    return OK;
+  }
+  heroGear(heroId: string) { return this.s.gear.filter((g) => g.hero === heroId); }
   talentPoints(heroId: string): number {
     const h = this.s.heroes[heroId];
     return talentPointsTotal(h.level) - spentIn(h.talents);
@@ -962,7 +1027,7 @@ export class Game {
       o.hp = Math.max(0, (o.hp ?? 1) * (1 - dealt));
       title = res.win || o.hp <= 0.02 ? 'Разлом закрыт!' : `Разлом ослаблен (${Math.round((o.hp ?? 0) * 100)}%)`;
       if (res.win || o.hp <= 0.02) {
-        rewards = { res: scaleRes({ food: 4000, wood: 4000, stone: 2000, gold: 1000, aether: 40 }, o.level), items: { key_gold: 1, chest_big: 1, tome2: 2 } };
+        rewards = { res: scaleRes({ food: 4000, wood: 4000, stone: 2000, gold: 1000, aether: 40 }, o.level), items: { key_gold: 1, chest_big: 1, tome2: 2, mat_bone: 6 + Math.floor(o.level / 3), mat_crystal: 3 + Math.floor(o.level / 5) } };
         this.grant(rewards);
         this.s.stats.riftsCleared++;
         this.removeObj(o);
@@ -977,7 +1042,7 @@ export class Game {
         title = `${td.name} приручён!`;
         this.s.titans.tamed[td.id] = { level: 1, xp: 0 };
         if (!this.s.titans.active) this.s.titans.active = td.id;
-        rewards = { res: scaleRes({ food: 20000, wood: 20000, stone: 10000, gold: 5000, aether: 150 }, td.level), items: { key_gold: 2, titan_food: 3 } };
+        rewards = { res: scaleRes({ food: 20000, wood: 20000, stone: 10000, gold: 5000, aether: 150 }, td.level), items: { key_gold: 2, titan_food: 3, mat_bone: 15, mat_crystal: 10 } };
         this.grant(rewards);
         this.removeObj(o);
         bus.emit('titan-tamed', td.id);
@@ -1370,6 +1435,11 @@ function campReward(level: number, rnd: () => number, first: boolean): Reward {
   if (level >= 8 && rnd() < 0.15) items.tome2 = 1;
   if (level >= 10 && rnd() < 0.04) items.shard_any = 1;
   if (first) { items.key_silver = (items.key_silver ?? 0) + 1; res.aether = 10 + level * 2; }
+  // forge materials
+  items.mat_iron = 1 + Math.floor(rnd() * (1 + level / 4));
+  if (rnd() < 0.6) items.mat_leather = 1 + Math.floor(rnd() * (1 + level / 5));
+  if (level >= 6 && rnd() < 0.35) items.mat_bone = 1 + Math.floor(level / 8);
+  if (level >= 10 && rnd() < 0.15) items.mat_crystal = 1;
   return { res, items };
 }
 
@@ -1387,6 +1457,8 @@ function ruinReward(level: number, rnd: () => number): Reward {
   else if (roll < 0.85) items.chest_small = 1;
   else if (roll < 0.95) items.shard_any = 1;
   else items.key_gold = 1;
+  items.mat_iron = 2 + Math.floor(rnd() * 3);
+  if (rnd() < 0.5) items.mat_crystal = 1 + Math.floor(level / 10);
   return { res, items, heroXp: Math.round(100 * m) };
 }
 
@@ -1425,6 +1497,10 @@ export function migrate(s: GameState) {
   if (!s.raids) s.raids = [];
   if (s.raidCooldown == null) s.raidCooldown = 0;
   if (!s.flags) s.flags = {};
+  if (!s.gear) s.gear = [];
+  if (s.stats.crafted == null) s.stats.crafted = 0;
+  // plots added in later versions
+  for (const p of PLOTS) if (!s.buildings.some((b) => b.plot === p.id)) s.buildings.push({ plot: p.id, type: p.type, level: 0, stored: 0 });
   if (!s.calendar) s.calendar = { day: 0, last: '' };
   for (const h of HEROES) if (!s.heroes[h.id]) s.heroes[h.id] = { id: h.id, level: 1, xp: 0, stars: 1, shards: 0, owned: false };
   s.version = SAVE_VERSION;

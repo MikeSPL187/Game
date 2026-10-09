@@ -39,6 +39,11 @@ function totalTroops(s: GameState): number {
 }
 function ownedHeroes(s: GameState): number { return Object.values(s.heroes).filter((h) => h.owned).length; }
 function bestHeroLevel(s: GameState): number { return Math.max(0, ...Object.values(s.heroes).filter((h) => h.owned).map((h) => h.level)); }
+function gearedHero(s: GameState): number {
+  const per: Record<string, number> = {};
+  for (const it of s.gear ?? []) if (it.hero) per[it.hero] = (per[it.hero] ?? 0) + 1;
+  return Math.max(0, ...Object.values(per));
+}
 function researchCount(s: GameState): number { return Object.values(s.research).reduce((a, b) => a + b, 0); }
 
 const B = (type: BuildingId, lvl: number, reward: Reward, title?: string): QuestDef => ({
@@ -110,6 +115,7 @@ export const CHAPTERS: ChapterDef[] = [
       named(B('watchtower', 3, { res: { wood: 3000 } }), 'Улучшите Дозорную башню до 3 ур.'),
       { id: 'camp5lv', title: 'Победите логово 5 ур.', target: 5, progress: (s) => s.stats.maxCampLevel, go: { kind: 'world', find: 'camp', level: 5 }, reward: { items: { tome2: 1 } } },
       { id: 'res5', title: 'Завершите 5 исследований', target: 5, progress: researchCount, go: { kind: 'building', type: 'academy', action: 'research' }, reward: { res: { gold: 1500 } } },
+      named(B('forge', 1, { items: { mat_iron: 20, mat_leather: 10 } }), 'Постройте Кузницу'),
       { id: 'farms2', title: 'Имейте 2 Фермы 5 ур.', target: 2, progress: (s) => countAtLeast(s, 'farm', 5), go: { kind: 'building', type: 'farm', action: 'upgrade' }, reward: { res: { wood: 4000 } } },
     ],
   },
@@ -122,6 +128,7 @@ export const CHAPTERS: ChapterDef[] = [
       named(B('citadel', 8, { items: { speed60: 1 } }), 'Улучшите Цитадель до 8 ур.'),
       named(B('sanctum', 1, { res: { gold: 3000 } }), 'Постройте Святилище титанов'),
       { id: 'herolv20', title: 'Поднимите героя до 20 ур.', target: 20, progress: bestHeroLevel, go: { kind: 'panel', panel: 'heroes' }, reward: { items: { tome3: 1 } } },
+      { id: 'gear2', title: 'Наденьте на героя 2 предмета', target: 2, progress: gearedHero, go: { kind: 'building', type: 'forge', action: 'info' }, reward: { items: { mat_bone: 6, mat_crystal: 3 } } },
       { id: 'troops1500', title: 'Соберите армию из 1 500 воинов', target: 1500, progress: totalTroops, go: { kind: 'building', type: 'barracks', action: 'train' }, reward: { res: { food: 8000 } } },
       { id: 'tame_roc', title: 'Приручите Громокрыла', target: 1, progress: (s) => (s.titans.tamed.roc ? 1 : 0), go: { kind: 'world', find: 'titan', titan: 'roc' }, reward: { items: { key_gold: 1 } } },
     ],

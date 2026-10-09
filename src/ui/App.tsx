@@ -18,6 +18,7 @@ import { HeroesPanel, TavernPanel } from './panels/heroes';
 import { DispatchPanel, SearchPanel, WorldSheet } from './panels/world';
 import { ArmyPanel, CalendarPanel, InventoryPanel, ProfilePanel, QuestsPanel, RewardPopup, SettingsPanel, StoryDialog, TitansPanel, WallPanel, WelcomeBack } from './panels/misc';
 import { ReportsPanel } from './panels/reports';
+import { ForgePanel } from './panels/forge';
 import { sfx } from '../audio/audio';
 import { CrashScreen, Guard } from './guard';
 import { Capacitor } from '@capacitor/core';
@@ -26,7 +27,7 @@ import { requestNotifications } from '../core/notify';
 const PANELS: Record<string, (p: any) => any> = {
   upgrade: UpgradePanel, speedup: SpeedupPanel, train: TrainPanel, research: ResearchPanel, heroes: HeroesPanel, tavern: TavernPanel,
   dispatch: DispatchPanel, search: SearchPanel, inventory: InventoryPanel, quests: QuestsPanel, reports: ReportsPanel, army: ArmyPanel,
-  titans: TitansPanel, wall: WallPanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
+  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
 };
 
 // ———————————————————————————————————————— building context menu
@@ -77,6 +78,7 @@ function BuildingMenu() {
     if (b.type === 'tavern' && b.level > 0) btns.push({ icon: 'key_gold', label: 'Призыв', fn: () => ui.open('tavern'), pulse: g.s.freeSummonAt <= Date.now() });
     if (b.type === 'infirmary' && b.level > 0) btns.push({ icon: 'heart', label: 'Лечение', fn: () => ui.open('army') });
     if (b.type === 'sanctum' && b.level > 0) btns.push({ icon: 'titan', label: 'Титаны', fn: () => ui.open('titans') });
+    if (b.type === 'forge' && b.level > 0) btns.push({ icon: 'gauntlet', label: 'Ковка', fn: () => ui.open('forge') });
     if ((b.type === 'wall' || b.type === 'watchtower') && b.level > 0) btns.push({ icon: 'tower', label: 'Оборона', fn: () => ui.open('wall') });
     if (b.type === 'citadel') btns.push({ icon: 'castle', label: 'Профиль', fn: () => ui.open('profile') });
     if (PRODUCTION_RES[b.type] && b.stored >= 1) btns.push({ icon: PRODUCTION_RES[b.type]!, label: 'Собрать', fn: () => { g.collect(plot); ga.city.refresh(); } });

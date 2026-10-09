@@ -6,6 +6,7 @@ import { TYPE_INFO } from '../../data/troops';
 import { FACTIONS } from '../../data/world';
 import { Bar, Btn, Icon, Panel, Stars, act, ga, haptic, toast, ui, useGame } from '../core';
 import { BRANCHES, ROW_REQ, TALENTS, spentIn } from '../../data/talents';
+import { HeroGear } from './forge';
 import { sfx } from '../../audio/audio';
 
 export function HeroCard({ id, onClick, sel, busy, small }: { id: string; onClick?: () => void; sel?: boolean; busy?: boolean; small?: boolean }) {
@@ -64,12 +65,12 @@ function HeroDetail({ id, onBack }: { id: string; onBack: () => void }) {
   const starMul = 1 + (st.stars - 1) * 0.06;
   const lvl = st.level * 0.35;
   const univ = g.s.inventory.shard_any ?? 0;
-  const [tab, setTab] = useState<'info' | 'talents'>('info');
+  const [tab, setTab] = useState<'info' | 'talents' | 'gear'>('info');
   const pts = st.owned ? g.talentPoints(id) : 0;
   return (
     <Panel title={<span>{h.name} <span style={{ color: rar.color, fontSize: 16 }}>· {h.title}</span></span>} width={1000} onClose={onBack}
-      tabs={st.owned ? [{ id: 'info', label: 'Обзор' }, { id: 'talents', label: `Таланты${pts ? ` (${pts})` : ''}`, badge: pts > 0 }] : undefined} tab={tab} onTab={(t) => setTab(t as any)}>
-      {tab === 'talents' && st.owned ? <TalentTree id={id} /> : (
+      tabs={st.owned ? [{ id: 'info', label: 'Обзор' }, { id: 'talents', label: `Таланты${pts ? ` (${pts})` : ''}`, badge: pts > 0 }, { id: 'gear', label: 'Снаряжение' }] : undefined} tab={tab} onTab={(t) => setTab(t as any)}>
+      {tab === 'gear' && st.owned ? <HeroGear id={id} /> : tab === 'talents' && st.owned ? <TalentTree id={id} /> : (
       <div class="row" style={{ alignItems: 'stretch', gap: 16 }}>
         <div class={'hcard ' + h.rarity} style={{ width: 250, flex: 'none', aspectRatio: '4/5', cursor: 'default' }}>
           <img src={portraitUrl(id)} style={{ filter: st.owned ? undefined : 'grayscale(1) brightness(.5)' }} />

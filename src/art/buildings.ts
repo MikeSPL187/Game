@@ -481,6 +481,47 @@ function wallGate(t: number, p: Pal): ArtResult {
   return done();
 }
 
+function forge(t: number, p: Pal): ArtResult {
+  const { s, cx, cy, done } = frame(270, 260, 195);
+  shadowEllipse(s, cx, cy + 4, 108, 40, 0.28);
+  groundPad(s, cx, cy, 66, 52, '#7a6a58', 4);
+  // main smithy
+  const h = 34 + t * 4;
+  isoBox(s, cx - 10, cy - 12, 40, 30, h, t <= 1 ? p.wood : p.stone, { pattern: t <= 1 ? 'plank' : 'brick', trim: t >= 3 ? p.trim : undefined });
+  isoGable(s, cx - 10, cy - 12, 40, 30, h, 22, shade(p.roof, -0.15), 4);
+  // open forge mouth with fire on the front face
+  const [fx, fy] = iso(cx - 10, cy - 12, 4, 30, 0);
+  const fire = t >= 4 ? '#7fe3ff' : '#ff8a2a';
+  s.path(`M${fx - 16},${fy + 8} L${fx - 16},${fy - 18} Q${fx},${fy - 32} ${fx + 16},${fy - 10} L${fx + 16},${fy + 16} Z`, '#1a0e08');
+  s.ellipse(fx, fy, 22, 16, s.rad([[0, fire, 0.95], [0.5, fire, 0.5], [1, fire, 0]]));
+  s.path(`M${fx - 8},${fy + 8} q4,-16 8,-20 q4,10 8,22 z`, t >= 4 ? '#d8faff' : '#ffd36a');
+  // chimney
+  const [chx, chy] = iso(cx - 10, cy - 12, -24, -6, h + 16);
+  isoBox(s, chx, chy + 26, 7, 7, 30 + t * 4, shade(p.stone, -0.2), { pattern: 'brick' });
+  s.ellipse(chx, chy - 8 - t * 4, 9, 6, s.rad([[0, fire, 0.7], [1, fire, 0]]));
+  if (t >= 2) {
+    const [c2x, c2y] = iso(cx - 10, cy - 12, 22, -10, h + 12);
+    isoBox(s, c2x, c2y + 24, 6, 6, 26, shade(p.stone, -0.25), { pattern: 'brick' });
+  }
+  // anvil
+  const ax = cx + 52, ay = cy + 14;
+  s.ellipse(ax, ay + 2, 16, 5, 'rgba(0,0,0,.3)');
+  s.rect(ax - 5, ay - 10, 10, 12, '#4a3a2a');
+  s.path(`M${ax - 16},${ay - 10} L${ax + 14},${ay - 10} L${ax + 20},${ay - 16} L${ax - 12},${ay - 16} Z`, s.lin([[0, '#c8ccd8'], [1, '#5a5e6a']]), 'stroke="#20242c" stroke-width="1"');
+  s.line(ax + 4, ay - 18, ax + 16, ay - 30, '#6a4a2a', 2.4);
+  s.rect(ax + 12, ay - 36, 10, 7, '#8a8e9a', 'transform="rotate(-35 ' + (ax + 17) + ' ' + (ay - 32) + ')"');
+  // weapon rack
+  s.line(cx - 78, cy + 20, cx - 52, cy + 30, p.wood, 2.4);
+  for (let i = 0; i < 4; i++) s.line(cx - 74 + i * 7, cy + 22 + i * 2.4, cx - 72 + i * 7, cy - 4 + i * 2.4, i % 2 ? '#c8ccd8' : '#9aa0aa', 2);
+  // quench barrel
+  s.ellipse(cx + 20, cy + 34, 8, 3.5, 'rgba(0,0,0,.25)');
+  s.add(`<rect x="${cx + 12}" y="${cy + 18}" width="16" height="16" rx="4" fill="#7a4a22" stroke="#3a2010" stroke-width=".8"/>`);
+  s.ellipse(cx + 20, cy + 18, 8, 3, '#3a7ab8');
+  if (t >= 3) banner(s, cx - 30, cy - h - 10, 12, 24, p.banner, p.trim);
+  if (t >= 4) crystal(s, cx + 70, cy - 10, 18, '#7fe3ff');
+  return done();
+}
+
 /** Wall segment along an iso axis — used for the ring around the city. */
 export function wallSegment(t: number, p: Pal, len: number, axis: 'x' | 'y'): ArtResult {
   const h = t <= 1 ? 34 : 40 + t * 4;
@@ -564,5 +605,6 @@ export function buildingArt(type: BuildingId, level: number, faction: FactionId)
     case 'wall': return wallGate(t, p);
     case 'watchtower': return watchtower(t, p);
     case 'sanctum': return sanctum(t, p);
+    case 'forge': return forge(t, p);
   }
 }

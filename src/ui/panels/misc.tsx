@@ -24,13 +24,13 @@ export function showReward(r: Reward, title = 'Награда') { bus.emit('show
 // ———————————————————————————————————————— inventory
 export function InventoryPanel() {
   const g = useGame();
-  const [cat, setCat] = useState<'all' | 'speed' | 'res' | 'hero' | 'special'>('all');
+  const [cat, setCat] = useState<'all' | 'speed' | 'res' | 'hero' | 'special' | 'mat'>('all');
   const list = ITEMS.filter((i) => (g.s.inventory[i.id] ?? 0) > 0 && (cat === 'all' || i.cat === cat));
   const [sel, setSel] = useState<string | null>(list[0]?.id ?? null);
   const it = sel && (g.s.inventory[sel] ?? 0) > 0 ? ITEM_BY_ID[sel] : list[0];
   const n = it ? g.s.inventory[it.id] ?? 0 : 0;
   return (
-    <Panel title="Сумка" width={940} icon="bag" tabs={[{ id: 'all', label: 'Все' }, { id: 'speed', label: 'Ускорения' }, { id: 'res', label: 'Ресурсы' }, { id: 'hero', label: 'Герои' }, { id: 'special', label: 'Особое' }]} tab={cat} onTab={(c) => setCat(c as any)}>
+    <Panel title="Сумка" width={940} icon="bag" tabs={[{ id: 'all', label: 'Все' }, { id: 'speed', label: 'Ускорения' }, { id: 'res', label: 'Ресурсы' }, { id: 'hero', label: 'Герои' }, { id: 'mat', label: 'Материалы' }, { id: 'special', label: 'Особое' }]} tab={cat} onTab={(c) => setCat(c as any)}>
       <div class="row" style={{ alignItems: 'stretch', gap: 14 }}>
         <div class="igrid grow scroll" style={{ maxHeight: 330, alignContent: 'start' }}>
           {list.map((i) => (
@@ -48,6 +48,7 @@ export function InventoryPanel() {
             {it.cat === 'speed' && <div class="mute" style={{ fontSize: 12 }}>Применяется через кнопку «Ускорить» у строительства, обучения или исследования.</div>}
             {it.cat === 'hero' && <Btn kind="dark" onClick={() => { ui.close(); ui.open(it.id.startsWith('key') ? 'tavern' : 'heroes'); }}>{it.id.startsWith('key') ? 'В таверну' : 'К героям'}</Btn>}
             {it.id === 'titan_food' && <Btn kind="dark" onClick={() => { ui.close(); ui.open('titans'); }}>К титанам</Btn>}
+            {it.cat === 'mat' && <Btn kind="dark" onClick={() => { ui.close(); ui.open('forge'); }}>В Кузницу</Btn>}
           </div>
         )}
       </div>

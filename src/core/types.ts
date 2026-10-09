@@ -13,7 +13,7 @@ export type BuildingId =
   | 'citadel' | 'farm' | 'sawmill' | 'quarry' | 'goldmine'
   | 'barracks' | 'range' | 'stable' | 'spire'
   | 'academy' | 'infirmary' | 'tavern' | 'warehouse' | 'wall'
-  | 'watchtower' | 'sanctum';
+  | 'watchtower' | 'sanctum' | 'forge';
 
 export interface BuildingState {
   plot: string;
@@ -185,6 +185,7 @@ export interface Stats {
   heroLevelUps: number;
   buildsDone: number;
   healed: number;
+  crafted: number;
 }
 
 export interface QuestState {
@@ -221,6 +222,7 @@ export interface GameState {
   /** no new raid from any lord before this time */
   raidCooldown: number;
   inventory: Record<string, number>;
+  gear: { uid: number; bp: string; rarity: 0 | 1 | 2 | 3; hero: string | null }[];
   reports: Report[];
   stats: Stats;
   quests: QuestState;
