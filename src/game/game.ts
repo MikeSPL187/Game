@@ -1097,7 +1097,7 @@ export class Game {
     }
     const lostTotal = sumNums(res.aLost);
     const report: Partial<Report> = {
-      kind: 'battle', title, win: res.win, rounds: res.rounds, rewards,
+      kind: 'battle', title, win: res.win, rounds: res.rounds, comp: res.comp, rewards,
       pos: { x: o.x, y: o.y },
       attacker: { name: this.s.player.name, heroes: heroIds.map((id) => ({ id, level: this.s.heroes[id].level })), start: sumTroops(startTroops), lost: dead, wounded, survived: sumTroops(l.troops), power: aPow, kind: 'player' },
       defender: { name: def.name, heroes: def.heroes.map((h) => ({ id: h.id, level: h.level })), start: res.dStart, lost: sumNums(res.dLost), wounded: 0, survived: res.dEnd, power: dPow, kind: def.kind, portrait: o.kind === 'titan' ? o.titanId : o.kind },
@@ -1208,7 +1208,7 @@ export class Game {
     const aPow = armyPower(att), dPow = armyPower(def);
     let res;
     if (start < 1) {
-      res = { win: true, rounds: [], aLost: {}, dLost: {}, aStart: sumTroops(r.troops), dStart: 0, aEnd: sumTroops(r.troops), dEnd: 0 };
+      res = { win: true, rounds: [], aLost: {}, dLost: {}, aStart: sumTroops(r.troops), dStart: 0, aEnd: sumTroops(r.troops), dEnd: 0, comp: { a: [], d: [] } };
     } else {
       res = simulateBattle(att, def, r.id * 17);
     }
@@ -1244,7 +1244,7 @@ export class Game {
       s.shieldUntil = Math.max(s.shieldUntil, this.now() + 2 * 3_600_000);
     }
     this.pushReport({
-      kind: 'defense', title: !res.win ? `Набег отражён: ${lord.name}` : `Город разграблен: ${lord.name}`, win: !res.win, text, rounds: res.rounds, rewards,
+      kind: 'defense', title: !res.win ? `Набег отражён: ${lord.name}` : `Город разграблен: ${lord.name}`, win: !res.win, text, rounds: res.rounds, comp: res.comp, rewards,
       attacker: { name: lord.name, heroes: att.heroes.map((h) => ({ id: h.id, level: h.level })), start: res.aStart, lost: sumNums(res.aLost), wounded: 0, survived: res.aEnd, power: aPow, kind: 'lord' },
       defender: { name: 'Гарнизон', heroes: def.heroes.map((h) => ({ id: h.id, level: h.level })), start, lost: dead, wounded, survived: sumTroops(s.troops), power: dPow, kind: 'player' },
     });
@@ -1505,7 +1505,7 @@ export class Game {
     for (const g of att.groups) g.name = hollowName(g.type);
     const def = this.cityDefenseArmy();
     const start = sumTroops(s.troops);
-    const res = start < 1 ? { win: true, rounds: [], aLost: {}, dLost: {}, aStart: sumTroops(r.troops), dStart: 0, aEnd: sumTroops(r.troops), dEnd: 0 } : simulateBattle(att, def, r.id * 13);
+    const res = start < 1 ? { win: true, rounds: [], aLost: {}, dLost: {}, aStart: sumTroops(r.troops), dStart: 0, aEnd: sumTroops(r.troops), dEnd: 0, comp: { a: [], d: [] } } : simulateBattle(att, def, r.id * 13);
     let wounded = 0;
     // monsters wound rather than kill: all garrison losses go to the infirmary when there is room
     let cap = Math.max(0, this.infirmaryCapacity() - this.woundedCount());
@@ -1530,7 +1530,7 @@ export class Game {
       s.event.wave = Math.max(0, wave - 2);
     }
     this.pushReport({
-      kind: 'defense', title: !res.win ? `Волна ${wave} отражена!` : `Волна ${wave} прорвалась`, win: !res.win, rounds: res.rounds, rewards,
+      kind: 'defense', title: !res.win ? `Волна ${wave} отражена!` : `Волна ${wave} прорвалась`, win: !res.win, rounds: res.rounds, comp: res.comp, rewards,
       text: !res.win ? 'Стены выстояли. Следующая волна будет сильнее.' : 'Твари прорвались, но отступили с рассветом. Укрепите гарнизон — ресурсы не тронуты.',
       attacker: { name: 'Орда Пустоты', heroes: [], start: res.aStart, lost: sumNums(res.aLost), wounded: 0, survived: res.aEnd, power: armyPower(att), kind: 'monster' },
       defender: { name: 'Гарнизон', heroes: def.heroes.map((h) => ({ id: h.id, level: h.level })), start, lost: dead, wounded, survived: sumTroops(s.troops), power: armyPower(def), kind: 'player' },

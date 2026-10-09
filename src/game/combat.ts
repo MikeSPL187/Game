@@ -47,9 +47,15 @@ export interface BattleResult {
   dStart: number;
   aEnd: number;
   dEnd: number;
+  comp: { a: number[]; d: number[] };
 }
 
 export const DMG_C = 0.2;
+/** Order of per-type troop counts stored for the battle replay. */
+export const COMP_TYPES: GroupType[] = ['inf', 'cav', 'arc', 'mag', 'beast'];
+export function composition(a: Army): number[] {
+  return COMP_TYPES.map((t) => Math.round(a.groups.filter((g) => g.type === t).reduce((s, g) => s + g.count, 0)));
+}
 const FRONT: Record<GroupType, number> = { inf: 1.7, cav: 1.1, arc: 0.75, mag: 0.6, beast: 1 };
 
 export function emptyMods(): Mods { return { atk: 0, def: 0, hp: 0, typeAtk: {}, typeDef: {}, typeHp: {}, vsMonster: 0 }; }
@@ -189,6 +195,7 @@ export function simulateBattle(attacker: Army, defender: Army, seed = 1, maxRoun
     dead: {}, atkBuff: [], defBuff: [], rage: army.heroes.map(() => 0),
   });
   const A = mk(attacker), D = mk(defender);
+  const comp = { a: composition(attacker), d: composition(defender) };
   const aStart = total(attacker), dStart = total(defender);
   const rounds: BattleRound[] = [];
   const vsMonsterA = defender.kind === 'monster' || defender.kind === 'titan';
@@ -236,7 +243,7 @@ export function simulateBattle(attacker: Army, defender: Army, seed = 1, maxRoun
     applyKills(A, ka);
     tickBuffs(A); tickBuffs(D);
     const at = total(attacker), dt = total(defender);
-    rounds.push({ a: Math.round(at), d: Math.round(dt), events });
+    rounds.push({ a: Math.round(at), d: Math.round(dt), events, ta: composition(attacker), td: composition(defender) });
     if (dt < 1 || dt <= dStart * defender.retreatAt) break;
     if (at < 1 || at <= aStart * attacker.retreatAt) break;
   }
@@ -257,7 +264,7 @@ export function simulateBattle(attacker: Army, defender: Army, seed = 1, maxRoun
   const aLost: Record<string, number> = {}, dLost: Record<string, number> = {};
   for (const g of attacker.groups) aLost[g.key] = Math.max(0, (A.start[g.key] ?? 0) - g.count);
   for (const g of defender.groups) dLost[g.key] = Math.max(0, (D.start[g.key] ?? 0) - g.count);
-  return { win, rounds, aLost, dLost, aStart: Math.round(aStart), dStart: Math.round(dStart), aEnd: Math.round(aEnd), dEnd: Math.round(dEnd) };
+  return { win, rounds, aLost, dLost, aStart: Math.round(aStart), dStart: Math.round(dStart), aEnd: Math.round(aEnd), dEnd: Math.round(dEnd), comp };
 }
 
 /** quick estimate of win probability-like score: >1 means attacker favoured */

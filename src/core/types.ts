@@ -129,6 +129,9 @@ export interface BattleRound {
   a: number; // attacker troops remaining
   d: number; // defender troops remaining
   events: string[];
+  /** remaining troops by type, order of COMP_TYPES (inf, cav, arc, mag, beast) — for the battle replay */
+  ta?: number[];
+  td?: number[];
 }
 
 export interface Report {
@@ -141,6 +144,8 @@ export interface Report {
   attacker?: ArmySummary;
   defender?: ArmySummary;
   rounds?: BattleRound[];
+  /** troops by type at the start of the battle (see BattleRound.ta) */
+  comp?: { a: number[]; d: number[] };
   rewards?: Reward;
   read: boolean;
   pos?: Point;

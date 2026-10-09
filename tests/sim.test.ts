@@ -126,3 +126,17 @@ describe('marches', () => {
     expect(g2.s.world.objects.length).toBe(g.s.world.objects.length);
   });
 });
+
+describe('battle replay data', () => {
+  it('stores per-type composition for every round', async () => {
+    const { simulateBattle, groupsFromTroops, emptyMods, COMP_TYPES } = await import('../src/game/combat');
+    const mk = (t: Record<string, number>) => ({ name: 'x', kind: 'player' as const, groups: groupsFromTroops(t), heroes: [], mods: emptyMods(), retreatAt: 0, titan: null });
+    const r = simulateBattle(mk({ inf1: 300, arc1: 200 }), mk({ cav1: 250, mag1: 100 }), 3);
+    expect(r.comp.a[COMP_TYPES.indexOf('inf')]).toBe(300);
+    expect(r.comp.d[COMP_TYPES.indexOf('mag')]).toBe(100);
+    for (const rd of r.rounds) {
+      expect(rd.ta!.reduce((a, b) => a + b, 0)).toBeCloseTo(rd.a, -1);
+      expect(rd.td!.reduce((a, b) => a + b, 0)).toBeCloseTo(rd.d, -1);
+    }
+  });
+});
