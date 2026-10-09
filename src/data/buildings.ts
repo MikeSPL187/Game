@@ -99,6 +99,11 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     desc: 'Мастера куют снаряжение для героев из руды, кожи, костей Пустоты и эфирных кристаллов. Чем выше уровень, тем чаще выходят редкие вещи.',
     cost: { wood: 300, stone: 300, gold: 100 }, costExp: 2.3, time: 6, timeExp: 2.15,
   },
+  embassy: {
+    id: 'embassy', name: 'Посольство', category: 'support', maxLevel: 25,
+    desc: 'Связь с союзом «Пепельный Рассвет». Соратники ускоряют ваши стройки, дарят подарки и сражаются рядом с вами против титанов.',
+    cost: { wood: 260, stone: 160, food: 160 }, costExp: 2.25, time: 5, timeExp: 2.1,
+  },
   sanctum: {
     id: 'sanctum', name: 'Святилище титанов', category: 'support', maxLevel: 25,
     desc: 'Обитель прирученных титанов. Усиливает связь с титаном и его мощь в бою.',
@@ -189,6 +194,7 @@ export function buildingPerks(id: BuildingId, level: number): { label: string; v
     case 'wall': return [{ label: 'Бонус защитникам', value: '+' + Math.round(wallBonus(level) * 100) + '%' }];
     case 'watchtower': return [{ label: 'Радиус обзора', value: watchRange(level) + ' кл.' }];
     case 'sanctum': return [{ label: 'Сила титана', value: '+' + level * 4 + '%' }];
+    case 'embassy': return [{ label: 'Помощей на одну задачу', value: String(5 + Math.floor(level / 2)) }, { label: 'Поддержка союзников в бою с титанами', value: '+' + (5 + level) + '%' }];
     case 'forge': return [{ label: 'Шанс эпических и легендарных', value: Math.round((Math.min(0.12, 0.01 + (level - 1) * 0.005) + Math.min(0.35, 0.08 + (level - 1) * 0.012)) * 100) + '%' }];
   }
   return [];

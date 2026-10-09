@@ -20,6 +20,7 @@ import { ArmyPanel, CalendarPanel, InventoryPanel, ProfilePanel, QuestsPanel, Re
 import { ReportsPanel } from './panels/reports';
 import { ForgePanel } from './panels/forge';
 import { EventPanel } from './panels/event';
+import { AlliancePanel } from './panels/alliance';
 import { sfx } from '../audio/audio';
 import { CrashScreen, Guard } from './guard';
 import { Capacitor } from '@capacitor/core';
@@ -28,7 +29,7 @@ import { requestNotifications } from '../core/notify';
 const PANELS: Record<string, (p: any) => any> = {
   upgrade: UpgradePanel, speedup: SpeedupPanel, train: TrainPanel, research: ResearchPanel, heroes: HeroesPanel, tavern: TavernPanel,
   dispatch: DispatchPanel, search: SearchPanel, inventory: InventoryPanel, quests: QuestsPanel, reports: ReportsPanel, army: ArmyPanel,
-  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, event: EventPanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
+  titans: TitansPanel, wall: WallPanel, forge: ForgePanel, event: EventPanel, alliance: AlliancePanel, calendar: CalendarPanel, settings: SettingsPanel, profile: ProfilePanel,
 };
 
 // ———————————————————————————————————————— building context menu
@@ -80,6 +81,7 @@ function BuildingMenu() {
     if (b.type === 'infirmary' && b.level > 0) btns.push({ icon: 'heart', label: 'Лечение', fn: () => ui.open('army') });
     if (b.type === 'sanctum' && b.level > 0) btns.push({ icon: 'titan', label: 'Титаны', fn: () => ui.open('titans') });
     if (b.type === 'forge' && b.level > 0) btns.push({ icon: 'gauntlet', label: 'Ковка', fn: () => ui.open('forge') });
+    if (b.type === 'embassy' && b.level > 0) btns.push({ icon: 'banner', label: 'Союз', fn: () => ui.open('alliance'), pulse: g.s.alliance.gifts.length > 0 });
     if ((b.type === 'wall' || b.type === 'watchtower') && b.level > 0) btns.push({ icon: 'tower', label: 'Оборона', fn: () => ui.open('wall') });
     if (b.type === 'citadel') btns.push({ icon: 'castle', label: 'Профиль', fn: () => ui.open('profile') });
     if (PRODUCTION_RES[b.type] && b.stored >= 1) btns.push({ icon: PRODUCTION_RES[b.type]!, label: 'Собрать', fn: () => { g.collect(plot); ga.city.refresh(); } });

@@ -18,6 +18,10 @@ import { ROW_REQ, TALENT_BY_ID, emptyTalentFx, spentIn, talentFx, talentPointsTo
 import { BLUEPRINT_BY_ID, SETS, itemStats, rollRarity, type GearItem, type SetId } from '../data/gear';
 import { PLOTS } from '../data/cityLayout';
 import { EVENTS, eventAt, rivalScore, type EventType } from '../data/events';
+import {
+  ALLIANCE_SHOP, ALLIANCE_TECH_BY_ID, DONATION_CONTRIB, DONATION_PROGRESS, HELPS_PER_JOB, HELP_CONTRIB, HELP_DAILY_CAP, MEMBERS, REQUEST_KINDS,
+  allianceLevelXp, donationCost, giftReward, techNeed,
+} from '../data/alliance';
 import { TROOPS, TYPE_INFO } from '../data/troops';
 import { TITAN_BY_ID, campName, campTroops, nodeRate, riftTroops } from '../data/world';
 import { computeEffects, heroUtility, type Effects } from './bonuses';
@@ -150,6 +154,7 @@ export class Game {
     }
     // healing
     this.healTick(dt);
+    this.allianceTick(now);
     // jobs
     const done = s.jobs.filter((j) => j.end <= now).sort((a, b) => a.end - b.end);
     for (const j of done) this.completeJob(j);
@@ -981,7 +986,9 @@ export class Game {
   predict(l: { lead: string | null; deputy: string | null; troops: Troops }, o: WorldObject): { label: string; tone: 'good' | 'warn' | 'bad'; score: number } {
     const t = this.targetArmy(o);
     if (!t || sumTroops(l.troops) <= 0) return { label: '—', tone: 'warn', score: 0 };
-    const sc = estimate(this.legionArmy(l), t);
+    const army = this.legionArmy(l);
+    if (o.kind === 'titan' || o.kind === 'rift') army.mods.atk += this.allianceSupport();
+    const sc = estimate(army, t);
     if (sc >= 1.6) return { label: 'Лёгкая победа', tone: 'good', score: sc };
     if (sc >= 1.2) return { label: 'Победа', tone: 'good', score: sc };
     if (sc >= 1) return { label: 'Тяжёлый бой', tone: 'warn', score: sc };
@@ -993,6 +1000,7 @@ export class Game {
     const def = this.targetArmy(o);
     if (!def) { this.startReturn(l, t); return; }
     const att = this.legionArmy(l);
+    if (o.kind === 'titan' || o.kind === 'rift') att.mods.atk += this.allianceSupport();
     const aPow = armyPower(att), dPow = armyPower(def);
     const startTroops = { ...l.troops };
     const res = simulateBattle(att, def, (o.id * 131 + t) | 0);
@@ -1241,6 +1249,129 @@ export class Game {
     bus.emit('raid-resolved', { win: !res.win });
     bus.emit('state');
   }
+
+  // ————————————————————————————————————————— alliance
+  allianceOn() { return this.level('embassy') > 0; }
+
+  requestHelp(jobId: number, now = this.now()): Result {
+    if (!this.allianceOn()) return fail('Постройте Посольство');
+    const j = this.s.jobs.find((x) => x.id === jobId);
+    if (!j || (j.kind !== 'build' && j.kind !== 'research')) return fail('Недоступно');
+    if (j.helpReq) return fail('Помощь уже запрошена');
+    j.helpReq = true; j.helps = 0; j.nextHelp = now + 15_000;
+    bus.emit('state');
+    return OK;
+  }
+
+  private allianceTick(now: number) {
+    if (!this.allianceOn()) return;
+    const a = this.s.alliance;
+    const day = dayKey(now);
+    if (a.day !== day) { a.day = day; a.helpsToday = 0; a.donationsToday = 0; a.shopToday = {}; }
+    const max = HELPS_PER_JOB(this.level('embassy'));
+    for (const j of this.s.jobs) {
+      if (!j.helpReq) continue;
+      let guard = 0;
+      while ((j.helps ?? 0) < max && (j.nextHelp ?? 0) <= now && j.end > (j.nextHelp ?? 0) && guard++ < 50) {
+        const cut = Math.max(60_000, (j.end - j.start) * 0.01);
+        j.end -= cut; j.start -= cut;
+        j.helps = (j.helps ?? 0) + 1;
+        j.nextHelp = (j.nextHelp ?? now) + 20_000 + ((j.id * 7919 + j.helps * 104729) % 40_000);
+      }
+    }
+    // allies ask for help and share gifts (gifts accumulate offline too)
+    if (!a.nextRequest) a.nextRequest = Math.min(now, this.s.lastTick) + 60_000;
+    let g2 = 0;
+    while (a.nextRequest <= now && g2++ < 10) {
+      if (a.requests.length < 6) {
+        const id = this.uid();
+        a.requests.push({ id, member: MEMBERS[id % MEMBERS.length].id, kind: REQUEST_KINDS[id % REQUEST_KINDS.length] });
+      }
+      a.nextRequest += (6 + (a.nextRequest % 7)) * 60_000;
+    }
+    if (!a.nextGift) a.nextGift = Math.min(now, this.s.lastTick) + 20 * 60_000;
+    let g3 = 0;
+    while (a.nextGift <= now && g3++ < 10) {
+      if (a.gifts.length < 5) { const id = this.uid(); a.gifts.push({ id, at: a.nextGift, from: MEMBERS[(id * 5) % MEMBERS.length].id }); }
+      a.nextGift += (150 + (a.nextGift / 1000 % 120)) * 60_000;
+    }
+  }
+
+  private allianceXp(n: number) {
+    const a = this.s.alliance;
+    a.xp += n;
+    while (a.xp >= allianceLevelXp(a.level) && a.level < 20) { a.xp -= allianceLevelXp(a.level); a.level++; bus.emit('alliance-level', a.level); }
+  }
+
+  helpAllies(): number {
+    const a = this.s.alliance;
+    let n = 0;
+    while (a.requests.length && a.helpsToday < HELP_DAILY_CAP) {
+      a.requests.shift();
+      a.helpsToday++;
+      a.contribution += HELP_CONTRIB;
+      this.s.stats.allianceHelps++;
+      this.allianceXp(5);
+      n++;
+    }
+    if (n) bus.emit('state');
+    return n;
+  }
+
+  claimGifts(rnd = Math.random): Reward | null {
+    const a = this.s.alliance;
+    if (!a.gifts.length) return null;
+    const items: Record<string, number> = {};
+    const res: ResBag = {};
+    for (const _ of a.gifts) {
+      const r = giftReward(a.level, rnd);
+      for (const [k, v] of Object.entries(r.items ?? {})) items[k] = (items[k] ?? 0) + v;
+      for (const [k, v] of Object.entries(r.res ?? {})) res[k as Currency] = (res[k as Currency] ?? 0) + (v ?? 0);
+      this.allianceXp(10);
+    }
+    a.gifts = [];
+    const reward = { items, res };
+    this.grant(reward);
+    bus.emit('state');
+    return reward;
+  }
+
+  donate(techId: string): Result {
+    const t = ALLIANCE_TECH_BY_ID[techId];
+    const a = this.s.alliance;
+    if (!t || !this.allianceOn()) return fail('Недоступно');
+    const st = a.techs[techId] ?? { level: 0, progress: 0 };
+    if (st.level >= t.max) return fail('Технология изучена полностью');
+    if (a.donationsToday >= 20) return fail('Лимит пожертвований на сегодня');
+    const cost = donationCost(this.citadel);
+    if (!this.has(cost)) return fail('Недостаточно ресурсов');
+    this.pay(cost);
+    st.progress += DONATION_PROGRESS;
+    while (st.level < t.max && st.progress >= techNeed(st.level)) { st.progress -= techNeed(st.level); st.level++; }
+    a.techs[techId] = st;
+    a.donationsToday++;
+    a.contribution += DONATION_CONTRIB;
+    this.allianceXp(20);
+    this.fx = computeEffects(this.s);
+    bus.emit('state');
+    return OK;
+  }
+
+  buyAlliance(shopId: string): Result {
+    const it = ALLIANCE_SHOP.find((x) => x.id === shopId);
+    const a = this.s.alliance;
+    if (!it) return fail('Нет товара');
+    if ((a.shopToday[shopId] ?? 0) >= it.daily) return fail('Лимит покупок на сегодня');
+    if (a.contribution < it.price) return fail('Недостаточно очков вклада');
+    a.contribution -= it.price;
+    a.shopToday[shopId] = (a.shopToday[shopId] ?? 0) + 1;
+    this.addItems({ [it.item]: it.count });
+    bus.emit('state');
+    return OK;
+  }
+
+  /** Allied banners join battles against titans and rifts. */
+  allianceSupport(): number { return this.allianceOn() ? 0.05 + this.level('embassy') * 0.01 + this.s.alliance.level * 0.005 : 0; }
 
   // ————————————————————————————————————————— events
   currentEvent(now = this.s.lastTick) { return eventAt(now, this.s.created); }
@@ -1631,6 +1762,8 @@ export function migrate(s: GameState) {
   if (s.raidCooldown == null) s.raidCooldown = 0;
   if (!s.flags) s.flags = {};
   if (!s.gear) s.gear = [];
+  if (!s.alliance) s.alliance = { level: 1, xp: 0, contribution: 0, day: '', helpsToday: 0, donationsToday: 0, techs: {}, gifts: [], requests: [], nextGift: 0, nextRequest: 0, shopToday: {} };
+  if (s.stats.allianceHelps == null) s.stats.allianceHelps = 0;
   if (!s.event) s.event = { key: '', points: 0, claimed: [], wave: 0, nextWave: 0 };
   if (s.stats.crafted == null) s.stats.crafted = 0;
   // plots added in later versions

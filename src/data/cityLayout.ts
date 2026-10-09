@@ -31,6 +31,7 @@ export const PLOTS: Plot[] = [
   { id: 'sanctum', type: 'sanctum', x: 1400, y: 1440, unlock: 8 },
   { id: 'spire', type: 'spire', x: 2330, y: 1110, unlock: 10 },
   { id: 'forge', type: 'forge', x: 1770, y: 1250, unlock: 6 },
+  { id: 'embassy', type: 'embassy', x: 990, y: 1390, unlock: 3 },
 
   { id: 'farm1', type: 'farm', x: 640, y: 1080, unlock: 1 },
   { id: 'farm2', type: 'farm', x: 430, y: 960, unlock: 1 },

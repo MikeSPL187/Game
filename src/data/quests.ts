@@ -3,7 +3,7 @@ import type { BuildingId, GameState, Reward } from '../core/types';
 export type GoTarget =
   | { kind: 'building'; type: BuildingId; action?: 'upgrade' | 'train' | 'research' | 'summon' | 'info' }
   | { kind: 'world'; find?: 'camp' | 'node' | 'ruin' | 'titan' | 'lord' | 'rift'; level?: number; titan?: string }
-  | { kind: 'panel'; panel: 'heroes' | 'research' | 'inventory' | 'titans' };
+  | { kind: 'panel'; panel: 'heroes' | 'research' | 'inventory' | 'titans' | 'alliance' };
 
 export interface QuestDef {
   id: string;
@@ -101,6 +101,8 @@ export const CHAPTERS: ChapterDef[] = [
       named(B('citadel', 4, { res: { food: 2500, wood: 2500 } }), 'Улучшите Цитадель до 4 ур.'),
       named(B('range', 1, { res: { wood: 1500 } }), 'Постройте Стрельбище'),
       { id: 'ruin2', title: 'Исследуйте 2 руины', target: 2, progress: (s) => s.stats.ruinsExplored, go: { kind: 'world', find: 'ruin' }, reward: { items: { chest_small: 1 } } },
+      named(B('embassy', 1, { items: { speed15: 2 } }), 'Постройте Посольство'),
+      { id: 'ally3', title: 'Помогите союзникам 3 раза', target: 3, progress: (s) => s.stats.allianceHelps ?? 0, go: { kind: 'panel', panel: 'alliance' }, reward: { res: { gold: 600 }, items: { speed5: 3 } } },
       { id: 'troops200', title: 'Соберите армию из 200 воинов', target: 200, progress: totalTroops, go: { kind: 'building', type: 'barracks', action: 'train' }, reward: { res: { food: 2500 } } },
     ],
   },
@@ -182,6 +184,7 @@ export const DAILIES: DailyDef[] = [
   { id: 'd_research', title: 'Завершите 1 исследование', target: 1, points: 15, stat: 'researchDone' },
   { id: 'd_summon', title: 'Призовите героя', target: 1, points: 10, stat: 'summons' },
   { id: 'd_ruin', title: 'Исследуйте руину', target: 1, points: 10, stat: 'ruinsExplored' },
+  { id: 'd_help', title: 'Помогите союзникам 5 раз', target: 5, points: 10, stat: 'allianceHelps' },
 ];
 
 export const DAILY_CHESTS: { points: number; reward: Reward }[] = [

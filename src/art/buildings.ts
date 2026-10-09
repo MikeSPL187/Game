@@ -522,6 +522,42 @@ function forge(t: number, p: Pal): ArtResult {
   return done();
 }
 
+/** Embassy: council hall with a round tower and banners of the allied houses. */
+function embassy(t: number, p: Pal): ArtResult {
+  const { s, cx, cy, done } = frame(280, 280, 210);
+  shadowEllipse(s, cx, cy + 4, 112, 42, 0.25);
+  groundPad(s, cx, cy, 70, 56, shade(p.stone, -0.08), 5);
+  // plaza flagstones
+  s.ellipse(cx + 34, cy + 22, 34, 14, shade(p.stone, 0.12), `stroke="${shade(p.stone, -0.35)}" stroke-width=".8"`);
+  // tower behind the hall
+  const [tx, ty] = iso(cx - 6, cy - 14, -26, -18, 0);
+  const top = isoCylinder(s, tx, ty, 13, 62 + t * 8, p.stone, 0, { brick: true, windows: true, crenel: t >= 3, trim: t >= 2 ? p.trim : undefined });
+  if (t < 3) isoCone(s, tx, top, 15, 26, p.roof);
+  flag(s, tx, t < 3 ? top - 26 : top - 6, 22, p.banner, p.trim);
+  // hall
+  const h = 30 + t * 4;
+  isoBox(s, cx - 6, cy - 14, 44, 30, h, p.plaster, { pattern: 'none', windows: { n: 3, rows: t >= 3 ? 2 : 1 }, trim: p.trim });
+  isoGable(s, cx - 6, cy - 14, 44, 30, h, 24, p.roof, 4);
+  // gate arch on the front face
+  const [gx, gy] = iso(cx - 6, cy - 14, 0, 30, 0);
+  s.path(`M${gx - 8},${gy + 4} L${gx - 8},${gy - 12} Q${gx},${gy - 22} ${gx + 8},${gy - 8} L${gx + 8},${gy + 8} Z`, '#2a1d14', `stroke="${p.trim}" stroke-width="1.4"`);
+  // allied house banners on poles along the plaza
+  const houses = ['#c84a3a', '#3a7ad8', '#4aa85a', '#d8a83a', '#8a4ad8', '#3ab8b8'];
+  const n = 2 + t;
+  for (let i = 0; i < n; i++) {
+    const bx = cx + 6 + i * 14, by = cy + 30 - i * 7;
+    s.line(bx, by, bx, by - 40, '#3a2a1a', 2);
+    s.circle(bx, by - 41, 2, p.trim);
+    banner(s, bx + 6, by - 38, 10, 20, houses[i % houses.length], '#f0e6c8');
+  }
+  // round council table / fountain in the plaza
+  s.ellipse(cx + 34, cy + 20, 12, 6, shade(p.stone, -0.2), `stroke="${shade(p.stone, -0.5)}" stroke-width=".8"`);
+  s.ellipse(cx + 34, cy + 18, 9, 4.4, t >= 4 ? '#7fe3ff' : '#5a9ad8');
+  if (t >= 4) crystal(s, cx + 34, cy + 14, 14, '#7fe3ff');
+  if (t >= 2) banner(s, cx - 66, cy - 44, 12, 28, p.banner, p.trim);
+  return done();
+}
+
 /** Wall segment along an iso axis — used for the ring around the city. */
 export function wallSegment(t: number, p: Pal, len: number, axis: 'x' | 'y'): ArtResult {
   const h = t <= 1 ? 34 : 40 + t * 4;
@@ -606,5 +642,6 @@ export function buildingArt(type: BuildingId, level: number, faction: FactionId)
     case 'watchtower': return watchtower(t, p);
     case 'sanctum': return sanctum(t, p);
     case 'forge': return forge(t, p);
+    case 'embassy': return embassy(t, p);
   }
 }

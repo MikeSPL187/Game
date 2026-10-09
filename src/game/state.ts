@@ -12,7 +12,7 @@ export function emptyStats(): Stats {
   return {
     campsDefeated: 0, maxCampLevel: 0, gathered: 0, troopsTrained: 0, summons: 0, ruinsExplored: 0,
     raidsDefended: 0, raidsLost: 0, lordsDefeated: 0, riftsCleared: 0, collects: 0, researchDone: 0,
-    heroLevelUps: 0, buildsDone: 0, healed: 0, crafted: 0,
+    heroLevelUps: 0, buildsDone: 0, healed: 0, crafted: 0, allianceHelps: 0,
   };
 }
 
@@ -53,6 +53,7 @@ export function newGame(faction: FactionId, name: string, seed = (Math.random() 
     raidCooldown: 0,
     inventory: { speed1: 5, speed5: 3, key_silver: 1, tome1: 2 },
     gear: [],
+    alliance: { level: 1, xp: 0, contribution: 0, day: '', helpsToday: 0, donationsToday: 0, techs: {}, gifts: [], requests: [], nextGift: 0, nextRequest: 0, shopToday: {} },
     event: { key: '', points: 0, claimed: [], wave: 0, nextWave: 0 },
     reports: [],
     stats: emptyStats(),

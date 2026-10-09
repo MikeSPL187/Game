@@ -13,7 +13,7 @@ export type BuildingId =
   | 'citadel' | 'farm' | 'sawmill' | 'quarry' | 'goldmine'
   | 'barracks' | 'range' | 'stable' | 'spire'
   | 'academy' | 'infirmary' | 'tavern' | 'warehouse' | 'wall'
-  | 'watchtower' | 'sanctum' | 'forge';
+  | 'watchtower' | 'sanctum' | 'forge' | 'embassy';
 
 export interface BuildingState {
   plot: string;
@@ -34,6 +34,10 @@ export interface Job {
   count?: number;
   tech?: string;
   troops?: Troops;
+  /** alliance help */
+  helpReq?: boolean;
+  helps?: number;
+  nextHelp?: number;
 }
 
 export interface HeroState {
@@ -189,6 +193,7 @@ export interface Stats {
   buildsDone: number;
   healed: number;
   crafted: number;
+  allianceHelps: number;
 }
 
 export interface QuestState {
@@ -225,6 +230,13 @@ export interface GameState {
   /** no new raid from any lord before this time */
   raidCooldown: number;
   inventory: Record<string, number>;
+  alliance: {
+    level: number; xp: number; contribution: number; day: string; helpsToday: number; donationsToday: number;
+    techs: Record<string, { level: number; progress: number }>;
+    gifts: { id: number; at: number; from: string }[];
+    requests: { id: number; member: string; kind: string }[];
+    nextGift: number; nextRequest: number; shopToday: Record<string, number>;
+  };
   event: { key: string; points: number; claimed: number[]; wave: number; nextWave: number };
   gear: { uid: number; bp: string; rarity: 0 | 1 | 2 | 3; hero: string | null }[];
   reports: Report[];

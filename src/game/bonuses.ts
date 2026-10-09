@@ -3,6 +3,7 @@ import type { EffectKey } from '../data/research';
 import { TECH_BY_ID } from '../data/research';
 import { FACTIONS } from '../data/world';
 import { HERO_BY_ID } from '../data/heroes';
+import { ALLIANCE_TECH_BY_ID } from '../data/alliance';
 
 export type Effects = Record<EffectKey, number>;
 
@@ -19,6 +20,10 @@ export function computeEffects(s: GameState): Effects {
   for (const [id, lvl] of Object.entries(s.research)) {
     const t = TECH_BY_ID[id];
     if (t && lvl > 0) e[t.effect] += t.per * lvl;
+  }
+  for (const [id, t] of Object.entries(s.alliance?.techs ?? {})) {
+    const def = ALLIANCE_TECH_BY_ID[id];
+    if (def && t.level > 0) e[def.effect] += def.per * t.level;
   }
   const f = FACTIONS[s.player.faction];
   for (const [k, v] of Object.entries(f.bonuses)) e[k as EffectKey] += v ?? 0;

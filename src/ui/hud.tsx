@@ -9,6 +9,7 @@ import { EVENTS } from '../data/events';
 import { TECH_BY_ID } from '../data/research';
 import { TROOPS } from '../data/troops';
 import { BUILDER_COUNT, sumTroops } from '../game/game';
+import { HELP_DAILY_CAP } from '../data/alliance';
 import { Bar, Icon, IconBtn, Timer, ga, haptic, ui, useGame, useNow } from './core';
 import { goTo } from './nav';
 import { sfx } from '../audio/audio';
@@ -211,6 +212,7 @@ export function BottomBar() {
         <IconBtn icon="troops" label="Армия" onClick={() => ui.open('army')} />
         <IconBtn icon="book" label="Наука" onClick={() => (g.level('academy') ? ui.open('research') : goTo({ kind: 'building', type: 'academy' }))} />
         <IconBtn icon="bag" label="Сумка" onClick={() => ui.open('inventory')} />
+        <IconBtn icon="banner" label="Союз" badge={g.allianceOn() && (g.s.alliance.gifts.length > 0 || (g.s.alliance.requests.length > 0 && g.s.alliance.helpsToday < HELP_DAILY_CAP))} onClick={() => (g.allianceOn() || g.citadel < 3 ? ui.open('alliance') : goTo({ kind: 'building', type: 'embassy' }))} />
         {view === 'world' && <IconBtn icon="map" label="Поиск" onClick={() => ui.open('search')} />}
         {view === 'world' && <IconBtn icon="home" label="Домой" onClick={() => { const c = g.cityPos(); ga.world.focusTile(c.x, c.y, 0.6); }} />}
       </div>

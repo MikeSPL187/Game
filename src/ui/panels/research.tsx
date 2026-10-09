@@ -3,6 +3,7 @@ import { fmtPct, fmtTime } from '../../core/format';
 import { TECHS, TECH_BY_ID } from '../../data/research';
 import { Bar, Btn, Cost, Icon, Panel, Timer, act, ui, useGame } from '../core';
 import { goTo } from '../nav';
+import { HelpBtn } from './alliance';
 
 const W = 150, H = 96;
 
@@ -56,6 +57,7 @@ export function ResearchPanel() {
               <div class="row"><b class="grow">{TECH_BY_ID[job.tech!].name} → {job.toLevel}</b><b><Timer end={job.end} /></b></div>
               <Bar value={Date.now() - job.start} max={job.end - job.start} kind="blue" />
               {job.end - Date.now() <= 180000 ? <Btn kind="green" onClick={() => act(g.freeFinish(job.id), 'complete')}>Бесплатно</Btn> : <Btn kind="blue" onClick={() => ui.open('speedup', { jobId: job.id })}>Ускорить</Btn>}
+              <HelpBtn job={job} wide />
             </div>
           ) : !st.maxed && (
             <>

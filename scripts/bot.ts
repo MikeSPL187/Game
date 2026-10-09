@@ -30,6 +30,7 @@ let sessionMinutes = 0;
 function plotsOf(t: BuildingId) { return g.s.buildings.filter((b) => b.type === t); }
 function tryUpgrade(plot: string): boolean {
   const r = g.upgrade(plot, now);
+  if (r.ok && g.allianceOn()) for (const j of g.s.jobs) if (j.kind === 'build' && !j.helpReq) g.requestHelp(j.id, now);
   return r.ok;
 }
 function wantBuild(): string[] {
@@ -73,6 +74,13 @@ function act() {
   }
   if (g.calendarReady()) g.claimCalendar();
   for (let i = 0; i < 5; i++) g.claimEventMilestone(i);
+  // alliance: help, take gifts, ask for help, donate surplus, shop
+  if (g.allianceOn()) {
+    g.helpAllies();
+    g.claimGifts();
+    for (const j of g.s.jobs) if ((j.kind === 'build' || j.kind === 'research') && !j.helpReq) g.requestHelp(j.id, now);
+    for (const id of ['s_speed60', 's_speed15', 's_tome2']) while (g.buyAlliance(id).ok) { /* spend */ }
+  }
   // chests & items
   for (const id of ['chest_small', 'chest_big']) while ((g.s.inventory[id] ?? 0) > 0) g.useItem(id);
   // build

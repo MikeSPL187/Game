@@ -8,6 +8,7 @@ import { FREE_SPEEDUP_MS } from '../../game/game';
 import { Bar, Btn, Cost, Icon, Panel, Timer, act, ga, toast, ui, useGame } from '../core';
 import { focusBuilding, plotFor } from '../nav';
 import { sfx } from '../../audio/audio';
+import { HelpBtn } from './alliance';
 
 const artCache = new Map<string, string>();
 export function buildingImg(type: any, level: number) {
@@ -48,6 +49,7 @@ export function UpgradePanel({ plot }: { plot: string }) {
                 {job.end - Date.now() <= FREE_SPEEDUP_MS
                   ? <Btn kind="green" wide onClick={() => { if (act(g.freeFinish(job.id), 'complete')) ui.close(); }}>Бесплатно завершить</Btn>
                   : <Btn kind="blue" wide onClick={() => ui.open('speedup', { jobId: job.id })}><Icon name="hourglass" size={22} /> Ускорить</Btn>}
+                <HelpBtn job={job} />
                 <Btn kind="dark" size="small" onClick={() => { if (confirm('Отменить строительство? Вернётся 50% ресурсов.')) { act(g.cancelJob(job.id)); } }}>Отмена</Btn>
               </div>
             </div>
@@ -114,6 +116,7 @@ export function SpeedupPanel({ jobId }: { jobId: number }) {
       <div class="col">
         <div class="card row"><Icon name="clock" size={30} /><b class="grow">Осталось</b><b style={{ fontSize: 22 }}><Timer end={job.end} /></b></div>
         <Bar value={Date.now() - job.start} max={job.end - job.start} kind="blue" />
+        <HelpBtn job={job} wide />
         {(job.kind === 'build' || job.kind === 'research') && rem <= FREE_SPEEDUP_MS && <Btn kind="green" wide onClick={() => { if (act(g.freeFinish(job.id), 'complete')) ui.close(); }}>Бесплатно завершить</Btn>}
         {items.map((id) => {
           const n = g.s.inventory[id] ?? 0;
