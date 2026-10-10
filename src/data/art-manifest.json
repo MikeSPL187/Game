@@ -103,6 +103,22 @@
   "ax": 0.5,
   "ay": 0.715
  },
+ "bld_embassy_order_t1": {
+  "file": "bld_embassy_order_t1.webp",
+  "w": 687,
+  "h": 725,
+  "size": 222,
+  "ax": 0.5,
+  "ay": 0.745
+ },
+ "bld_embassy_order_t2": {
+  "file": "bld_embassy_order_t2.webp",
+  "w": 765,
+  "h": 768,
+  "size": 239,
+  "ax": 0.5,
+  "ay": 0.731
+ },
  "bld_embassy_order_t3": {
   "file": "bld_embassy_order_t3.webp",
   "w": 747,
