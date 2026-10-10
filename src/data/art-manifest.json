@@ -1,4 +1,36 @@
 {
+ "bld_academy_order_t1": {
+  "file": "bld_academy_order_t1.webp",
+  "w": 583,
+  "h": 652,
+  "size": 222,
+  "ax": 0.5,
+  "ay": 0.77
+ },
+ "bld_academy_order_t2": {
+  "file": "bld_academy_order_t2.webp",
+  "w": 654,
+  "h": 768,
+  "size": 239,
+  "ax": 0.5,
+  "ay": 0.78
+ },
+ "bld_academy_order_t3": {
+  "file": "bld_academy_order_t3.webp",
+  "w": 694,
+  "h": 768,
+  "size": 252,
+  "ax": 0.5,
+  "ay": 0.767
+ },
+ "bld_academy_order_t4": {
+  "file": "bld_academy_order_t4.webp",
+  "w": 628,
+  "h": 768,
+  "size": 265,
+  "ax": 0.5,
+  "ay": 0.789
+ },
  "bld_barracks_order_t1": {
   "file": "bld_barracks_order_t1.webp",
   "w": 659,
@@ -238,6 +270,22 @@
   "size": 167,
   "ax": 0.5,
   "ay": 0.854
+ },
+ "bld_spire_order_t3": {
+  "file": "bld_spire_order_t3.webp",
+  "w": 395,
+  "h": 768,
+  "size": 176,
+  "ax": 0.5,
+  "ay": 0.857
+ },
+ "bld_spire_order_t4": {
+  "file": "bld_spire_order_t4.webp",
+  "w": 461,
+  "h": 768,
+  "size": 185,
+  "ax": 0.5,
+  "ay": 0.833
  },
  "bld_stable_order_t1": {
   "file": "bld_stable_order_t1.webp",
