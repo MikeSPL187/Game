@@ -110,16 +110,19 @@ export function Panel(p: { title: ComponentChildren; children: ComponentChildren
   return (
     <div class="overlay" onClick={() => (p.onClose ?? (() => ui.close()))()}>
       <div class="panel" style={{ width: p.width ?? 900, height: p.height }} onClick={(e) => e.stopPropagation()}>
+        <i class="pc tl" /><i class="pc tr" /><i class="pc bl" /><i class="pc br" />
         <div class="panel-head">
-          {p.icon && <Icon name={p.icon} size={34} />}
+          <i class="fl l" />
+          {p.icon && <Icon name={p.icon} size={36} />}
           <div class="panel-title">{p.title}</div>
+          <i class="fl r" />
           <button class="panel-close" onClick={() => (p.onClose ?? (() => ui.close()))()}>✕</button>
         </div>
         {p.tabs && (
           <div class="tabs">
             {p.tabs.map((t) => (
               <button class={'tab' + (t.id === p.tab ? ' on' : '')} onClick={() => { sfx('page'); p.onTab?.(t.id); }}>
-                {t.label}{t.badge && <span class="badge dot" style={{ top: -3, right: -3 }} />}
+                <span>{t.label}</span>{t.badge && <span class="badge dot" style={{ top: -3, right: -3 }} />}
               </button>
             ))}
           </div>

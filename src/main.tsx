@@ -9,6 +9,7 @@ import '@fontsource/nunito/latin-400.css';
 import '@fontsource/nunito/latin-700.css';
 import '@fontsource/nunito/latin-800.css';
 import './styles/main.css';
+import './styles/ui.css';
 import { render } from 'preact';
 import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';

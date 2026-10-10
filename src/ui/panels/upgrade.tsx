@@ -4,6 +4,8 @@ import { BUILDINGS, buildingPerks } from '../../data/buildings';
 import { PLOT_BY_ID } from '../../data/cityLayout';
 import { buildingArt, tierOf } from '../../art/buildings';
 import { svgUrl } from '../../art/svg';
+import { bldArtName } from '../../art/artMap';
+import { artUrl, hasArt } from '../../art/manifest';
 import { FREE_SPEEDUP_MS } from '../../game/game';
 import { Bar, Btn, Cost, Icon, Panel, Timer, act, ga, toast, ui, useGame } from '../core';
 import { focusBuilding, plotFor } from '../nav';
@@ -15,7 +17,11 @@ export function buildingImg(type: any, level: number) {
   const f = ga.game.s.player.faction;
   const k = `${type}:${tierOf(Math.max(1, level))}:${f}`;
   let u = artCache.get(k);
-  if (!u) { u = svgUrl(buildingArt(type, Math.max(1, level), f).svg); artCache.set(k, u); }
+  if (!u) {
+    const name = bldArtName(type, f, tierOf(Math.max(1, level)));
+    u = hasArt(name) ? artUrl(name) : svgUrl(buildingArt(type, Math.max(1, level), f).svg);
+    artCache.set(k, u);
+  }
   return u;
 }
 
