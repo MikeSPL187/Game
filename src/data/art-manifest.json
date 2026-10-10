@@ -598,5 +598,189 @@
   "size": 167,
   "ax": 0.475,
   "ay": 0.877
+ },
+ "ui_badge_level": {
+  "file": "ui_badge_level.webp",
+  "w": 578,
+  "h": 263,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_bar_bottom": {
+  "file": "ui_bar_bottom.webp",
+  "w": 1024,
+  "h": 174,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_bar_frame": {
+  "file": "ui_bar_frame.webp",
+  "w": 568,
+  "h": 77,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_bar_top": {
+  "file": "ui_bar_top.webp",
+  "w": 1024,
+  "h": 94,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_btn_blue": {
+  "file": "ui_btn_blue.webp",
+  "w": 846,
+  "h": 351,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_btn_gold": {
+  "file": "ui_btn_gold.webp",
+  "w": 845,
+  "h": 349,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_btn_green": {
+  "file": "ui_btn_green.webp",
+  "w": 844,
+  "h": 349,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_btn_red": {
+  "file": "ui_btn_red.webp",
+  "w": 845,
+  "h": 351,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_card": {
+  "file": "ui_card.webp",
+  "w": 555,
+  "h": 298,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_close": {
+  "file": "ui_close.webp",
+  "w": 440,
+  "h": 431,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_frame_portrait": {
+  "file": "ui_frame_portrait.webp",
+  "w": 581,
+  "h": 602,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_header": {
+  "file": "ui_header.webp",
+  "w": 1024,
+  "h": 267,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_panel": {
+  "file": "ui_panel.webp",
+  "w": 1024,
+  "h": 561,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_plate_name": {
+  "file": "ui_plate_name.webp",
+  "w": 1024,
+  "h": 162,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_plate_quest": {
+  "file": "ui_plate_quest.webp",
+  "w": 1024,
+  "h": 313,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_ring": {
+  "file": "ui_ring.webp",
+  "w": 467,
+  "h": 448,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_ring_big": {
+  "file": "ui_ring_big.webp",
+  "w": 578,
+  "h": 570,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_slot_common": {
+  "file": "ui_slot_common.webp",
+  "w": 374,
+  "h": 364,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_slot_epic": {
+  "file": "ui_slot_epic.webp",
+  "w": 418,
+  "h": 401,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_slot_legendary": {
+  "file": "ui_slot_legendary.webp",
+  "w": 416,
+  "h": 407,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_slot_rare": {
+  "file": "ui_slot_rare.webp",
+  "w": 411,
+  "h": 396,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_tab": {
+  "file": "ui_tab.webp",
+  "w": 250,
+  "h": 483,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "ui_tab_on": {
+  "file": "ui_tab_on.webp",
+  "w": 250,
+  "h": 483,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
  }
 }

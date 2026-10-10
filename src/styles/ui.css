@@ -281,3 +281,31 @@
 .bmenu .title { font-size: 18px; color: #ffe39a; text-shadow: 0 2px 0 #1a0e02, 0 0 10px rgba(255,200,90,.35); }
 .bmenu .acts { gap: 18px; margin-top: 6px; }
 .bmenu .iconbtn .lbl { bottom: -22px; }
+
+/* ——— raster kit fit (measured on the generated pieces) */
+.k-card .card { border-width: 12px 12px; border-image-width: 20px; padding: 6px 10px; }
+.k-tab .tab, .k-tab-on .tab.on { background: none; border: 0 solid transparent; border-width: 6px 10px 2px; border-image-slice: 18% 28% 12% fill; border-image-width: 10px 14px 4px; border-image-repeat: stretch; padding: 6px 14px 6px; }
+.k-tab .tab { border-image-source: var(--ui-tab); }
+.k-tab-on .tab.on { border-image-source: var(--ui-tab-on); color: #2a1804; }
+.k-plate-quest .side-left { width: 340px; }
+.k-plate-quest .quest-tracker { padding: 18px 46px 20px 40px; min-height: 104px; }
+.k-plate-quest .quest-tracker .qc { margin-top: 2px; }
+.k-plate-name .lord-name { padding-left: 34px; min-width: 190px; height: 34px; }
+.k-bar-top .resplate { padding: 0 34px 0 48px; }
+.k-bar-bottom .mbtn { padding-bottom: 16px; height: 98px; }
+.k-bar-bottom .mbtn .ml { font-size: 13px; }
+.k-bar-bottom .botplate { padding: 0 64px; height: 88px; }
+.k-btn-gold .btn, .k-btn-green .btn.green, .k-btn-blue .btn.blue, .k-btn-red .btn.red { padding-left: 26px; padding-right: 26px; }
+.k-panel .panel { border-width: 18px 20px 24px; }
+.k-panel .panel-body { padding: 12px 18px 14px; }
+.k-tab-on .tab.on { border-image-source: var(--ui-btn-gold, var(--ui-tab-on)); border-image-slice: 38% 18% fill; border-image-width: 100% 18px; border-width: 0 6px; }
+.k-plate-quest .side-left { width: 360px; }
+.k-plate-quest .quest-tracker { padding: 24px 46px 24px 44px; min-height: 122px; gap: 10px; }
+.k-plate-quest .quest-tracker .qt { font-size: 13px; line-height: 1.15; }
+.k-plate-quest .quest-tracker .qi { width: 40px; height: 40px; }
+.k-plate-quest .quest-tracker .grow { min-width: 0; }
+.k-plate-quest .quest-tracker .qc, .k-plate-quest .quest-tracker .qt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.k-plate-quest .quest-tracker { padding: 26px 46px 26px 44px; }
+.k-plate-quest .quest-tracker .qt { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.k-plate-quest .quest-tracker .btn { padding-left: 16px; padding-right: 16px; }
+.k-card .queue, .k-card .note { background: none; box-shadow: none; border: 0 solid transparent; border-width: 8px 10px; border-image: var(--ui-card) 12% fill / 16px / 0 stretch; border-radius: 0; }
