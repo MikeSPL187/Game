@@ -218,7 +218,7 @@ await page.evaluate(() => {
     const img = await load(dataUrl);
     let c = canvas(img.width, img.height);
     ctx(c).drawImage(img, 0, 0);
-    const cut = kind === 'sprite' || kind === 'unit' || kind === 'icon';
+    const cut = kind === 'sprite' || kind === 'unit' || kind === 'icon' || kind === 'ui';
     let bg = null;
     if (cut) {
       if (!hasAlpha(c)) bg = removeBackground(c);

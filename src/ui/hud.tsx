@@ -59,21 +59,27 @@ export function TopBar() {
   const g = useGame();
   const prod = g.totalProduction();
   const lead = g.s.defender && g.s.heroes[g.s.defender]?.owned ? g.s.defender : 'torvald';
+  const ach = g.achievementsReady();
   return (
     <div class="hud-top">
-      <div class="lordplate act" onClick={() => { sfx('click'); ui.open('profile'); }}>
-        <div style={{ position: 'relative', flex: 'none' }}>
-          <div class="crest"><img src={portraitUrl(lead)} /></div>
-          {g.achievementsReady() > 0 && <span class="badge" title="Достижения" style={{ top: -4, right: -6 }}>{g.achievementsReady()}</span>}
+      <div class="lord act" onClick={() => { sfx('click'); ui.open('profile'); }}>
+        <div class="lord-frame">
+          <img src={portraitUrl(lead)} />
+          <span class="lord-lv" title="Уровень Цитадели">{g.citadel}</span>
+          {ach > 0 && <span class="badge" title="Достижения" style={{ top: 0, right: 0 }}>{ach}</span>}
         </div>
-        <div class="lordinfo">
-          <div class="row" style={{ gap: 6 }}><div class="lordname">{g.s.player.name}</div><button class="act" title="Настройки" style={{ width: 26, height: 26, borderRadius: 13, background: 'rgba(0,0,0,.45)', boxShadow: '0 0 0 1px rgba(232,184,74,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={(e) => { e.stopPropagation(); sfx('click'); ui.open('settings'); }}><Icon name="gear" size={18} /></button></div>
-          <div class="power"><Icon name="power" size={22} />{fmt(g.power())}</div>
+        <div class="lord-info">
+          <div class="lord-name">
+            <span>{g.s.player.name}</span>
+            <button class="lord-gear" title="Настройки" onClick={(e) => { e.stopPropagation(); sfx('click'); ui.open('settings'); }}><Icon name="gear" size={18} /></button>
+          </div>
+          <div class="lord-power"><Icon name="power" size={22} /><b>{fmt(g.power())}</b></div>
         </div>
       </div>
-      <div class="resbar act">
+      <div class="resplate act">
         {RES.map((k) => <ResItem k={k} rate={prod[k as Res]} />)}
         <ResItem k="aether" />
+        <button class="res-plus" title="Сумка" onClick={() => { sfx('click'); ui.open('inventory'); }}>+</button>
       </div>
     </div>
   );
@@ -87,7 +93,7 @@ export function QuestTracker() {
   if (g.chapterDone()) {
     return (
       <div class="quest-tracker shine act" onClick={() => ui.open('quests')}>
-        <Icon name="trophy" size={40} />
+        <div class="qi"><Icon name="trophy" size={34} /></div>
         <div class="grow"><div class="qc">Глава {ch.n}: {ch.title}</div><div class="qt">Глава завершена! Заберите награду</div></div>
         <button class="btn small green pulse">Забрать</button>
       </div>
@@ -98,7 +104,7 @@ export function QuestTracker() {
   const done = p >= q.target;
   return (
     <div class="quest-tracker act" id="quest-tracker" onClick={() => ui.open('quests')}>
-      <Icon name="quest" size={40} />
+      <div class="qi"><Icon name="quest" size={34} /></div>
       <div class="grow">
         <div class="qc">Глава {ch.n} · {ch.title}</div>
         <div class="qt">{q.title}</div>
@@ -225,23 +231,34 @@ function EventButton() {
   return <IconBtn icon={ev.icon} label={ev.name.split(' ')[0]} badge={ready} pulse={ready} onClick={() => ui.open('event')} />;
 }
 
+function MenuBtn(p: { icon: string; label: string; badge?: boolean | number; onClick: () => void }) {
+  return (
+    <button class="mbtn" onClick={(e) => { e.stopPropagation(); sfx('click'); haptic(); p.onClick(); }}>
+      <span class="mi"><Icon name={p.icon} size={50} /></span>
+      <span class="ml">{p.label}</span>
+      {p.badge ? <span class={'badge' + (p.badge === true ? ' dot' : '')}>{p.badge === true ? '' : p.badge}</span> : null}
+    </button>
+  );
+}
+
 export function BottomBar() {
   const g = useGame();
   const view = ga.view;
   const heroBadge = Object.values(g.s.heroes).some((h) => h.owned && ((h.level < g.heroCap(h.id) && Object.keys(g.s.inventory).some((k) => k.startsWith('tome') && g.s.inventory[k] > 0)) || g.talentPoints(h.id) >= 3));
+  const allyBadge = g.allianceOn() && (g.s.alliance.gifts.length > 0 || (g.s.alliance.requests.length > 0 && g.s.alliance.helpsToday < HELP_DAILY_CAP));
   return (
     <div class="hud-bottom">
-      <div class="menubar act">
-        <IconBtn icon="hero" label="Герои" badge={heroBadge} onClick={() => ui.open('heroes')} />
-        <IconBtn icon="troops" label="Армия" onClick={() => ui.open('army')} />
-        <IconBtn icon="book" label="Наука" onClick={() => (g.level('academy') ? ui.open('research') : goTo({ kind: 'building', type: 'academy' }))} />
-        <IconBtn icon="bag" label="Сумка" onClick={() => ui.open('inventory')} />
-        <IconBtn icon="banner" label="Союз" badge={g.allianceOn() && (g.s.alliance.gifts.length > 0 || (g.s.alliance.requests.length > 0 && g.s.alliance.helpsToday < HELP_DAILY_CAP))} onClick={() => (g.allianceOn() || g.citadel < 3 ? ui.open('alliance') : goTo({ kind: 'building', type: 'embassy' }))} />
-        {view === 'world' && <IconBtn icon="map" label="Поиск" onClick={() => ui.open('search')} />}
-        {view === 'world' && <IconBtn icon="home" label="Домой" onClick={() => { const c = g.cityPos(); ga.world.focusTile(c.x, c.y, 0.6); }} />}
+      <div class="botplate act">
+        <MenuBtn icon="hero" label="Герои" badge={heroBadge} onClick={() => ui.open('heroes')} />
+        <MenuBtn icon="troops" label="Армия" onClick={() => ui.open('army')} />
+        <MenuBtn icon="book" label="Наука" onClick={() => (g.level('academy') ? ui.open('research') : goTo({ kind: 'building', type: 'academy' }))} />
+        <MenuBtn icon="bag" label="Сумка" onClick={() => ui.open('inventory')} />
+        <MenuBtn icon="banner" label="Союз" badge={allyBadge} onClick={() => (g.allianceOn() || g.citadel < 3 ? ui.open('alliance') : goTo({ kind: 'building', type: 'embassy' }))} />
+        {view === 'world' && <MenuBtn icon="map" label="Поиск" onClick={() => ui.open('search')} />}
+        {view === 'world' && <MenuBtn icon="home" label="Домой" onClick={() => { const c = g.cityPos(); ga.world.focusTile(c.x, c.y, 0.6); }} />}
       </div>
       <button class="viewbtn act" id="viewbtn" onClick={() => { sfx('horn'); haptic(true); ga.setView(view === 'city' ? 'world' : 'city'); ui.closeAll(); }}>
-        <Icon name={view === 'city' ? 'map' : 'castle'} size={56} />
+        <Icon name={view === 'city' ? 'map' : 'castle'} size={60} />
         <span>{view === 'city' ? 'Мир' : 'Город'}</span>
       </button>
     </div>

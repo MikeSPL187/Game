@@ -983,6 +983,77 @@
    "bld_wall_segment_wild"
   ]
  },
+ "U01": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "ui_panel"
+  ]
+ },
+ "U02": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "ui_header",
+   "ui_close"
+  ]
+ },
+ "U03": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "ui_btn_gold",
+   "ui_btn_green",
+   "ui_btn_blue",
+   "ui_btn_red"
+  ]
+ },
+ "U04": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "ui_ring",
+   "ui_ring_big",
+   "ui_frame_portrait",
+   "ui_badge_level"
+  ]
+ },
+ "U05": {
+  "cols": 1,
+  "rows": 2,
+  "cells": [
+   "ui_bar_top",
+   "ui_bar_bottom"
+  ]
+ },
+ "U06": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "ui_tab",
+   "ui_tab_on",
+   "ui_card",
+   "ui_bar_frame"
+  ]
+ },
+ "U07": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "ui_slot_common",
+   "ui_slot_rare",
+   "ui_slot_epic",
+   "ui_slot_legendary"
+  ]
+ },
+ "U08": {
+  "cols": 1,
+  "rows": 2,
+  "cells": [
+   "ui_plate_quest",
+   "ui_plate_name"
+  ]
+ },
  "A01": {
   "cols": 2,
   "rows": 1,

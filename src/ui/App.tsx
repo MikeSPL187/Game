@@ -174,12 +174,12 @@ function Notes() {
     return () => offs.forEach((o) => o());
   }, []);
   return (
-    <div style={{ position: 'absolute', right: 120, bottom: 120, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end', pointerEvents: 'none' }}>
+    <div style={{ position: 'absolute', right: 150, bottom: 130, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end', pointerEvents: 'none' }}>
       {notes.map((n) => (
-        <div key={n.id} class="queue act" style={{ pointerEvents: 'auto', minWidth: 300, animation: 'slidein .25s', boxShadow: n.tone === 'bad' ? '0 0 0 1px var(--bad), 0 6px 14px rgba(0,0,0,.5)' : '0 0 0 1px var(--gold3), 0 6px 14px rgba(0,0,0,.5)', background: 'rgba(14,18,32,.95)', cursor: n.fn ? 'pointer' : 'default' }}
+        <div key={n.id} class={'note act' + (n.tone === 'bad' ? ' bad' : '')} style={{ pointerEvents: 'auto', cursor: n.fn ? 'pointer' : 'default' }}
           onClick={() => { n.fn?.(); setNotes((l) => l.filter((x) => x.id !== n.id)); }}>
-          <Icon name={n.icon} size={36} />
-          <div class="grow"><b>{n.text}</b>{n.sub && <div class="mute" style={{ fontSize: 12 }}>{n.sub}</div>}</div>
+          <span class="ni"><Icon name={n.icon} size={34} /></span>
+          <div class="grow"><b>{n.text}</b>{n.sub && <div class="ns">{n.sub}</div>}</div>
         </div>
       ))}
     </div>

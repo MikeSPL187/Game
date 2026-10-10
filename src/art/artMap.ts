@@ -53,13 +53,14 @@ export function referenceArt(name: string): ArtResult | null {
   return null;
 }
 
-export type ArtKind = 'sprite' | 'icon' | 'portrait' | 'art' | 'texture' | 'unit';
+export type ArtKind = 'sprite' | 'icon' | 'portrait' | 'art' | 'texture' | 'unit' | 'ui';
 /** Processing profile by file name: cut-out sprites vs. full images, and their stored size. */
 export function artKind(name: string): { kind: ArtKind; maxPx: number } {
   if (name.startsWith('bld_')) return { kind: 'sprite', maxPx: 768 };
   if (name.startsWith('wobj_') || /^titan_.*_map$/.test(name)) return { kind: 'sprite', maxPx: 512 };
   if (name.startsWith('unit_')) return { kind: 'unit', maxPx: 384 };
   if (name.startsWith('icon_')) return { kind: 'icon', maxPx: 192 };
+  if (name.startsWith('ui_')) return { kind: 'ui', maxPx: 1024 };
   if (name.startsWith('hero_')) return { kind: 'portrait', maxPx: 900 };
   if (name.startsWith('tex_')) return { kind: 'texture', maxPx: 512 };
   return { kind: 'art', maxPx: 1600 };

@@ -243,7 +243,7 @@ writeFileSync('docs/art/prompts.json', JSON.stringify(ASSETS.map((a) => ({ ...a,
 // Cells are cut apart by scripts/art-import.mjs (objects are found by their silhouettes and
 // assigned to the grid cell their centre falls into), so slight drift off the grid is fine.
 const SHEET_RULES = (cols, rows) => `A game asset sheet: ${cols * rows > 1 ? `${cols * rows} separate images arranged in a grid of ${cols} columns and ${rows} row${rows > 1 ? 's' : ''}, each one centered in its own equal cell with wide empty space around it, nothing touching or crossing the cell borders, no grid lines, no labels` : 'one image'}`;
-const sheets = { main: [], wild: [], ash: [] };
+const sheets = { main: [], wild: [], ash: [], ui: [] };
 const sheet = (set, title, cols, rows, size, cells, body) => sheets[set].push({ title, cols, rows, size, cells, prompt: cols * rows > 1 ? `${SHEET_RULES(cols, rows)}. ${body}` : body });
 const chunk = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, i * n + n));
 const pos = (i, cols) => (cols === 2 && i < 2 ? ['Left', 'Right'][i] : `Cell ${i + 1} (row ${Math.floor(i / cols) + 1}, column ${(i % cols) + 1})`);
@@ -276,6 +276,28 @@ for (const g of chunk(ICONS, 16)) {
   sheet('main', 'Иконки: ' + g.map((x) => x[0]).join(', '), cols, rows, '1024x1024', g.map((x) => `icon_${x[0]}`),
     'A set of matching game UI icons in one consistent style, reading left to right, top to bottom: ' + g.map(([, what], i) => `${i + 1}) ${what}`).join('; ') + `. Each icon is a ${ICON}.`);
 }
+// ———————————————————————————————————————— UI kit (window chrome, buttons, plates)
+const UIS = 'premium fantasy mobile strategy game UI element, polished gold and bronze metal with fine engraving, deep royal-blue enamel, small blue sapphire gems, soft studio light from the upper left, crisp edges, perfectly symmetrical, flat front view with no perspective, isolated on a transparent background, no text, no letters, no icons, no characters';
+const UIKIT = [
+  { title: 'Рамка окна', cols: 1, rows: 1, size: '1536x1024', cells: ['ui_panel'],
+    body: `An empty rectangular game window frame: a thick ornate gold metal border with sapphire gems in all four corners and small filigree ornaments in the middle of each side, the inside is a flat plain dark navy-blue panel with a very subtle texture, the inner area is completely empty. The four sides are straight and evenly thick so the frame can be stretched as a 9-slice. ${UIS}.` },
+  { title: 'Заголовок окна + кнопка закрытия', cols: 2, rows: 1, size: '1536x1024', cells: ['ui_header', 'ui_close'],
+    body: `Left: a wide horizontal title banner plate for a window header, dark-blue enamel center framed by gold metal with pointed ornamental ends, empty center for text. Right: a round close button, red enamel disc with a gold rim and an engraved silver X cross. ${UIS}.` },
+  { title: 'Кнопки', cols: 2, rows: 2, size: '1024x1024', cells: ['ui_btn_gold', 'ui_btn_green', 'ui_btn_blue', 'ui_btn_red'],
+    body: `Four wide rectangular game buttons with rounded corners, each a glossy colored enamel body inside a thin gold metal rim, with a soft highlight on top and a darker bottom bevel, completely empty face for text. Cell 1: golden yellow. Cell 2: emerald green. Cell 3: royal blue. Cell 4: crimson red. ${UIS}.` },
+  { title: 'Круглые рамки и медальон уровня', cols: 2, rows: 2, size: '1024x1024', cells: ['ui_ring', 'ui_ring_big', 'ui_frame_portrait', 'ui_badge_level'],
+    body: `Cell 1: a round ornate gold ring frame for an icon button, with a dark blue enamel disc inside. Cell 2: a larger, more elaborate round gold medallion frame with gems at the four cardinal points and a dark blue enamel disc inside. Cell 3: an ornate round gold portrait frame with laurel leaves and a crown ornament on top, the center is an empty transparent circular hole. Cell 4: a small horizontal oval blue enamel badge with a gold rim, empty for a number. ${UIS}.` },
+  { title: 'Панели HUD: ресурсы и нижнее меню', cols: 1, rows: 2, size: '1536x1024', cells: ['ui_bar_top', 'ui_bar_bottom'],
+    body: `Top row: a long thin horizontal resource bar plate, dark-blue enamel with a gold metal frame and decorative end caps, empty. Bottom row: a long horizontal bottom menu bar plate, slightly taller, dark-blue enamel with an ornate gold frame, a raised decorative crest in the middle of the top edge, empty. Both are very wide (about 6 times wider than tall). ${UIS}.` },
+  { title: 'Вкладки, карточка, полоса прогресса', cols: 2, rows: 2, size: '1024x1024', cells: ['ui_tab', 'ui_tab_on', 'ui_card', 'ui_bar_frame'],
+    body: `Cell 1: an inactive tab button shaped like a bookmark with a flat bottom edge, dark blue enamel with a thin bronze rim. Cell 2: the same tab shape but active: polished gold with engraving. Cell 3: a rectangular content card plate, dark translucent blue enamel with a thin engraved gold border and tiny corner ornaments, empty. Cell 4: a long thin empty progress bar frame, gold metal rim around a dark recessed groove. ${UIS}.` },
+  { title: 'Ячейки предметов по редкости', cols: 2, rows: 2, size: '1024x1024', cells: ['ui_slot_common', 'ui_slot_rare', 'ui_slot_epic', 'ui_slot_legendary'],
+    body: `Four square item slot frames with rounded corners, empty inside with a dark radial gradient background. Cell 1: grey steel frame. Cell 2: blue sapphire-trimmed frame with a soft blue glow. Cell 3: purple amethyst-trimmed frame with a purple glow. Cell 4: ornate gold frame with orange glow and small gems. ${UIS}.` },
+  { title: 'Плашки: свиток задания, имя лорда', cols: 1, rows: 2, size: '1536x1024', cells: ['ui_plate_quest', 'ui_plate_name'],
+    body: `Top row: a horizontal parchment scroll plate for a quest tracker, light aged parchment with rolled ends and a thin gold trim, empty, about 3.5 times wider than tall. Bottom row: a horizontal name plate ribbon, dark blue enamel with a gold edge that fades out on the right end, empty, about 5 times wider than tall. ${UIS}.` },
+];
+for (const u of UIKIT) sheet('ui', u.title, u.cols, u.rows, u.size, u.cells, u.body);
+
 buildingSheets('wild', 'wild', false);
 buildingSheets('ash', 'ash', false);
 
@@ -303,8 +325,9 @@ const sheetMd = (set, prefix, title) => {
 };
 writeFileSync('docs/art/SHEETS.md', sheetMd('main', 'S', 'Листы для ChatGPT: этапы 0–D (Солнечный Орден)'));
 writeFileSync('docs/art/SHEETS_wild.md', sheetMd('wild', 'W', 'Листы для ChatGPT: этап E — Дикий Завет'));
+writeFileSync('docs/art/SHEETS_UI.md', sheetMd('ui', 'U', 'Листы для ChatGPT: UI-кит (рамки, кнопки, плашки)'));
 writeFileSync('docs/art/SHEETS_ash.md', sheetMd('ash', 'A', 'Листы для ChatGPT: этап E — Пепельные Кланы'));
 writeFileSync('docs/art/sheets.json', JSON.stringify(layouts, null, 1) + '\n');
 const covered = new Set(Object.values(layouts).flatMap((l) => l.cells).filter(Boolean));
-const missing = ASSETS.filter((a) => !covered.has(a.name)).map((a) => a.name);
-console.log(`sheets: S=${sheets.main.length} W=${sheets.wild.length} A=${sheets.ash.length} → ${covered.size} assets` + (missing.length ? `; not on any sheet: ${missing.join(', ')}` : ''));
+const missing = ASSETS.filter((a) => !a.name.startsWith('ui_')).filter((a) => !covered.has(a.name)).map((a) => a.name);
+console.log(`sheets: S=${sheets.main.length} W=${sheets.wild.length} A=${sheets.ash.length} U=${sheets.ui.length} → ${covered.size} assets` + (missing.length ? `; not on any sheet: ${missing.join(', ')}` : ''));

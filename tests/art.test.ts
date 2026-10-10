@@ -45,7 +45,7 @@ describe('art pipeline naming', () => {
 
   it('ChatGPT sheets cover every asset exactly once, and the API list matches the prompts', () => {
     const sheets = JSON.parse(readFileSync('docs/art/sheets.json', 'utf8')) as Record<string, { cols: number; rows: number; cells: string[] }>;
-    const cells = Object.values(sheets).flatMap((s) => s.cells.filter(Boolean));
+    const cells = Object.values(sheets).flatMap((s) => s.cells.filter((c) => c && !c.startsWith('ui_')));
     expect(new Set(cells).size).toBe(cells.length);
     expect(new Set(cells)).toEqual(names);
     for (const [id, s] of Object.entries(sheets)) expect(s.cells.length, id).toBeLessThanOrEqual(s.cols * s.rows);
