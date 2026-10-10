@@ -46,5 +46,53 @@
   "size": 243,
   "ax": 0.53,
   "ay": 0.701
+ },
+ "bld_farm_order_t3": {
+  "file": "bld_farm_order_t3.webp",
+  "w": 768,
+  "h": 688,
+  "size": 256,
+  "ax": 0.53,
+  "ay": 0.697
+ },
+ "bld_farm_order_t4": {
+  "file": "bld_farm_order_t4.webp",
+  "w": 768,
+  "h": 723,
+  "size": 268,
+  "ax": 0.531,
+  "ay": 0.71
+ },
+ "bld_sawmill_order_t1": {
+  "file": "bld_sawmill_order_t1.webp",
+  "w": 759,
+  "h": 562,
+  "size": 232,
+  "ax": 0.5,
+  "ay": 0.662
+ },
+ "bld_sawmill_order_t2": {
+  "file": "bld_sawmill_order_t2.webp",
+  "w": 768,
+  "h": 685,
+  "size": 251,
+  "ax": 0.5,
+  "ay": 0.72
+ },
+ "bld_sawmill_order_t3": {
+  "file": "bld_sawmill_order_t3.webp",
+  "w": 768,
+  "h": 700,
+  "size": 264,
+  "ax": 0.5,
+  "ay": 0.726
+ },
+ "bld_sawmill_order_t4": {
+  "file": "bld_sawmill_order_t4.webp",
+  "w": 768,
+  "h": 762,
+  "size": 277,
+  "ax": 0.5,
+  "ay": 0.748
  }
 }

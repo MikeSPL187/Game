@@ -62,12 +62,72 @@ await page.evaluate(() => {
   }
 
   /** flood-fill the flat background from the borders with a soft edge and colour decontamination */
+  /**
+   * ChatGPT sometimes "draws" transparency: a grey/white checkerboard baked into an RGB image.
+   * Background = neutral (unsaturated) light pixels connected to the border; edge pixels get alpha
+   * from their distance to the nearer checker tone and are un-blended from it.
+   */
+  function removeChecker(c, cols) {
+    const w = c.width, h = c.height, g = ctx(c), im = g.getImageData(0, 0, w, h), p = im.data;
+    const lums = cols.map(([r, gg, b]) => (r + gg + b) / 3).sort((a, b) => a - b);
+    const dark = lums[Math.floor(lums.length * 0.1)], light = lums[Math.floor(lums.length * 0.9)];
+    const sat = (i) => Math.max(p[i * 4], p[i * 4 + 1], p[i * 4 + 2]) - Math.min(p[i * 4], p[i * 4 + 1], p[i * 4 + 2]);
+    const lum = (i) => (p[i * 4] + p[i * 4 + 1] + p[i * 4 + 2]) / 3;
+    const isBg = (i) => sat(i) <= 12 && lum(i) >= dark - 14;
+    const bg = new Uint8Array(w * h), stack = [];
+    for (let x = 0; x < w; x++) stack.push(x, (h - 1) * w + x);
+    for (let y = 0; y < h; y++) stack.push(y * w, y * w + w - 1);
+    while (stack.length) {
+      const i = stack.pop();
+      if (bg[i] || !isBg(i)) continue;
+      bg[i] = 1;
+      const x = i % w, y = (i / w) | 0;
+      if (x > 0) stack.push(i - 1); if (x < w - 1) stack.push(i + 1);
+      if (y > 0) stack.push(i - w); if (y < h - 1) stack.push(i + w);
+    }
+    // enclosed pockets (between a crane and a tree, inside an arch): a region of neutral pixels that
+    // alternates between exactly the two checker tones is background too; real white/grey parts are not bimodal
+    const seen2 = new Uint8Array(w * h);
+    for (let s0 = 0; s0 < w * h; s0++) {
+      if (bg[s0] || seen2[s0] || !isBg(s0)) continue;
+      const region = [], st = [s0];
+      seen2[s0] = 1;
+      while (st.length) {
+        const i = st.pop();
+        region.push(i);
+        const x = i % w, y = (i / w) | 0;
+        for (const k of [x > 0 ? i - 1 : -1, x < w - 1 ? i + 1 : -1, y > 0 ? i - w : -1, y < h - 1 ? i + w : -1]) if (k >= 0 && !seen2[k] && !bg[k] && isBg(k)) { seen2[k] = 1; st.push(k); }
+      }
+      if (region.length < 40) continue;
+      let nd = 0, nl = 0;
+      for (const i of region) { const L = lum(i); if (Math.abs(L - dark) <= 10) nd++; else if (Math.abs(L - light) <= 10) nl++; }
+      // resampled checkers are blurry (many in-between greys), so only require both tones to be well present
+      if (nd / region.length > 0.15 && nl / region.length > 0.15) for (const i of region) bg[i] = 1;
+    }
+    for (let i = 0; i < w * h; i++) {
+      if (bg[i]) { p[i * 4 + 3] = 0; continue; }
+      const x = i % w, y = (i / w) | 0;
+      const near = (x > 0 && bg[i - 1]) || (x < w - 1 && bg[i + 1]) || (y > 0 && bg[i - w]) || (y < h - 1 && bg[i + w]);
+      if (!near) continue;
+      const t = Math.abs(lum(i) - dark) < Math.abs(lum(i) - light) ? dark : light;
+      const d = Math.hypot(p[i * 4] - t, p[i * 4 + 1] - t, p[i * 4 + 2] - t);
+      const a = Math.min(1, Math.max(0.15, d / 90));
+      for (let k = 0; k < 3; k++) p[i * 4 + k] = Math.max(0, Math.min(255, (p[i * 4 + k] - t * (1 - a)) / a));
+      p[i * 4 + 3] = Math.round(255 * a);
+    }
+    g.putImageData(im, 0, 0);
+    return [Math.round(dark), Math.round(light), -1];
+  }
+
   function removeBackground(c) {
     const w = c.width, h = c.height, g = ctx(c), im = g.getImageData(0, 0, w, h), p = im.data;
     const border = [];
     for (let x = 0; x < w; x += 4) border.push(x, (h - 1) * w + x);
     for (let y = 0; y < h; y += 4) border.push(y * w, y * w + w - 1);
     const cols = border.map((i) => [p[i * 4], p[i * 4 + 1], p[i * 4 + 2]]);
+    const lumsB = cols.map(([r, gg, b]) => (r + gg + b) / 3).sort((a, b) => a - b);
+    const neutral = cols.filter(([r, gg, b]) => Math.max(r, gg, b) - Math.min(r, gg, b) <= 12).length / cols.length;
+    if (neutral > 0.9 && lumsB[Math.floor(lumsB.length * 0.9)] - lumsB[Math.floor(lumsB.length * 0.1)] > 18) return removeChecker(c, cols);
     const med = [0, 1, 2].map((k) => cols.map((c2) => c2[k]).sort((a, b) => a - b)[cols.length >> 1]);
     const dist = (i) => Math.hypot(p[i * 4] - med[0], p[i * 4 + 1] - med[1], p[i * 4 + 2] - med[2]);
     const T1 = 28, T2 = 64;
@@ -286,6 +346,12 @@ try {
     }
   } else {
     const overrides = existsSync('art/overrides.json') ? JSON.parse(readFileSync('art/overrides.json', 'utf8')) : {};
+    // keys may use * as a wildcard (bld_farm_*); exact names win over patterns
+    const overrideFor = (name) => {
+      const out = {};
+      for (const [k, v] of Object.entries(overrides)) if (k.includes('*') && new RegExp('^' + k.split('*').map((x) => x.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('.*') + '$').test(name)) Object.assign(out, v);
+      return Object.assign(out, overrides[name] ?? {});
+    };
     const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
     mkdirSync(OUT, { recursive: true });
     const sheets = existsSync('docs/art/sheets.json') ? JSON.parse(readFileSync('docs/art/sheets.json', 'utf8')) : {};
@@ -314,7 +380,7 @@ try {
     let ok = 0, bad = 0;
     for (const { name, dataUrl, from } of jobs) {
       try {
-        const r = await page.evaluate((a) => window.__process(a), { dataUrl, name, ov: overrides[name] ?? {} });
+        const r = await page.evaluate((a) => window.__process(a), { dataUrl, name, ov: overrideFor(name) });
         writeFileSync(join(OUT, r.entry.file), Buffer.from(r.webp.split(',')[1], 'base64'));
         manifest[name] = r.entry;
         const kb = Math.round(Buffer.byteLength(r.webp.split(',')[1], 'base64') / 1024);
