@@ -1,6 +1,7 @@
 // Imports generated art into the game.
 //
 //   node scripts/art-import.mjs                 process every image in art/incoming
+//        (files named by asset, e.g. bld_farm_order_t1.png, or by ChatGPT sheet code, e.g. S03.png)
 //   node scripts/art-import.mjs --only bld_x    process one asset
 //   node scripts/art-import.mjs --in <dir>      read from another folder
 //   node scripts/art-import.mjs --placeholders <dir> name1 name2 …
@@ -191,6 +192,65 @@ await page.evaluate(() => {
     return { webp, entry, note, bg };
   };
 
+  /**
+   * Cut a ChatGPT sheet into its cells. Objects are found as connected silhouettes (so loose parts
+   * like flags stay attached) and given to the grid cell that holds their centre; pixels of objects
+   * that belong to neighbouring cells are cleared from each crop.
+   */
+  window.__slice = async ({ dataUrl, cols, rows }) => {
+    const img = await load(dataUrl);
+    const c = canvas(img.width, img.height);
+    ctx(c).drawImage(img, 0, 0);
+    if (!hasAlpha(c)) removeBackground(c);
+    const W = c.width, H = c.height, F = 4, w = Math.ceil(W / F), h = Math.ceil(H / F);
+    const px = ctx(c).getImageData(0, 0, W, H).data;
+    let m = new Uint8Array(w * h);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (px[(y * W + x) * 4 + 3] > 40) m[((y / F) | 0) * w + ((x / F) | 0)] = 1;
+    for (let pass = 0; pass < 2; pass++) { // dilate ~8px so detached parts join their object
+      const d = m.slice();
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (!m[y * w + x] && ((x > 0 && m[y * w + x - 1]) || (x < w - 1 && m[y * w + x + 1]) || (y > 0 && m[(y - 1) * w + x]) || (y < h - 1 && m[(y + 1) * w + x]))) d[y * w + x] = 1;
+      m = d;
+    }
+    const lab = new Int32Array(w * h).fill(-1);
+    const comps = [];
+    for (let i = 0; i < w * h; i++) {
+      if (!m[i] || lab[i] >= 0) continue;
+      const id = comps.length, st = [i];
+      let area = 0, sx = 0, sy = 0, x0 = w, y0 = h, x1 = 0, y1 = 0;
+      lab[i] = id;
+      while (st.length) {
+        const j = st.pop(), x = j % w, y = (j / w) | 0;
+        area++; sx += x; sy += y;
+        if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        for (const k of [x > 0 ? j - 1 : -1, x < w - 1 ? j + 1 : -1, y > 0 ? j - w : -1, y < h - 1 ? j + w : -1]) if (k >= 0 && m[k] && lab[k] < 0) { lab[k] = id; st.push(k); }
+      }
+      comps.push({ area, cx: sx / area, cy: sy / area, x0, y0, x1, y1, cell: -1 });
+    }
+    const minArea = (w * h) / (cols * rows) * 0.002;
+    for (const k of comps) {
+      if (k.area < minArea) continue; // specks and noise
+      const col = Math.min(cols - 1, Math.floor((k.cx / w) * cols)), row = Math.min(rows - 1, Math.floor((k.cy / h) * rows));
+      k.cell = row * cols + col;
+    }
+    const out = [];
+    for (let cell = 0; cell < cols * rows; cell++) {
+      const mine = comps.filter((k) => k.cell === cell);
+      if (!mine.length) { out.push(null); continue; }
+      const bx0 = Math.max(0, Math.min(...mine.map((k) => k.x0)) * F - 4), by0 = Math.max(0, Math.min(...mine.map((k) => k.y0)) * F - 4);
+      const bx1 = Math.min(W, (Math.max(...mine.map((k) => k.x1)) + 1) * F + 4), by1 = Math.min(H, (Math.max(...mine.map((k) => k.y1)) + 1) * F + 4);
+      const o = canvas(bx1 - bx0, by1 - by0), g = ctx(o);
+      g.drawImage(c, bx0, by0, o.width, o.height, 0, 0, o.width, o.height);
+      const im = g.getImageData(0, 0, o.width, o.height), p = im.data;
+      for (let y = 0; y < o.height; y++) for (let x = 0; x < o.width; x++) {
+        const l = lab[(((by0 + y) / F) | 0) * w + (((bx0 + x) / F) | 0)];
+        if (l < 0 || comps[l].cell !== cell) p[(y * o.width + x) * 4 + 3] = 0;
+      }
+      g.putImageData(im, 0, 0);
+      out.push(o.toDataURL('image/png'));
+    }
+    return out;
+  };
+
   window.__placeholder = async (name) => {
     const ref = window.__art.referenceArt(name);
     if (!ref) return null;
@@ -217,19 +277,37 @@ try {
     const overrides = existsSync('art/overrides.json') ? JSON.parse(readFileSync('art/overrides.json', 'utf8')) : {};
     const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
     mkdirSync(OUT, { recursive: true });
-    const files = readdirSync(IN).filter((f) => /\.(png|jpe?g|webp)$/i.test(f)).filter((f) => !ONLY || basename(f, extname(f)) === ONLY);
-    let ok = 0, bad = 0;
+    const sheets = existsSync('docs/art/sheets.json') ? JSON.parse(readFileSync('docs/art/sheets.json', 'utf8')) : {};
+    const files = readdirSync(IN).filter((f) => /\.(png|jpe?g|webp)$/i.test(f));
+    // expand sheets (S01.png …) into named cells; plain files keep their own name
+    const jobs = [];
     for (const f of files) {
-      const name = basename(f, extname(f)).trim();
-      if (!/^[a-z0-9_]+$/.test(name)) { console.log(`skip ${f}: file name must be like bld_citadel_order_t3.png`); bad++; continue; }
+      const base = basename(f, extname(f)).trim();
       const mime = /\.png$/i.test(f) ? 'image/png' : /\.webp$/i.test(f) ? 'image/webp' : 'image/jpeg';
       const dataUrl = `data:${mime};base64,` + readFileSync(join(IN, f)).toString('base64');
+      const layout = sheets[base.toUpperCase()];
+      if (layout) {
+        if (ONLY && !layout.cells.includes(ONLY)) continue;
+        const cells = layout.cols * layout.rows > 1 ? await page.evaluate((a) => window.__slice(a), { dataUrl, cols: layout.cols, rows: layout.rows }) : [dataUrl];
+        layout.cells.forEach((name, i) => {
+          if (!name || (ONLY && name !== ONLY)) return;
+          if (cells[i]) jobs.push({ name, dataUrl: cells[i], from: base });
+          else console.log(`✗ ${name}: cell ${i + 1} of sheet ${base} is empty`);
+        });
+        continue;
+      }
+      if (ONLY && base !== ONLY) continue;
+      if (!/^[A-Za-z0-9_]+$/.test(base)) { console.log(`skip ${f}: name it by its asset (bld_citadel_order_t3.png) or sheet code (S01.png)`); continue; }
+      jobs.push({ name: base, dataUrl, from: '' });
+    }
+    let ok = 0, bad = 0;
+    for (const { name, dataUrl, from } of jobs) {
       try {
         const r = await page.evaluate((a) => window.__process(a), { dataUrl, name, ov: overrides[name] ?? {} });
         writeFileSync(join(OUT, r.entry.file), Buffer.from(r.webp.split(',')[1], 'base64'));
         manifest[name] = r.entry;
         const kb = Math.round(Buffer.byteLength(r.webp.split(',')[1], 'base64') / 1024);
-        console.log(`✓ ${name}  ${r.entry.w}×${r.entry.h}  ${kb} KB  size=${r.entry.size} anchor=(${r.entry.ax}, ${r.entry.ay})${r.bg ? `  bg cut rgb(${r.bg.join(',')})` : ''}  ${r.note}`);
+        console.log(`✓ ${name}${from ? ` (из ${from})` : ''}  ${r.entry.w}×${r.entry.h}  ${kb} KB  size=${r.entry.size} anchor=(${r.entry.ax}, ${r.entry.ay})${r.bg ? `  bg cut rgb(${r.bg.join(',')})` : ''}  ${r.note}`);
         ok++;
       } catch (e) { console.log(`✗ ${name}: ${e.message}`); bad++; }
     }

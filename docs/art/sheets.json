@@ -1,0 +1,1289 @@
+{
+ "S01": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_citadel_order_t3",
+   "bld_citadel_order_t4"
+  ]
+ },
+ "S02": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_citadel_order_t1",
+   "bld_citadel_order_t2"
+  ]
+ },
+ "S03": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_farm_order_t1",
+   "bld_farm_order_t2"
+  ]
+ },
+ "S04": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_farm_order_t3",
+   "bld_farm_order_t4"
+  ]
+ },
+ "S05": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sawmill_order_t1",
+   "bld_sawmill_order_t2"
+  ]
+ },
+ "S06": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sawmill_order_t3",
+   "bld_sawmill_order_t4"
+  ]
+ },
+ "S07": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_quarry_order_t1",
+   "bld_quarry_order_t2"
+  ]
+ },
+ "S08": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_quarry_order_t3",
+   "bld_quarry_order_t4"
+  ]
+ },
+ "S09": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_goldmine_order_t1",
+   "bld_goldmine_order_t2"
+  ]
+ },
+ "S10": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_goldmine_order_t3",
+   "bld_goldmine_order_t4"
+  ]
+ },
+ "S11": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_barracks_order_t1",
+   "bld_barracks_order_t2"
+  ]
+ },
+ "S12": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_barracks_order_t3",
+   "bld_barracks_order_t4"
+  ]
+ },
+ "S13": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_range_order_t1",
+   "bld_range_order_t2"
+  ]
+ },
+ "S14": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_range_order_t3",
+   "bld_range_order_t4"
+  ]
+ },
+ "S15": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_stable_order_t1",
+   "bld_stable_order_t2"
+  ]
+ },
+ "S16": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_stable_order_t3",
+   "bld_stable_order_t4"
+  ]
+ },
+ "S17": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_spire_order_t1",
+   "bld_spire_order_t2"
+  ]
+ },
+ "S18": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_spire_order_t3",
+   "bld_spire_order_t4"
+  ]
+ },
+ "S19": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_academy_order_t1",
+   "bld_academy_order_t2"
+  ]
+ },
+ "S20": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_academy_order_t3",
+   "bld_academy_order_t4"
+  ]
+ },
+ "S21": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_infirmary_order_t1",
+   "bld_infirmary_order_t2"
+  ]
+ },
+ "S22": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_infirmary_order_t3",
+   "bld_infirmary_order_t4"
+  ]
+ },
+ "S23": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_tavern_order_t1",
+   "bld_tavern_order_t2"
+  ]
+ },
+ "S24": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_tavern_order_t3",
+   "bld_tavern_order_t4"
+  ]
+ },
+ "S25": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_warehouse_order_t1",
+   "bld_warehouse_order_t2"
+  ]
+ },
+ "S26": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_warehouse_order_t3",
+   "bld_warehouse_order_t4"
+  ]
+ },
+ "S27": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_watchtower_order_t1",
+   "bld_watchtower_order_t2"
+  ]
+ },
+ "S28": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_watchtower_order_t3",
+   "bld_watchtower_order_t4"
+  ]
+ },
+ "S29": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_forge_order_t1",
+   "bld_forge_order_t2"
+  ]
+ },
+ "S30": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_forge_order_t3",
+   "bld_forge_order_t4"
+  ]
+ },
+ "S31": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_embassy_order_t1",
+   "bld_embassy_order_t2"
+  ]
+ },
+ "S32": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_embassy_order_t3",
+   "bld_embassy_order_t4"
+  ]
+ },
+ "S33": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sanctum_order_t1",
+   "bld_sanctum_order_t2"
+  ]
+ },
+ "S34": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sanctum_order_t3",
+   "bld_sanctum_order_t4"
+  ]
+ },
+ "S35": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_order_t1",
+   "bld_wall_order_t2"
+  ]
+ },
+ "S36": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_order_t3",
+   "bld_wall_order_t4"
+  ]
+ },
+ "S37": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_tower_order",
+   "bld_construction"
+  ]
+ },
+ "S38": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "bld_wall_segment_order"
+  ]
+ },
+ "S39": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_city_grass"
+  ]
+ },
+ "S40": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_city_plaza"
+  ]
+ },
+ "S41": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_city_road"
+  ]
+ },
+ "S42": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_grass"
+  ]
+ },
+ "S43": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_meadow"
+  ]
+ },
+ "S44": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_forest"
+  ]
+ },
+ "S45": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_sand"
+  ]
+ },
+ "S46": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_hills"
+  ]
+ },
+ "S47": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_mountain"
+  ]
+ },
+ "S48": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_snow"
+  ]
+ },
+ "S49": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_ash"
+  ]
+ },
+ "S50": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "tex_swamp"
+  ]
+ },
+ "S51": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "wobj_camp_1",
+   "wobj_camp_2",
+   "wobj_camp_3",
+   "wobj_node_food"
+  ]
+ },
+ "S52": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "wobj_node_wood",
+   "wobj_node_stone",
+   "wobj_node_gold",
+   "wobj_ruin_1"
+  ]
+ },
+ "S53": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "wobj_ruin_2",
+   "wobj_ruin_3",
+   "wobj_rift",
+   "wobj_city_order"
+  ]
+ },
+ "S54": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "wobj_city_wild",
+   "wobj_city_ash",
+   "wobj_mountain_1",
+   "wobj_mountain_2"
+  ]
+ },
+ "S55": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "wobj_mountain_3",
+   "wobj_snowpeak_1",
+   "wobj_snowpeak_2",
+   "wobj_snowpeak_3"
+  ]
+ },
+ "S56": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "wobj_hill_1",
+   "wobj_tree_pine",
+   "wobj_tree_oak",
+   "wobj_tree_birch"
+  ]
+ },
+ "S57": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "wobj_tree_dead",
+   "wobj_tree_ash",
+   "wobj_boat"
+  ]
+ },
+ "S58": {
+  "cols": 3,
+  "rows": 1,
+  "cells": [
+   "titan_roc_map",
+   "titan_golem_map",
+   "titan_wyrm_map"
+  ]
+ },
+ "S59": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_aerena"
+  ]
+ },
+ "S60": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_kael"
+  ]
+ },
+ "S61": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_grom"
+  ]
+ },
+ "S62": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_lyra"
+  ]
+ },
+ "S63": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_torvald"
+  ]
+ },
+ "S64": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_syra"
+  ]
+ },
+ "S65": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_varg"
+  ]
+ },
+ "S66": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_orian"
+  ]
+ },
+ "S67": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_brenn"
+  ]
+ },
+ "S68": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_mira"
+  ]
+ },
+ "S69": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_ulf"
+  ]
+ },
+ "S70": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "hero_sella"
+  ]
+ },
+ "S71": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "titan_roc_art"
+  ]
+ },
+ "S72": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "titan_golem_art"
+  ]
+ },
+ "S73": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "titan_wyrm_art"
+  ]
+ },
+ "S74": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "key_loading"
+  ]
+ },
+ "S75": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "key_faction_order"
+  ]
+ },
+ "S76": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "key_faction_wild"
+  ]
+ },
+ "S77": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "key_faction_ash"
+  ]
+ },
+ "S78": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "unit_order_inf",
+   "unit_order_arc",
+   "unit_order_cav",
+   "unit_order_mag"
+  ]
+ },
+ "S79": {
+  "cols": 2,
+  "rows": 2,
+  "cells": [
+   "unit_void_inf",
+   "unit_void_arc",
+   "unit_void_cav",
+   "unit_void_mag"
+  ]
+ },
+ "S80": {
+  "cols": 4,
+  "rows": 4,
+  "cells": [
+   "icon_food",
+   "icon_wood",
+   "icon_stone",
+   "icon_gold",
+   "icon_aether",
+   "icon_power",
+   "icon_hourglass",
+   "icon_tome1",
+   "icon_tome2",
+   "icon_tome3",
+   "icon_key_silver",
+   "icon_key_gold",
+   "icon_shard",
+   "icon_shieldItem",
+   "icon_chest",
+   "icon_chest_gold"
+  ]
+ },
+ "S81": {
+  "cols": 4,
+  "rows": 4,
+  "cells": [
+   "icon_ore",
+   "icon_leather",
+   "icon_bone",
+   "icon_crystalMat",
+   "icon_essence",
+   "icon_inf",
+   "icon_arc",
+   "icon_cav",
+   "icon_mag",
+   "icon_quest",
+   "icon_mail",
+   "icon_bag",
+   "icon_map",
+   "icon_castle",
+   "icon_hero",
+   "icon_troops"
+  ]
+ },
+ "S82": {
+  "cols": 4,
+  "rows": 4,
+  "cells": [
+   "icon_book",
+   "icon_gift",
+   "icon_trophy",
+   "icon_calendar",
+   "icon_gear",
+   "icon_banner",
+   "icon_skull",
+   "icon_titan",
+   "icon_hammer",
+   "icon_gauntlet",
+   "icon_armor",
+   "icon_sword",
+   "icon_heart"
+  ]
+ },
+ "W01": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_citadel_wild_t1",
+   "bld_citadel_wild_t2"
+  ]
+ },
+ "W02": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_citadel_wild_t3",
+   "bld_citadel_wild_t4"
+  ]
+ },
+ "W03": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_farm_wild_t1",
+   "bld_farm_wild_t2"
+  ]
+ },
+ "W04": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_farm_wild_t3",
+   "bld_farm_wild_t4"
+  ]
+ },
+ "W05": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sawmill_wild_t1",
+   "bld_sawmill_wild_t2"
+  ]
+ },
+ "W06": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sawmill_wild_t3",
+   "bld_sawmill_wild_t4"
+  ]
+ },
+ "W07": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_quarry_wild_t1",
+   "bld_quarry_wild_t2"
+  ]
+ },
+ "W08": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_quarry_wild_t3",
+   "bld_quarry_wild_t4"
+  ]
+ },
+ "W09": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_goldmine_wild_t1",
+   "bld_goldmine_wild_t2"
+  ]
+ },
+ "W10": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_goldmine_wild_t3",
+   "bld_goldmine_wild_t4"
+  ]
+ },
+ "W11": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_barracks_wild_t1",
+   "bld_barracks_wild_t2"
+  ]
+ },
+ "W12": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_barracks_wild_t3",
+   "bld_barracks_wild_t4"
+  ]
+ },
+ "W13": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_range_wild_t1",
+   "bld_range_wild_t2"
+  ]
+ },
+ "W14": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_range_wild_t3",
+   "bld_range_wild_t4"
+  ]
+ },
+ "W15": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_stable_wild_t1",
+   "bld_stable_wild_t2"
+  ]
+ },
+ "W16": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_stable_wild_t3",
+   "bld_stable_wild_t4"
+  ]
+ },
+ "W17": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_spire_wild_t1",
+   "bld_spire_wild_t2"
+  ]
+ },
+ "W18": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_spire_wild_t3",
+   "bld_spire_wild_t4"
+  ]
+ },
+ "W19": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_academy_wild_t1",
+   "bld_academy_wild_t2"
+  ]
+ },
+ "W20": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_academy_wild_t3",
+   "bld_academy_wild_t4"
+  ]
+ },
+ "W21": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_infirmary_wild_t1",
+   "bld_infirmary_wild_t2"
+  ]
+ },
+ "W22": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_infirmary_wild_t3",
+   "bld_infirmary_wild_t4"
+  ]
+ },
+ "W23": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_tavern_wild_t1",
+   "bld_tavern_wild_t2"
+  ]
+ },
+ "W24": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_tavern_wild_t3",
+   "bld_tavern_wild_t4"
+  ]
+ },
+ "W25": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_warehouse_wild_t1",
+   "bld_warehouse_wild_t2"
+  ]
+ },
+ "W26": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_warehouse_wild_t3",
+   "bld_warehouse_wild_t4"
+  ]
+ },
+ "W27": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_watchtower_wild_t1",
+   "bld_watchtower_wild_t2"
+  ]
+ },
+ "W28": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_watchtower_wild_t3",
+   "bld_watchtower_wild_t4"
+  ]
+ },
+ "W29": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_forge_wild_t1",
+   "bld_forge_wild_t2"
+  ]
+ },
+ "W30": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_forge_wild_t3",
+   "bld_forge_wild_t4"
+  ]
+ },
+ "W31": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_embassy_wild_t1",
+   "bld_embassy_wild_t2"
+  ]
+ },
+ "W32": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_embassy_wild_t3",
+   "bld_embassy_wild_t4"
+  ]
+ },
+ "W33": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sanctum_wild_t1",
+   "bld_sanctum_wild_t2"
+  ]
+ },
+ "W34": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sanctum_wild_t3",
+   "bld_sanctum_wild_t4"
+  ]
+ },
+ "W35": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_wild_t1",
+   "bld_wall_wild_t2"
+  ]
+ },
+ "W36": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_wild_t3",
+   "bld_wall_wild_t4"
+  ]
+ },
+ "W37": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_tower_wild",
+   ""
+  ]
+ },
+ "W38": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "bld_wall_segment_wild"
+  ]
+ },
+ "A01": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_citadel_ash_t1",
+   "bld_citadel_ash_t2"
+  ]
+ },
+ "A02": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_citadel_ash_t3",
+   "bld_citadel_ash_t4"
+  ]
+ },
+ "A03": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_farm_ash_t1",
+   "bld_farm_ash_t2"
+  ]
+ },
+ "A04": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_farm_ash_t3",
+   "bld_farm_ash_t4"
+  ]
+ },
+ "A05": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sawmill_ash_t1",
+   "bld_sawmill_ash_t2"
+  ]
+ },
+ "A06": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sawmill_ash_t3",
+   "bld_sawmill_ash_t4"
+  ]
+ },
+ "A07": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_quarry_ash_t1",
+   "bld_quarry_ash_t2"
+  ]
+ },
+ "A08": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_quarry_ash_t3",
+   "bld_quarry_ash_t4"
+  ]
+ },
+ "A09": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_goldmine_ash_t1",
+   "bld_goldmine_ash_t2"
+  ]
+ },
+ "A10": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_goldmine_ash_t3",
+   "bld_goldmine_ash_t4"
+  ]
+ },
+ "A11": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_barracks_ash_t1",
+   "bld_barracks_ash_t2"
+  ]
+ },
+ "A12": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_barracks_ash_t3",
+   "bld_barracks_ash_t4"
+  ]
+ },
+ "A13": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_range_ash_t1",
+   "bld_range_ash_t2"
+  ]
+ },
+ "A14": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_range_ash_t3",
+   "bld_range_ash_t4"
+  ]
+ },
+ "A15": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_stable_ash_t1",
+   "bld_stable_ash_t2"
+  ]
+ },
+ "A16": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_stable_ash_t3",
+   "bld_stable_ash_t4"
+  ]
+ },
+ "A17": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_spire_ash_t1",
+   "bld_spire_ash_t2"
+  ]
+ },
+ "A18": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_spire_ash_t3",
+   "bld_spire_ash_t4"
+  ]
+ },
+ "A19": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_academy_ash_t1",
+   "bld_academy_ash_t2"
+  ]
+ },
+ "A20": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_academy_ash_t3",
+   "bld_academy_ash_t4"
+  ]
+ },
+ "A21": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_infirmary_ash_t1",
+   "bld_infirmary_ash_t2"
+  ]
+ },
+ "A22": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_infirmary_ash_t3",
+   "bld_infirmary_ash_t4"
+  ]
+ },
+ "A23": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_tavern_ash_t1",
+   "bld_tavern_ash_t2"
+  ]
+ },
+ "A24": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_tavern_ash_t3",
+   "bld_tavern_ash_t4"
+  ]
+ },
+ "A25": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_warehouse_ash_t1",
+   "bld_warehouse_ash_t2"
+  ]
+ },
+ "A26": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_warehouse_ash_t3",
+   "bld_warehouse_ash_t4"
+  ]
+ },
+ "A27": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_watchtower_ash_t1",
+   "bld_watchtower_ash_t2"
+  ]
+ },
+ "A28": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_watchtower_ash_t3",
+   "bld_watchtower_ash_t4"
+  ]
+ },
+ "A29": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_forge_ash_t1",
+   "bld_forge_ash_t2"
+  ]
+ },
+ "A30": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_forge_ash_t3",
+   "bld_forge_ash_t4"
+  ]
+ },
+ "A31": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_embassy_ash_t1",
+   "bld_embassy_ash_t2"
+  ]
+ },
+ "A32": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_embassy_ash_t3",
+   "bld_embassy_ash_t4"
+  ]
+ },
+ "A33": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sanctum_ash_t1",
+   "bld_sanctum_ash_t2"
+  ]
+ },
+ "A34": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_sanctum_ash_t3",
+   "bld_sanctum_ash_t4"
+  ]
+ },
+ "A35": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_ash_t1",
+   "bld_wall_ash_t2"
+  ]
+ },
+ "A36": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_ash_t3",
+   "bld_wall_ash_t4"
+  ]
+ },
+ "A37": {
+  "cols": 2,
+  "rows": 1,
+  "cells": [
+   "bld_wall_tower_ash",
+   ""
+  ]
+ },
+ "A38": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "bld_wall_segment_ash"
+  ]
+ }
+}

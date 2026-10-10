@@ -1,5 +1,9 @@
 // Generates copy-ready image prompts for the art pipeline (see docs/art/STYLEGUIDE.md).
-// usage: node scripts/art-prompts.mjs   → writes docs/art/PROMPTS.md, PROMPTS_wild.md, PROMPTS_ash.md
+// usage: node scripts/art-prompts.mjs
+//   docs/art/PROMPTS*.md   one prompt per asset (Midjourney / ChatGPT / API)
+//   docs/art/prompts.json  the same list for scripts/art-generate.mjs (OpenAI API batch)
+//   docs/art/SHEETS*.md    ChatGPT sheets: several assets per generation, file named by sheet id
+//   docs/art/sheets.json   sheet layouts used by scripts/art-import.mjs to cut sheets apart
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const STYLE = 'stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette';
@@ -41,8 +45,16 @@ const BUILDINGS = [
   ['wall', 'Ворота крепости', 'a fortress gatehouse: two strong towers flanking a gate with a portcullis, short wall stubs on both sides'],
 ];
 
-const block = (title, file, size, prompt, mj = MJ) =>
-  `### ${title}\n\`${file}\` · ${size}\n\n\`\`\`\n${prompt}\n\`\`\`\n<sub>Midjourney: добавьте в конец</sub> \`${mj}\`\n\n`;
+/** every asset in prompt order: { name, stage, title, prompt, size } */
+const ASSETS = [];
+let STAGE = '0';
+const apiSize = (s) => (/3:4|768×1024/.test(s) ? '1024x1536' : /3:2|16:9|1024×512/.test(s) ? '1536x1024' : '1024x1024');
+
+const block = (title, file, size, prompt, mj = MJ) => {
+  const name = file.replace(/\.png$/, '');
+  if (!ASSETS.some((a) => a.name === name)) ASSETS.push({ name, stage: STAGE, title, prompt, size: apiSize(size) });
+  return `### ${title}\n\`${file}\` · ${size}\n\n\`\`\`\n${prompt}\n\`\`\`\n<sub>Midjourney: добавьте в конец</sub> \`${mj}\`\n\n`;
+};
 
 function buildings(fac) {
   const f = FACTION[fac];
@@ -81,39 +93,40 @@ const cityGround = () => {
   return out;
 };
 
+const WORLD_OBJS = [
+  ['camp_1', 'Логово Пустоты 1', 'a void creature camp: tattered dark purple tents, a bone totem with a skull with glowing pink eyes, corrupted purple crystals, a campfire, purple mist'],
+  ['camp_2', 'Логово Пустоты 2', 'a void creature lair: a cave mouth in black rocks, corrupted purple crystals growing around, bones, purple glow from inside'],
+  ['camp_3', 'Логово Пустоты 3', 'a void creature nest: twisted dark thorny spires, pulsing purple egg sacs, corrupted crystals'],
+  ['node_food', 'Поля (ресурс)', 'a patch of ripe golden wheat fields with haystacks and a small scarecrow'],
+  ['node_wood', 'Лес (ресурс)', 'a logging spot: a cluster of tall pine trees, felled logs and a stack of timber'],
+  ['node_stone', 'Каменоломня (ресурс)', 'a rocky outcrop of grey stone with cut blocks'],
+  ['node_gold', 'Золотая жила (ресурс)', 'a rocky outcrop with glittering gold veins and gold nuggets'],
+  ['ruin_1', 'Руины 1', 'ancient temple ruins: broken marble columns, a collapsed arch, overgrown with ivy'],
+  ['ruin_2', 'Руины 2', 'a ruined watchtower of an old kingdom, crumbling stone, a faded banner'],
+  ['ruin_3', 'Руины 3', 'ancient sky-throne debris: a broken golden statue and a fallen ornate pillar with faint blue runes'],
+  ['rift', 'Эфирный разлом', 'an aether rift: a glowing purple and blue swirling tear in the ground, floating rock shards and crystals around it'],
+  ['city_order', 'Замок игрока (Орден)', `a walled castle town, ${FACTION.order.mat}`],
+  ['city_wild', 'Замок игрока (Завет)', `a walled forest stronghold, ${FACTION.wild.mat}`],
+  ['city_ash', 'Замок игрока (Кланы)', `a walled war fortress, ${FACTION.ash.mat}`],
+  ['mountain_1', 'Гора 1', 'a rocky mountain peak with cliffs'],
+  ['mountain_2', 'Гора 2', 'a pair of jagged mountain peaks'],
+  ['mountain_3', 'Гора 3', 'a broad massive mountain with layered rock'],
+  ['snowpeak_1', 'Снежная гора 1', 'a snowy mountain peak with ice'],
+  ['snowpeak_2', 'Снежная гора 2', 'a pair of snow-capped jagged peaks'],
+  ['snowpeak_3', 'Снежная гора 3', 'a broad massive snow-covered mountain'],
+  ['hill_1', 'Холм', 'a low grassy hill with a few rocks'],
+  ['tree_pine', 'Сосна', 'a single tall pine tree'],
+  ['tree_oak', 'Дуб', 'a single broad oak tree'],
+  ['tree_birch', 'Берёза', 'a single white birch tree with light green leaves'],
+  ['tree_dead', 'Мёртвое дерево', 'a single dead twisted swamp tree without leaves'],
+  ['tree_ash', 'Обгоревшее дерево', 'a single charred burnt tree with glowing embers'],
+  ['boat', 'Лодка', 'a small wooden sailing boat with a cream sail and a blue stripe, side view facing right'],
+];
+
 const MAP = 'a miniature on a strategy world map, small scale object seen from far away. ' + ISO;
 const world = () => {
   let out = '\n# Этап B — карта мира\n\n## Объекты\n\n';
-  const objs = [
-    ['camp_1', 'Логово Пустоты 1', 'a void creature camp: tattered dark purple tents, a bone totem with a skull with glowing pink eyes, corrupted purple crystals, a campfire, purple mist'],
-    ['camp_2', 'Логово Пустоты 2', 'a void creature lair: a cave mouth in black rocks, corrupted purple crystals growing around, bones, purple glow from inside'],
-    ['camp_3', 'Логово Пустоты 3', 'a void creature nest: twisted dark thorny spires, pulsing purple egg sacs, corrupted crystals'],
-    ['node_food', 'Поля (ресурс)', 'a patch of ripe golden wheat fields with haystacks and a small scarecrow'],
-    ['node_wood', 'Лес (ресурс)', 'a logging spot: a cluster of tall pine trees, felled logs and a stack of timber'],
-    ['node_stone', 'Каменоломня (ресурс)', 'a rocky outcrop of grey stone with cut blocks'],
-    ['node_gold', 'Золотая жила (ресурс)', 'a rocky outcrop with glittering gold veins and gold nuggets'],
-    ['ruin_1', 'Руины 1', 'ancient temple ruins: broken marble columns, a collapsed arch, overgrown with ivy'],
-    ['ruin_2', 'Руины 2', 'a ruined watchtower of an old kingdom, crumbling stone, a faded banner'],
-    ['ruin_3', 'Руины 3', 'ancient sky-throne debris: a broken golden statue and a fallen ornate pillar with faint blue runes'],
-    ['rift', 'Эфирный разлом', 'an aether rift: a glowing purple and blue swirling tear in the ground, floating rock shards and crystals around it'],
-    ['city_order', 'Замок игрока (Орден)', `a walled castle town, ${FACTION.order.mat}`],
-    ['city_wild', 'Замок игрока (Завет)', `a walled forest stronghold, ${FACTION.wild.mat}`],
-    ['city_ash', 'Замок игрока (Кланы)', `a walled war fortress, ${FACTION.ash.mat}`],
-    ['mountain_1', 'Гора 1', 'a rocky mountain peak with cliffs'],
-    ['mountain_2', 'Гора 2', 'a pair of jagged mountain peaks'],
-    ['mountain_3', 'Гора 3', 'a broad massive mountain with layered rock'],
-    ['snowpeak_1', 'Снежная гора 1', 'a snowy mountain peak with ice'],
-    ['snowpeak_2', 'Снежная гора 2', 'a pair of snow-capped jagged peaks'],
-    ['snowpeak_3', 'Снежная гора 3', 'a broad massive snow-covered mountain'],
-    ['hill_1', 'Холм', 'a low grassy hill with a few rocks'],
-    ['tree_pine', 'Сосна', 'a single tall pine tree'],
-    ['tree_oak', 'Дуб', 'a single broad oak tree'],
-    ['tree_birch', 'Берёза', 'a single white birch tree with light green leaves'],
-    ['tree_dead', 'Мёртвое дерево', 'a single dead twisted swamp tree without leaves'],
-    ['tree_ash', 'Обгоревшее дерево', 'a single charred burnt tree with glowing embers'],
-    ['boat', 'Лодка', 'a small wooden sailing boat with a cream sail and a blue stripe, side view facing right'],
-  ];
-  for (const [id, ru, what] of objs) out += block(ru, `wobj_${id}.png`, '1024×1024, прозрачный фон', `${what}, ${MAP}. ${STYLE}. ${CUT}.`);
+  for (const [id, ru, what] of WORLD_OBJS) out += block(ru, `wobj_${id}.png`, '1024×1024, прозрачный фон', `${what}, ${MAP}. ${STYLE}. ${CUT}.`);
   out += '\n## Текстуры биомов (бесшовные)\n\n';
   for (const [id, ru, what] of [
     ['grass', 'Равнина', 'green grassland with subtle variation'], ['meadow', 'Луг', 'flower meadow with small yellow and white flowers'],
@@ -180,18 +193,20 @@ const ICONS = [
   ['sword', 'a fine steel sword'], ['heart', 'a red heart with a green leaf (healing)'],
 ];
 
+const UNITS = [
+  ['order_inf', 'Пехота', 'a royal infantry soldier in steel armor with a blue tabard, a spear and a big shield'],
+  ['order_arc', 'Лучник', 'a royal archer in a blue hood and leather armor drawing a longbow'],
+  ['order_cav', 'Кавалерия', 'a royal knight in blue-and-steel armor on a brown warhorse with a lance'],
+  ['order_mag', 'Маг', 'a battle mage in blue robes with a pointed hat and a staff with a glowing blue orb'],
+  ['void_inf', 'Громила Пустоты', 'a hulking void brute, dark purple chitin with spikes, glowing pink eyes, huge claws'],
+  ['void_arc', 'Плевун Пустоты', 'a hunched void spitter creature with spines on its back and a glowing green throat'],
+  ['void_cav', 'Волк Пустоты', 'a void wolf beast, dark purple fur with spikes, glowing pink eyes, running pose'],
+  ['void_mag', 'Огонёк Пустоты', 'a floating void wisp, a glowing purple-white orb with trailing smoke tendrils'],
+];
+
 const battleUi = () => {
   let out = '\n# Этап D — бой и интерфейс\n\n## Юниты для повтора битвы\n\n';
-  for (const [id, ru, what] of [
-    ['order_inf', 'Пехота', 'a royal infantry soldier in steel armor with a blue tabard, a spear and a big shield'],
-    ['order_arc', 'Лучник', 'a royal archer in a blue hood and leather armor drawing a longbow'],
-    ['order_cav', 'Кавалерия', 'a royal knight in blue-and-steel armor on a brown warhorse with a lance'],
-    ['order_mag', 'Маг', 'a battle mage in blue robes with a pointed hat and a staff with a glowing blue orb'],
-    ['void_inf', 'Громила Пустоты', 'a hulking void brute, dark purple chitin with spikes, glowing pink eyes, huge claws'],
-    ['void_arc', 'Плевун Пустоты', 'a hunched void spitter creature with spines on its back and a glowing green throat'],
-    ['void_cav', 'Волк Пустоты', 'a void wolf beast, dark purple fur with spikes, glowing pink eyes, running pose'],
-    ['void_mag', 'Огонёк Пустоты', 'a floating void wisp, a glowing purple-white orb with trailing smoke tendrils'],
-  ]) out += block(ru, `unit_${id}.png`, '1024×1024, прозрачный фон', `${what}. ${UNIT}.`);
+  for (const [id, ru, what] of UNITS) out += block(ru, `unit_${id}.png`, '1024×1024, прозрачный фон', `${what}. ${UNIT}.`);
   out += '\nЦвет врагов-людей (красный) я получу из синих юнитов перекраской — отдельно генерировать не нужно.\n\n## Иконки\n\n';
   for (const [id, what] of ICONS) out += block(id, `icon_${id}.png`, '512×512, прозрачный фон', `${what}. ${ICON}.`, '--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text');
   return out;
@@ -209,8 +224,10 @@ const head = (title) => `<!-- generated by scripts/art-prompts.mjs — edit the 
 > Не используйте серый или белый фон: светлый камень зданий сольётся с ним.
 `;
 
-writeFileSync('docs/art/PROMPTS.md', head('Промпты: этапы 0–D (Солнечный Орден)') + pilot()
-  + '\n# Этап A — город Ордена\n' + buildings('order') + cityGround() + world() + people() + battleUi());
+const staged = (st, f) => { STAGE = st; return f(); };
+writeFileSync('docs/art/PROMPTS.md', head('Промпты: этапы 0–D (Солнечный Орден)') + staged('0', pilot)
+  + '\n# Этап A — город Ордена\n' + staged('A', () => buildings('order') + cityGround()) + staged('B', world) + staged('C', people) + staged('D', battleUi));
+STAGE = 'E';
 for (const fac of ['wild', 'ash']) {
   writeFileSync(`docs/art/PROMPTS_${fac}.md`, head(`Промпты: этап E — ${FACTION[fac].name}`) + buildings(fac)
     + block('Отрезок стены', `bld_wall_segment_${fac}.png`, '1024×512, прозрачный фон', `a straight castle wall segment with battlements running diagonally from bottom-left to top-right, modular piece that can be repeated end to end, ${FACTION[fac].mat}. ${ISO}. ${STYLE}. ${CUT}.`, MJ.replace('1:1', '2:1'))
@@ -218,3 +235,76 @@ for (const fac of ['wild', 'ash']) {
 }
 const count = (f) => (readFileSync(`docs/art/${f}`, 'utf8').match(/^### /gm) ?? []).length;
 console.log('prompts:', ['PROMPTS.md', 'PROMPTS_wild.md', 'PROMPTS_ash.md'].map((f) => `${f}=${count(f)}`).join(' '));
+
+// ———————————————————————————————————————— machine-readable list for the API batch
+writeFileSync('docs/art/prompts.json', JSON.stringify(ASSETS.map((a) => ({ ...a, transparent: a.prompt.includes('transparent background') })), null, 1) + '\n');
+
+// ———————————————————————————————————————— ChatGPT sheets: several assets per image
+// Cells are cut apart by scripts/art-import.mjs (objects are found by their silhouettes and
+// assigned to the grid cell their centre falls into), so slight drift off the grid is fine.
+const SHEET_RULES = (cols, rows) => `A game asset sheet: ${cols * rows > 1 ? `${cols * rows} separate images arranged in a grid of ${cols} columns and ${rows} row${rows > 1 ? 's' : ''}, each one centered in its own equal cell with wide empty space around it, nothing touching or crossing the cell borders, no grid lines, no labels` : 'one image'}`;
+const sheets = { main: [], wild: [], ash: [] };
+const sheet = (set, title, cols, rows, size, cells, body) => sheets[set].push({ title, cols, rows, size, cells, prompt: cols * rows > 1 ? `${SHEET_RULES(cols, rows)}. ${body}` : body });
+const chunk = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, i * n + n));
+const pos = (i, cols) => (cols === 2 && i < 2 ? ['Left', 'Right'][i] : `Cell ${i + 1} (row ${Math.floor(i / cols) + 1}, column ${(i % cols) + 1})`);
+
+function buildingSheets(set, fac, firstCitadel) {
+  const f = FACTION[fac];
+  const list = firstCitadel ? [BUILDINGS[0], ...BUILDINGS.slice(1)] : BUILDINGS;
+  for (const [id, ru, what] of list) {
+    for (const pair of firstCitadel && id === 'citadel' ? [[2, 3], [0, 1]] : [[0, 1], [2, 3]]) {
+      sheet(set, `${ru} T${pair[0] + 1} + T${pair[1] + 1}`, 2, 1, '1536x1024', pair.map((t) => `bld_${id}_${fac}_t${t + 1}`),
+        `Both images show the same building at two upgrade levels: ${what}, ${f.mat}. Left: ${TIERS[pair[0]]}. Right: ${TIERS[pair[1]]}. Same camera angle, lighting and style for both. ${ISO}. ${STYLE}. ${CUT}.`);
+    }
+  }
+  sheet(set, 'Угловая башня стены + стройплощадка', 2, 1, '1536x1024', [`bld_wall_tower_${fac}`, fac === 'order' ? 'bld_construction' : ''],
+    `Left: a round castle wall tower with battlements and a conical roof, ${f.mat}. Right: ${fac === 'order' ? 'a construction site: wooden scaffolding, piles of planks and cut stones, ropes, a small wooden crane, on a diamond-shaped dirt plot' : 'leave this cell completely empty'}. ${ISO}. ${STYLE}. ${CUT}.`);
+  sheet(set, 'Отрезок стены', 1, 1, '1536x1024', [`bld_wall_segment_${fac}`], ASSETS.find((a) => a.name === `bld_wall_segment_${fac}`)?.prompt ?? '');
+}
+
+buildingSheets('main', 'order', true);
+for (const a of ASSETS.filter((x) => x.name.startsWith('tex_'))) sheet('main', `Текстура: ${a.title}`, 1, 1, '1024x1024', [a.name], a.prompt);
+for (const g of chunk(WORLD_OBJS, 4)) sheet('main', 'Карта: ' + g.map((o) => o[1]).join(', '), 2, 2, '1024x1024', g.map((o) => `wobj_${o[0]}`),
+  g.map(([, , what], i) => `${pos(i, 2)}: ${what}.`).join(' ') + (g.length < 4 ? ` Leave the remaining cell${4 - g.length > 1 ? 's' : ''} empty.` : '') + ` Each one is ${MAP}. ${STYLE}. ${CUT}.`);
+sheet('main', 'Титаны на карте', 3, 1, '1536x1024', TITANS.map((t) => `titan_${t[0]}_map`),
+  TITANS.map(([, , what], i) => `${['Left', 'Middle', 'Right'][i]}: ${what}.`).join(' ') + ` Each one is a colossal titan standing on the world map. ${ISO}. ${STYLE}. ${CUT}.`);
+for (const a of ASSETS.filter((x) => /^(hero_|titan_.*_art|key_)/.test(x.name))) sheet('main', a.title, 1, 1, a.size, [a.name], a.prompt);
+for (const g of chunk(UNITS, 4)) sheet('main', 'Юниты: ' + g.map((u) => u[1]).join(', '), 2, 2, '1024x1024', g.map((u) => `unit_${u[0]}`),
+  g.map(([, , what], i) => `${pos(i, 2)}: ${what}.`).join(' ') + ` Each is ${UNIT}.`);
+for (const g of chunk(ICONS, 16)) {
+  const cols = 4, rows = Math.ceil(g.length / 4);
+  sheet('main', 'Иконки: ' + g.map((x) => x[0]).join(', '), cols, rows, '1024x1024', g.map((x) => `icon_${x[0]}`),
+    'A set of matching game UI icons in one consistent style, reading left to right, top to bottom: ' + g.map(([, what], i) => `${i + 1}) ${what}`).join('; ') + `. Each icon is a ${ICON}.`);
+}
+buildingSheets('wild', 'wild', false);
+buildingSheets('ash', 'ash', false);
+
+const layouts = {};
+const sheetMd = (set, prefix, title) => {
+  let md = `<!-- generated by scripts/art-prompts.mjs — edit the script, not this file -->
+# ${title}
+
+Быстрый режим для **ChatGPT**: одна генерация — сразу несколько ассетов. Правила — в [STYLEGUIDE.md](STYLEGUIDE.md).
+
+1. Скопируйте промпт листа целиком и отправьте в ChatGPT. Размер указан под заголовком
+   (если ChatGPT спросит — квадрат, горизонтальный 3:2 или вертикальный 2:3).
+2. Скачайте картинку и **назовите файл кодом листа**, например \`${prefix}01.png\`.
+   Больше ничего переименовывать не нужно: импорт сам разрежет лист на отдельные ассеты.
+3. Если какой-то объект на листе не удался — перегенерируйте весь лист или только этот ассет по одиночному промпту из PROMPTS.md.
+
+`;
+  sheets[set].forEach((sh, i) => {
+    const id = `${prefix}${String(i + 1).padStart(2, '0')}`;
+    layouts[id] = { cols: sh.cols, rows: sh.rows, cells: sh.cells };
+    const what = sh.cells.filter(Boolean).map((c) => `\`${c}\``).join(', ');
+    md += `### ${id} — ${sh.title}\n${sh.size.replace('x', '×')} · ${sh.cols}×${sh.rows} · даёт: ${what}\n\n\`\`\`\n${sh.prompt}\n\`\`\`\n\n`;
+  });
+  return md;
+};
+writeFileSync('docs/art/SHEETS.md', sheetMd('main', 'S', 'Листы для ChatGPT: этапы 0–D (Солнечный Орден)'));
+writeFileSync('docs/art/SHEETS_wild.md', sheetMd('wild', 'W', 'Листы для ChatGPT: этап E — Дикий Завет'));
+writeFileSync('docs/art/SHEETS_ash.md', sheetMd('ash', 'A', 'Листы для ChatGPT: этап E — Пепельные Кланы'));
+writeFileSync('docs/art/sheets.json', JSON.stringify(layouts, null, 1) + '\n');
+const covered = new Set(Object.values(layouts).flatMap((l) => l.cells).filter(Boolean));
+const missing = ASSETS.filter((a) => !covered.has(a.name)).map((a) => a.name);
+console.log(`sheets: S=${sheets.main.length} W=${sheets.wild.length} A=${sheets.ash.length} → ${covered.size} assets` + (missing.length ? `; not on any sheet: ${missing.join(', ')}` : ''));
