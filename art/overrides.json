@@ -13,5 +13,11 @@
  },
  "bld_watchtower_*": {
   "scale": 2.6
+ },
+ "bld_wall_order_*": {
+  "scale": 1.45
+ },
+ "bld_wall_tower_*": {
+  "scale": 1.6
  }
 }

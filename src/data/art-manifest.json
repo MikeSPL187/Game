@@ -95,6 +95,30 @@
   "ax": 0.5,
   "ay": 0.852
  },
+ "bld_construction": {
+  "file": "bld_construction.webp",
+  "w": 768,
+  "h": 730,
+  "size": 144,
+  "ax": 0.5,
+  "ay": 0.715
+ },
+ "bld_embassy_order_t3": {
+  "file": "bld_embassy_order_t3.webp",
+  "w": 747,
+  "h": 768,
+  "size": 252,
+  "ax": 0.5,
+  "ay": 0.738
+ },
+ "bld_embassy_order_t4": {
+  "file": "bld_embassy_order_t4.webp",
+  "w": 735,
+  "h": 768,
+  "size": 265,
+  "ax": 0.5,
+  "ay": 0.742
+ },
  "bld_farm_order_t1": {
   "file": "bld_farm_order_t1.webp",
   "w": 768,
@@ -191,6 +215,22 @@
   "ax": 0.5,
   "ay": 0.819
  },
+ "bld_infirmary_order_t1": {
+  "file": "bld_infirmary_order_t1.webp",
+  "w": 761,
+  "h": 661,
+  "size": 190,
+  "ax": 0.5,
+  "ay": 0.707
+ },
+ "bld_infirmary_order_t2": {
+  "file": "bld_infirmary_order_t2.webp",
+  "w": 768,
+  "h": 745,
+  "size": 205,
+  "ax": 0.5,
+  "ay": 0.737
+ },
  "bld_infirmary_order_t3": {
   "file": "bld_infirmary_order_t3.webp",
   "w": 722,
@@ -270,6 +310,38 @@
   "size": 256,
   "ax": 0.5,
   "ay": 0.767
+ },
+ "bld_sanctum_order_t1": {
+  "file": "bld_sanctum_order_t1.webp",
+  "w": 725,
+  "h": 606,
+  "size": 190,
+  "ax": 0.5,
+  "ay": 0.656
+ },
+ "bld_sanctum_order_t2": {
+  "file": "bld_sanctum_order_t2.webp",
+  "w": 768,
+  "h": 703,
+  "size": 205,
+  "ax": 0.5,
+  "ay": 0.686
+ },
+ "bld_sanctum_order_t3": {
+  "file": "bld_sanctum_order_t3.webp",
+  "w": 768,
+  "h": 721,
+  "size": 216,
+  "ax": 0.5,
+  "ay": 0.694
+ },
+ "bld_sanctum_order_t4": {
+  "file": "bld_sanctum_order_t4.webp",
+  "w": 768,
+  "h": 745,
+  "size": 227,
+  "ax": 0.5,
+  "ay": 0.704
  },
  "bld_sawmill_order_t1": {
   "file": "bld_sawmill_order_t1.webp",
@@ -398,6 +470,54 @@
   "size": 216,
   "ax": 0.505,
   "ay": 0.786
+ },
+ "bld_wall_order_t1": {
+  "file": "bld_wall_order_t1.webp",
+  "w": 741,
+  "h": 619,
+  "size": 255,
+  "ax": 0.5,
+  "ay": 0.718
+ },
+ "bld_wall_order_t2": {
+  "file": "bld_wall_order_t2.webp",
+  "w": 768,
+  "h": 741,
+  "size": 234,
+  "ax": 0.5,
+  "ay": 0.744
+ },
+ "bld_wall_order_t3": {
+  "file": "bld_wall_order_t3.webp",
+  "w": 699,
+  "h": 703,
+  "size": 255,
+  "ax": 0.5,
+  "ay": 0.763
+ },
+ "bld_wall_order_t4": {
+  "file": "bld_wall_order_t4.webp",
+  "w": 680,
+  "h": 768,
+  "size": 268,
+  "ax": 0.5,
+  "ay": 0.789
+ },
+ "bld_wall_segment_order": {
+  "file": "bld_wall_segment_order.webp",
+  "w": 768,
+  "h": 572,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "bld_wall_tower_order": {
+  "file": "bld_wall_tower_order.webp",
+  "w": 408,
+  "h": 768,
+  "size": 90,
+  "ax": 0.5,
+  "ay": 0.887
  },
  "bld_warehouse_order_t1": {
   "file": "bld_warehouse_order_t1.webp",

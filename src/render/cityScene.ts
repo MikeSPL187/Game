@@ -1,4 +1,4 @@
-import { Container, Graphics, Matrix, Sprite, Text, Texture, type Application } from 'pixi.js';
+import { Container, Graphics, Matrix, Rectangle, Sprite, Text, Texture, type Application } from 'pixi.js';
 import { bus } from '../core/bus';
 import { fmtTime } from '../core/format';
 import { hash2 } from '../core/rng';
@@ -15,7 +15,7 @@ import { ROAD_PATHS, distToRoads, inWall, lakeDist, paintCityGround, LAKE } from
 import { Particles, floatText, ringTexture, softCircle, starSprite } from './fx';
 import { bake, bakeOr, canvasTexture, get, shadowTexture, type Baked } from './textures';
 import { bldArtName } from '../art/artMap';
-import { artEntry, type ArtFx } from '../art/manifest';
+import { artEntry, hasArt, type ArtFx } from '../art/manifest';
 
 interface PlotView {
   plot: Plot;
@@ -191,6 +191,9 @@ export class CityScene {
       { a: L, b: B, axis: 'x', parts: [[0, 0.25], [0.25, 0.345], [0.655, 0.75], [0.75, 1]] },
       { a: B, b: R, axis: 'y', parts: [[0, 0.25], [0.25, 0.5], [0.5, 0.75], [0.75, 1]] },
     ];
+    const segName = `bld_wall_segment_${this.faction}`;
+    const seg = hasArt(segName) ? await bakeOr(`wallseg:${this.faction}`, segName, () => wallSegment(2, pal, 170, 'y')) : null;
+    if (seg?.raster) { this.rasterWalls(seg, edges); return this.wallTowers(tier, pal, T, R, B, L); }
     for (const e of edges) {
       const fullLen = Math.abs(e.b.x - e.a.x);
       for (const [f0, f1] of e.parts) {
@@ -205,6 +208,49 @@ export class CityScene {
         this.walls.push(s);
       }
     }
+    return this.wallTowers(tier, pal, T, R, B, L);
+  }
+
+  /**
+   * Raster wall: one generated segment (running bottom-left → top-right, i.e. the iso 'y' axis) is
+   * repeated at a fixed scale along every edge and mirrored for the 'x' axis; leftovers shorter than
+   * a segment use a cropped piece of it instead of a squashed copy.
+   */
+  private rasterWalls(seg: Baked, edges: { a: { x: number; y: number }; b: { x: number; y: number }; axis: 'x' | 'y'; parts: [number, number][] }[]) {
+    const e0 = artEntry(seg.raster!)!;
+    const tex = seg.tex, tw = tex.width, th = tex.height;
+    const STEP = 170, OVER = 1.15;                // advance per tile, tile width incl. overlap
+    const k = (STEP * OVER) / tw;                 // scene units per texture px
+    const baseY = (x: number) => e0.ay * th + (tw / 2 - x) * 0.53; // ground line under texture column x (iso slope)
+    const wallH = Math.max(th * 0.2, baseY(tw));                   // wall height: the top-right end touches the image top
+    const place = (cx: number, cy: number, flip: boolean, cropW: number) => {
+      let t = tex, ax = e0.ax, ay = e0.ay;
+      if (cropW < tw) {
+        const y0 = Math.max(0, Math.floor(baseY(cropW) - wallH - 4));
+        t = new Texture({ source: tex.source, frame: new Rectangle(tex.frame.x, tex.frame.y + y0, cropW, th - y0) });
+        ax = 0.5; ay = (baseY(cropW / 2) - y0) / (th - y0);
+      }
+      const s = new Sprite(t);
+      s.anchor.set(ax, ay);
+      s.scale.set(flip ? -k : k, k);
+      s.position.set(cx, cy);
+      s.zIndex = cy;
+      this.objs.addChild(s);
+      this.walls.push(s);
+    };
+    for (const e of edges) {
+      const full = Math.abs(e.b.x - e.a.x), flip = e.axis === 'x';
+      const at = (f: number) => ({ x: e.a.x + (e.b.x - e.a.x) * f, y: e.a.y + (e.b.y - e.a.y) * f });
+      for (const [f0, f1] of e.parts) {
+        const span = full * (f1 - f0);
+        const n = Math.floor(span / STEP + 0.05), rest = span - n * STEP;
+        for (let i = 0; i < n; i++) { const p = at(f0 + ((i + 0.5) * STEP) / full); place(p.x, p.y, flip, tw); }
+        if (rest > 8) { const p = at(f1 - rest / 2 / full); place(p.x, p.y, flip, Math.min(tw, Math.round((rest * OVER) / k))); }
+      }
+    }
+  }
+
+  private async wallTowers(tier: number, pal: (typeof PALETTES)['order'], T: { x: number; y: number }, R: { x: number; y: number }, B: { x: number; y: number }, L: { x: number; y: number }) {
     const tb = await bakeOr(`walltower:${tier}:${this.faction}`, `bld_wall_tower_${this.faction}`, () => wallTower(tier, pal));
     const towerPts = [T, R, B, L, { x: (T.x + R.x) / 2, y: (T.y + R.y) / 2 }, { x: (L.x + T.x) / 2, y: (L.y + T.y) / 2 }, { x: (B.x + R.x) / 2, y: (B.y + R.y) / 2 }];
     for (const p of towerPts) {
