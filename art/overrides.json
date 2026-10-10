@@ -1,6 +1,17 @@
 {
- "bld_farm_*": { "scale": 1.2 },
- "bld_sawmill_*": { "scale": 1.2 },
- "bld_quarry_*": { "scale": 1.2 },
- "bld_goldmine_*": { "scale": 1.2 }
+ "bld_farm_*": {
+  "scale": 1.2
+ },
+ "bld_sawmill_*": {
+  "scale": 1.2
+ },
+ "bld_quarry_*": {
+  "scale": 1.2
+ },
+ "bld_goldmine_*": {
+  "scale": 1.2
+ },
+ "bld_watchtower_*": {
+  "scale": 2.6
+ }
 }

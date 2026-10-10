@@ -127,6 +127,38 @@
   "ax": 0.531,
   "ay": 0.71
  },
+ "bld_forge_order_t1": {
+  "file": "bld_forge_order_t1.webp",
+  "w": 634,
+  "h": 647,
+  "size": 208,
+  "ax": 0.5,
+  "ay": 0.739
+ },
+ "bld_forge_order_t2": {
+  "file": "bld_forge_order_t2.webp",
+  "w": 660,
+  "h": 768,
+  "size": 224,
+  "ax": 0.5,
+  "ay": 0.77
+ },
+ "bld_forge_order_t3": {
+  "file": "bld_forge_order_t3.webp",
+  "w": 680,
+  "h": 765,
+  "size": 236,
+  "ax": 0.5,
+  "ay": 0.763
+ },
+ "bld_forge_order_t4": {
+  "file": "bld_forge_order_t4.webp",
+  "w": 644,
+  "h": 768,
+  "size": 248,
+  "ax": 0.5,
+  "ay": 0.776
+ },
  "bld_goldmine_order_t1": {
   "file": "bld_goldmine_order_t1.webp",
   "w": 645,
@@ -158,6 +190,22 @@
   "size": 252,
   "ax": 0.5,
   "ay": 0.819
+ },
+ "bld_infirmary_order_t3": {
+  "file": "bld_infirmary_order_t3.webp",
+  "w": 722,
+  "h": 768,
+  "size": 216,
+  "ax": 0.5,
+  "ay": 0.761
+ },
+ "bld_infirmary_order_t4": {
+  "file": "bld_infirmary_order_t4.webp",
+  "w": 675,
+  "h": 768,
+  "size": 227,
+  "ax": 0.5,
+  "ay": 0.776
  },
  "bld_quarry_order_t1": {
   "file": "bld_quarry_order_t1.webp",
@@ -318,5 +366,101 @@
   "size": 256,
   "ax": 0.5,
   "ay": 0.779
+ },
+ "bld_tavern_order_t1": {
+  "file": "bld_tavern_order_t1.webp",
+  "w": 589,
+  "h": 593,
+  "size": 181,
+  "ax": 0.505,
+  "ay": 0.739
+ },
+ "bld_tavern_order_t2": {
+  "file": "bld_tavern_order_t2.webp",
+  "w": 746,
+  "h": 739,
+  "size": 196,
+  "ax": 0.505,
+  "ay": 0.736
+ },
+ "bld_tavern_order_t3": {
+  "file": "bld_tavern_order_t3.webp",
+  "w": 727,
+  "h": 697,
+  "size": 206,
+  "ax": 0.505,
+  "ay": 0.727
+ },
+ "bld_tavern_order_t4": {
+  "file": "bld_tavern_order_t4.webp",
+  "w": 627,
+  "h": 768,
+  "size": 216,
+  "ax": 0.505,
+  "ay": 0.786
+ },
+ "bld_warehouse_order_t1": {
+  "file": "bld_warehouse_order_t1.webp",
+  "w": 624,
+  "h": 637,
+  "size": 201,
+  "ax": 0.5,
+  "ay": 0.764
+ },
+ "bld_warehouse_order_t2": {
+  "file": "bld_warehouse_order_t2.webp",
+  "w": 683,
+  "h": 768,
+  "size": 217,
+  "ax": 0.5,
+  "ay": 0.786
+ },
+ "bld_warehouse_order_t3": {
+  "file": "bld_warehouse_order_t3.webp",
+  "w": 670,
+  "h": 768,
+  "size": 228,
+  "ax": 0.5,
+  "ay": 0.79
+ },
+ "bld_warehouse_order_t4": {
+  "file": "bld_warehouse_order_t4.webp",
+  "w": 648,
+  "h": 768,
+  "size": 239,
+  "ax": 0.5,
+  "ay": 0.796
+ },
+ "bld_watchtower_order_t1": {
+  "file": "bld_watchtower_order_t1.webp",
+  "w": 465,
+  "h": 768,
+  "size": 183,
+  "ax": 0.5,
+  "ay": 0.985
+ },
+ "bld_watchtower_order_t2": {
+  "file": "bld_watchtower_order_t2.webp",
+  "w": 495,
+  "h": 768,
+  "size": 151,
+  "ax": 0.475,
+  "ay": 0.873
+ },
+ "bld_watchtower_order_t3": {
+  "file": "bld_watchtower_order_t3.webp",
+  "w": 470,
+  "h": 768,
+  "size": 159,
+  "ax": 0.475,
+  "ay": 0.88
+ },
+ "bld_watchtower_order_t4": {
+  "file": "bld_watchtower_order_t4.webp",
+  "w": 482,
+  "h": 768,
+  "size": 167,
+  "ax": 0.475,
+  "ay": 0.877
  }
 }
