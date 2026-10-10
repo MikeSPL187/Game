@@ -39,6 +39,9 @@ export const HELPS_PER_JOB = (embassy: number) => 5 + Math.floor(embassy / 2);
 export const HELP_DAILY_CAP = 40;
 export const HELP_CONTRIB = 8;
 
+/** experience the AI members bring every hour */
+export const ALLIANCE_XP_PER_HOUR = 30;
+
 export function allianceLevelXp(level: number): number { return Math.round(1000 * Math.pow(level, 1.5)); }
 
 export interface ShopItem { id: string; item: string; count: number; price: number; daily: number }

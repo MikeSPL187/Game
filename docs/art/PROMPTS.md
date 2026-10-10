@@ -1059,6 +1059,14 @@ the Ash Wyrm, an ancient obsidian dragon with glowing lava cracks, horns and emb
 ```
 <sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 200 --no text, people, ground, shadow`
 
+### Ледяной Колосс
+`titan_frost_map.png` · 1024×1024, прозрачный фон
+
+```
+the Frost Colossus, a towering giant of blue-white ice and starlight with a crown of icicles, frozen runes glowing pale blue across its body, snow drifting from its shoulders, a colossal titan standing on the world map. classic 2:1 isometric view, camera 30 degrees above the horizon rotated 45 degrees, seen from the front corner, the footprint is a diamond, left wall brighter than the right wall, the whole object fully in frame, centered with margins. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. isolated on a transparent background, no ground, no cast shadow, no text, no frame, no people.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 200 --no text, people, ground, shadow`
+
 
 # Этап C — персонажи и ключевой арт
 
@@ -1184,6 +1192,14 @@ Stoneshell, a walking mountain golem with a moss-covered rock body, trees on its
 
 ```
 the Ash Wyrm, an ancient obsidian dragon with glowing lava cracks, horns and ember-filled wings, epic dramatic splash art, full body, towering over a tiny fortress, stormy sky. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 3:2 --style raw --sref <ETALON_URL> --sw 150`
+
+### Ледяной Колосс
+`titan_frost_art.png` · 1536×1024 (3:2)
+
+```
+the Frost Colossus, a towering giant of blue-white ice and starlight with a crown of icicles, frozen runes glowing pale blue across its body, snow drifting from its shoulders, epic dramatic splash art, full body, towering over a tiny fortress, stormy sky. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
 ```
 <sub>Midjourney: добавьте в конец</sub> `--ar 3:2 --style raw --sref <ETALON_URL> --sw 150`
 

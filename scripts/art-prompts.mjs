@@ -136,6 +136,7 @@ const world = () => {
   ]) out += block(ru, `tex_${id}.png`, '1024×1024, бесшовная', `${what}, seen from high above at map scale. ${TEX}.`, MJT);
   out += '\n## Титаны на карте\n\n';
   for (const [id, ru, what] of TITANS) out += block(ru, `titan_${id}_map.png`, '1024×1024, прозрачный фон', `${what}, a colossal titan standing on the world map. ${ISO}. ${STYLE}. ${CUT}.`);
+  for (const [id, ru, what] of TITANS_LATE) out += block(ru, `titan_${id}_map.png`, '1024×1024, прозрачный фон', `${what}, a colossal titan standing on the world map. ${ISO}. ${STYLE}. ${CUT}.`);
   return out;
 };
 
@@ -143,6 +144,11 @@ const TITANS = [
   ['roc', 'Громокрыл', 'Stormwing, a colossal storm eagle with feathers of dark thunderclouds and crackling blue lightning, glowing white eyes'],
   ['golem', 'Камнепанцирь', 'Stoneshell, a walking mountain golem with a moss-covered rock body, trees on its back and glowing blue aether crystal veins'],
   ['wyrm', 'Пепельный Змей', 'the Ash Wyrm, an ancient obsidian dragon with glowing lava cracks, horns and ember-filled wings'],
+];
+
+// titans added later (kept separate so the original sheets keep their codes)
+const TITANS_LATE = [
+  ['frost', 'Ледяной Колосс', 'the Frost Colossus, a towering giant of blue-white ice and starlight with a crown of icicles, frozen runes glowing pale blue across its body, snow drifting from its shoulders'],
 ];
 
 const PORTRAIT = 'fantasy hero portrait, chest-up, three-quarter view turned slightly to the left, looking at the viewer, the head in the upper third of the image, same framing for every hero, stylized 3D render like premium mobile RPG hero art, detailed face, expressive eyes, painterly blurred background in faction colors with soft bokeh, cinematic light from the upper left';
@@ -166,7 +172,7 @@ const people = () => {
   let out = '\n# Этап C — персонажи и ключевой арт\n\n## Портреты героев\n\n';
   for (const [id, ru, fac, what] of HEROES) out += block(`${ru} (${FACTION[fac].name})`, `hero_${id}.png`, '768×1024 (3:4)', `${what}. ${PORTRAIT}, background ${FBG[fac]}. No text, no frame.`, '--ar 3:4 --style raw --sref <ETALON_URL> --sw 150');
   out += '\n## Арт титанов (для Святилища)\n\n';
-  for (const [id, ru, what] of TITANS) out += block(ru, `titan_${id}_art.png`, '1536×1024 (3:2)', `${what}, epic dramatic splash art, full body, towering over a tiny fortress, stormy sky. ${STYLE}. No text.`, '--ar 3:2 --style raw --sref <ETALON_URL> --sw 150');
+  for (const [id, ru, what] of [...TITANS, ...TITANS_LATE]) out += block(ru, `titan_${id}_art.png`, '1536×1024 (3:2)', `${what}, epic dramatic splash art, full body, towering over a tiny fortress, stormy sky. ${STYLE}. No text.`, '--ar 3:2 --style raw --sref <ETALON_URL> --sw 150');
   out += '\n## Ключевой арт\n\n';
   out += block('Экран загрузки', 'key_loading.png', '1920×1080 (16:9)', `epic fantasy landscape: a shining citadel on a cliff above a valley, giant titans silhouetted in the distance under a stormy sky with falling blue aether shards, empty space at the top for the game logo. ${STYLE}. No text.`, '--ar 16:9 --style raw --sref <ETALON_URL> --sw 150');
   for (const [fac, what] of [['order', 'paladins of the Sun Order in white-and-gold armor before a white citadel, golden sunlight'], ['wild', 'druids, rangers and a great stag in an ancient glowing forest'], ['ash', 'ash-clan warriors on horseback before a volcanic fortress, embers in the air']])
@@ -291,7 +297,7 @@ for (const g of chunk(WORLD_OBJS, 4)) sheet('main', 'Карта: ' + g.map((o) =
   g.map(([, , what], i) => `${pos(i, 2)}: ${what}.`).join(' ') + (g.length < 4 ? ` Leave the remaining cell${4 - g.length > 1 ? 's' : ''} empty.` : '') + ` Each one is ${MAP}. ${STYLE}. ${CUT}.`);
 sheet('main', 'Титаны на карте', 3, 1, '1536x1024', TITANS.map((t) => `titan_${t[0]}_map`),
   TITANS.map(([, , what], i) => `${['Left', 'Middle', 'Right'][i]}: ${what}.`).join(' ') + ` Each one is a colossal titan standing on the world map. ${ISO}. ${STYLE}. ${CUT}.`);
-for (const a of ASSETS.filter((x) => /^(hero_|titan_.*_art|key_)/.test(x.name))) sheet('main', a.title, 1, 1, a.size, [a.name], a.prompt);
+for (const a of ASSETS.filter((x) => /^(hero_|titan_.*_art|key_)/.test(x.name) && !TITANS_LATE.some(([id]) => x.name === `titan_${id}_art`))) sheet('main', a.title, 1, 1, a.size, [a.name], a.prompt);
 for (const g of chunk(UNITS, 4)) sheet('main', 'Юниты: ' + g.map((u) => u[1]).join(', '), 2, 2, '1024x1024', g.map((u) => `unit_${u[0]}`),
   g.map(([, , what], i) => `${pos(i, 2)}: ${what}.`).join(' ') + ` Each is ${UNIT}.`);
 for (const g of chunk(ICONS, 16)) {
@@ -327,6 +333,7 @@ for (const g of chunk(ICONS2, 16)) {
     'A set of matching game UI icons in one consistent style, reading left to right, top to bottom: ' + g.map(([, what], i) => `${i + 1}) ${what}`).join('; ') + `. Each icon is a ${ICON}.`);
 }
 for (const a of ASSETS.filter((x) => x.name.startsWith('bg_battle_'))) sheet('main', a.title, 1, 1, a.size, [a.name], a.prompt);
+for (const a of ASSETS.filter((x) => TITANS_LATE.some(([id]) => x.name === `titan_${id}_map` || x.name === `titan_${id}_art`))) sheet('main', a.title + (a.name.endsWith('_map') ? ' (на карте)' : ' (арт)'), 1, 1, a.size, [a.name], a.prompt);
 
 buildingSheets('wild', 'wild', false);
 buildingSheets('ash', 'ash', false);

@@ -625,3 +625,17 @@ a stormy rocky highland plateau with dark clouds and lightning in the distance, 
 the grassy field in front of a white stone city wall with blue banners at golden hour, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
 ```
 
+### S89 — Ледяной Колосс (на карте)
+1024×1024 · 1×1 · даёт: `titan_frost_map`
+
+```
+the Frost Colossus, a towering giant of blue-white ice and starlight with a crown of icicles, frozen runes glowing pale blue across its body, snow drifting from its shoulders, a colossal titan standing on the world map. classic 2:1 isometric view, camera 30 degrees above the horizon rotated 45 degrees, seen from the front corner, the footprint is a diamond, left wall brighter than the right wall, the whole object fully in frame, centered with margins. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. isolated on a transparent background, no ground, no cast shadow, no text, no frame, no people.
+```
+
+### S90 — Ледяной Колосс (арт)
+1536×1024 · 1×1 · даёт: `titan_frost_art`
+
+```
+the Frost Colossus, a towering giant of blue-white ice and starlight with a crown of icicles, frozen runes glowing pale blue across its body, snow drifting from its shoulders, epic dramatic splash art, full body, towering over a tiny fortress, stormy sky. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+

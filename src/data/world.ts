@@ -39,6 +39,7 @@ export const TITANS: TitanDef[] = [
   { id: 'roc', name: 'Громокрыл', title: 'Повелитель гроз', level: 8, desc: 'Исполинская птица, рождённая в сердце грозы. Её крик раскалывает небо.', buff: { atk: 0.06 }, strike: 1.2, color: '#5ac8ff', color2: '#24407a', hp: 11000, atk: 36 },
   { id: 'golem', name: 'Камнепанцирь', title: 'Древний страж', level: 15, desc: 'Ходячая гора, спавшая под Каменной грядой тысячу лет.', buff: { def: 0.08, hp: 0.06 }, strike: 1.6, color: '#c8a46a', color2: '#4a3a2a', hp: 38000, atk: 72 },
   { id: 'wyrm', name: 'Пепельный Змей', title: 'Пламя Раскола', level: 22, desc: 'Последний дракон старой эпохи. Его дыхание обращает крепости в стекло.', buff: { atk: 0.1, def: 0.05, hp: 0.05 }, strike: 2.4, color: '#ff6a2a', color2: '#5a1a0a', hp: 90000, atk: 110 },
+  { id: 'frost', name: 'Ледяной Колосс', title: 'Сердце Вечной Зимы', level: 25, desc: 'Великан изо льда и звёздного света, спящий на вершинах Северного хребта. Там, где он ступает, замерзает даже эфир.', buff: { atk: 0.08, def: 0.1, hp: 0.1 }, strike: 3.0, color: '#9ae8ff', color2: '#1a3a5a', hp: 180000, atk: 150 },
 ];
 
 export const TITAN_BY_ID: Record<string, TitanDef> = Object.fromEntries(TITANS.map((t) => [t.id, t]));

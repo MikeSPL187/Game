@@ -20,7 +20,7 @@ import { PLOTS } from '../data/cityLayout';
 import { EVENTS, eventAt, rivalScore, type EventType } from '../data/events';
 import {
   ALLIANCE_SHOP, ALLIANCE_TECH_BY_ID, DONATION_CONTRIB, DONATION_PROGRESS, HELPS_PER_JOB, HELP_CONTRIB, HELP_DAILY_CAP, MEMBERS, REQUEST_KINDS,
-  allianceLevelXp, donationCost, giftReward, techNeed,
+  ALLIANCE_XP_PER_HOUR, allianceLevelXp, donationCost, giftReward, techNeed,
 } from '../data/alliance';
 import { ACHIEVEMENTS, ACHIEVEMENT_BY_ID, achievementValue, type AchievementDef } from '../data/achievements';
 import { TROOPS, TYPE_INFO } from '../data/troops';
@@ -28,6 +28,7 @@ import { TITAN_BY_ID, campName, campTroops, nodeRate, riftTroops } from '../data
 import { computeEffects, heroUtility, type Effects } from './bonuses';
 import { applyHeroes, armyPower, emptyMods, estimate, groupsFromTroops, simulateBattle, titanGroup, type Army } from './combat';
 import { SAVE_VERSION, emptyStats, newGame } from './state';
+import { placeLateTitans } from './worldgen';
 import { findPath, getTerrain, pathLength, type Terrain } from './terrain';
 import {
   TARGET_COUNTS, decodeFog, encodeFog, lordTroops, makeCamp, makeNode, randomFreeTile, reveal, zoneLevel,
@@ -1274,6 +1275,9 @@ export class Game {
     const a = this.s.alliance;
     const day = dayKey(now);
     if (a.day !== day) { a.day = day; a.helpsToday = 0; a.donationsToday = 0; a.shopToday = {}; }
+    // allies work too: the alliance gains a little experience every hour
+    const hours = Math.max(0, Math.min(72, (now - this.s.lastTick) / 3_600_000));
+    if (hours > 0) this.allianceXp(ALLIANCE_XP_PER_HOUR * hours);
     const max = HELPS_PER_JOB(this.level('embassy'));
     for (const j of this.s.jobs) {
       if (!j.helpReq) continue;
@@ -1305,7 +1309,7 @@ export class Game {
 
   private allianceXp(n: number) {
     const a = this.s.alliance;
-    a.xp += n;
+    a.xp = Math.round((a.xp + n) * 100) / 100;
     while (a.xp >= allianceLevelXp(a.level) && a.level < 20) { a.xp -= allianceLevelXp(a.level); a.level++; bus.emit('alliance-level', a.level); }
   }
 
@@ -1815,6 +1819,12 @@ export function migrate(s: GameState) {
   if (!s.stats) s.stats = emptyStats();
   for (const [k, v] of Object.entries(emptyStats())) if ((s.stats as any)[k] == null) (s.stats as any)[k] = v;
   if (!s.titans) s.titans = { tamed: {}, active: null };
+  // titans added after release appear in existing worlds too
+  if (s.world?.objects && !s.world.objects.some((o) => o.kind === 'titan' && o.titanId === 'frost')) {
+    const late = placeLateTitans(getTerrain(s.world.seed), s.world.objects, s.world.seed, s.world.nextObjId);
+    s.world.objects.push(...late);
+    s.world.nextObjId += late.length;
+  }
   if (!s.settings) s.settings = { sound: true, music: true, haptics: true, quality: 'high', dayNight: true, showFps: false, notifications: true };
   if (s.settings.showFps == null) s.settings.showFps = false;
   if (s.settings.notifications == null) s.settings.notifications = true;

@@ -751,6 +751,20 @@
    "bg_battle_siege"
   ]
  },
+ "S89": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "titan_frost_map"
+  ]
+ },
+ "S90": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "titan_frost_art"
+  ]
+ },
  "W01": {
   "cols": 2,
   "rows": 1,

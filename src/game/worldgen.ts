@@ -78,19 +78,11 @@ export function generateWorld(seed: number): { objects: WorldObject[]; lords: Ai
   const titanSpots = [
     { t: TITANS[0], d: 22, prefer: [T.Hills, T.Grass, T.Meadow] },
     { t: TITANS[1], d: 48, prefer: [T.Hills, T.Sand, T.Grass] },
-    { t: TITANS[2], d: 80, prefer: [T.Ash] },
+    { t: TITANS.find((x) => x.id === 'wyrm')!, d: 80, prefer: [T.Ash] },
   ];
   for (const ts of titanSpots) {
-    let best: { x: number; y: number; score: number } | null = null;
-    for (let i = 0; i < 3000; i++) {
-      const x = randInt(rnd, 4, ter.size - 5), y = randInt(rnd, 4, ter.size - 5);
-      if (!isFree(ter, objs, x, y, 4)) continue;
-      const d = distFromStart(ter, x, y);
-      const tt = ter.t[y * ter.size + x];
-      const score = -Math.abs(d - ts.d) + (ts.prefer.includes(tt) ? 6 : 0);
-      if (!best || score > best.score) best = { x, y, score };
-    }
-    if (best) objs.push({ id: id++, kind: 'titan', x: best.x, y: best.y, level: ts.t.level, titanId: ts.t.id, hp: 1 });
+    const o = placeTitan(ter, objs, ts.t.id, ts.d, ts.prefer, rnd, id);
+    if (o) { objs.push(o); id++; }
   }
 
   // AI lords — spread out at increasing distance
@@ -145,7 +137,34 @@ export function generateWorld(seed: number): { objects: WorldObject[]; lords: Ai
     if (!p) break;
     objs.push(makeNode(ter, id++, p.x, p.y, rnd));
   }
+  // the endgame titan is placed last with its own random stream, so earlier objects stay identical to older versions
+  const late = placeLateTitans(ter, objs, seed, id);
+  objs.push(...late); id += late.length;
   return { objects: objs, lords, nextId: id, ter };
+}
+
+function placeTitan(ter: Terrain, objs: WorldObject[], titanId: string, dist: number, prefer: number[], rnd: () => number, id: number): WorldObject | null {
+  let best: { x: number; y: number; score: number } | null = null;
+  for (let i = 0; i < 3000; i++) {
+    const x = randInt(rnd, 4, ter.size - 5), y = randInt(rnd, 4, ter.size - 5);
+    if (!isFree(ter, objs, x, y, 4)) continue;
+    const d = distFromStart(ter, x, y);
+    const tt = ter.t[y * ter.size + x];
+    const score = -Math.abs(d - dist) + (prefer.includes(tt) ? 6 : 0);
+    if (!best || score > best.score) best = { x, y, score };
+  }
+  const t = TITANS.find((x) => x.id === titanId)!;
+  return best ? { id, kind: 'titan', x: best.x, y: best.y, level: t.level, titanId, hp: 1 } : null;
+}
+
+/** Titans added after release (also used to add them to existing worlds). */
+export function placeLateTitans(ter: Terrain, objs: WorldObject[], seed: number, firstId: number): WorldObject[] {
+  const out: WorldObject[] = [];
+  if (!objs.some((o) => o.kind === 'titan' && o.titanId === 'frost')) {
+    const o = placeTitan(ter, [...objs, ...out], 'frost', 100, [T.Snow, T.Hills, T.Mountain], mulberry32(seed ^ 0x5f2a71), firstId + out.length);
+    if (o) out.push(o);
+  }
+  return out;
 }
 
 export function lordTroops(citadel: number, rnd: () => number) {

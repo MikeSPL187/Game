@@ -5,7 +5,7 @@ import type { Legion, WorldObject } from '../core/types';
 import { boatArt, campArt, castleArt, mountainArt, nodeArt, riftArt, riftVortex, ruinArt, soldierArt, titanArt, treeArt, hillArt } from '../art/worldArt';
 import { PALETTES } from '../art/buildings';
 import { iconSvg } from '../art/icons';
-import { FACTIONS, NODE_INFO } from '../data/world';
+import { FACTIONS, NODE_INFO, TITANS, TITAN_BY_ID } from '../data/world';
 import { TROOPS } from '../data/troops';
 import type { Game } from '../game/game';
 import { T, type Terrain } from '../game/terrain';
@@ -92,7 +92,7 @@ export class WorldScene {
     jobs.push(B('wrift', riftArt), bake('wvortex', riftVortex), B('wboat', () => boatArt(PALETTES[f].banner)));
     jobs.push(B('wcity', () => castleArt(FACTIONS[f].color, f, 5, true)));
     for (const l of this.game.s.lords) jobs.push(bakeOr(`wlord:${l.id}`, `wobj_city_${l.faction}`, () => castleArt(l.color, l.faction, l.citadel)));
-    for (const t of ['roc', 'golem', 'wyrm']) jobs.push(B(`wtitan:${t}`, () => titanArt(t)));
+    for (const t of TITANS) jobs.push(B(`wtitan:${t.id}`, () => titanArt(t.id)));
     for (let v = 0; v < 3; v++) { jobs.push(B(`wmtn:${v}`, () => mountainArt(v, false))); jobs.push(B(`wsnow:${v}`, () => mountainArt(v, true))); }
     jobs.push(B('whill:0', () => hillArt(0)), B('whill:1', () => hillArt(1)));
     for (const k of ['pine', 'oak', 'dead', 'ash', 'birch'] as const) for (let v = 0; v < 2; v++) jobs.push(B(`wtree:${k}:${v}`, () => treeArt(k, v), 1));
@@ -380,7 +380,7 @@ export class WorldScene {
     if (o.kind === 'titan') {
       const glow = new Sprite(softCircle());
       glow.anchor.set(0.5); glow.scale.set(5, 2.4); glow.alpha = 0.35; glow.blendMode = 'add';
-      glow.tint = o.titanId === 'wyrm' ? 0xff6a2a : o.titanId === 'golem' ? 0x7fe3ff : 0x5ac8ff;
+      glow.tint = parseInt((TITAN_BY_ID[o.titanId!]?.color ?? '#5ac8ff').slice(1), 16);
       glow.y = -60;
       c.addChildAt(glow, 0);
       v.extra = s;

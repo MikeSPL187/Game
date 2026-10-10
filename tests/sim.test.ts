@@ -17,7 +17,7 @@ describe('world', () => {
     expect(g.ter.reach[city.y * g.ter.size + city.x]).toBe(1);
     const objs = g.s.world.objects;
     expect(objs.filter((o) => o.kind === 'camp').length).toBeGreaterThan(40);
-    expect(objs.filter((o) => o.kind === 'titan').length).toBe(3);
+    expect(objs.filter((o) => o.kind === 'titan').length).toBe(4);
     expect(objs.filter((o) => o.kind === 'lord').length).toBeGreaterThanOrEqual(5);
     const near = objs.filter((o) => o.kind === 'camp' && Math.hypot(o.x - city.x, o.y - city.y) < 10);
     expect(near.length).toBeGreaterThan(2);
@@ -28,7 +28,7 @@ describe('world', () => {
   it('many seeds are valid', () => {
     for (let seed = 1; seed < 8; seed++) {
       const g = Game.create('wild', 'T', seed * 977, T0);
-      expect(g.s.world.objects.filter((o) => o.kind === 'titan').length).toBe(3);
+      expect(g.s.world.objects.filter((o) => o.kind === 'titan').length).toBe(4);
       expect(g.s.lords.length).toBeGreaterThanOrEqual(5);
     }
   });
@@ -138,5 +138,22 @@ describe('battle replay data', () => {
       expect(rd.ta!.reduce((a, b) => a + b, 0)).toBeCloseTo(rd.a, -1);
       expect(rd.td!.reduce((a, b) => a + b, 0)).toBeCloseTo(rd.d, -1);
     }
+  });
+});
+
+describe('late titans', () => {
+  it('old worlds get the Frost Colossus once; earlier objects are unchanged', async () => {
+    const { migrate } = await import('../src/game/game');
+    const g = Game.create('order', 'T', 4242, T0);
+    const frost = g.s.world.objects.find((o) => o.titanId === 'frost')!;
+    expect(frost).toBeTruthy();
+    const raw = JSON.parse(JSON.stringify(g.s));
+    raw.world.objects = raw.world.objects.filter((o: { titanId?: string }) => o.titanId !== 'frost');
+    const before = raw.world.objects.length;
+    migrate(raw);
+    expect(raw.world.objects.length).toBe(before + 1);
+    migrate(raw);
+    expect(raw.world.objects.length).toBe(before + 1);
+    expect(raw.world.objects.filter((o: { titanId?: string }) => o.titanId === 'frost').length).toBe(1);
   });
 });

@@ -248,7 +248,7 @@ export class WorldAmbience {
     const p = this.sc.particles;
     if (kind === 'camp' && Math.random() < dt * 0.8) p.emit({ x: x + (Math.random() - 0.5) * 50, y: y - 20, vy: -24, tex: softCircle(), tint: 0xb04af0, alpha: 0.55, scale: 0.18, grow: 0.5, life: 1.8, blend: 'add' });
     if (kind === 'titan' && Math.random() < dt * 2.2) {
-      const tint = titanId === 'wyrm' ? 0xff7a2a : titanId === 'golem' ? 0x7fe3ff : 0xbfe8ff;
+      const tint = titanId === 'wyrm' ? 0xff7a2a : titanId === 'golem' ? 0x7fe3ff : titanId === 'frost' ? 0xe8fbff : 0xbfe8ff;
       p.emit({ x: x + (Math.random() - 0.5) * 90, y: y - 40 - Math.random() * 60, vy: titanId === 'wyrm' ? -40 : -12, tex: starSprite(), tint, scale: 0.25, life: 1.2, blend: 'add', spread: 20 });
     }
     if (kind === 'rift' && Math.random() < dt * 1.5) p.emit({ x: x + (Math.random() - 0.5) * 40, y: y - 14, vy: -30, tex: starSprite(), tint: 0xd08aff, scale: 0.2, life: 1, blend: 'add', spread: 30 });

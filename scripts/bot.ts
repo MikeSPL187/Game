@@ -180,6 +180,8 @@ Date.now = realNow; Math.random = rnd;
 const h = (t: number) => ((t - start) / 3_600_000).toFixed(1) + 'h';
 console.log('Chapter completion (simulated wall time):');
 for (const [n, t] of Object.entries(chapterAt)) console.log(`  Ch ${n} ${CHAPTERS[Number(n) - 1].title}: ${h(t)}`);
+for (const q of (g.chapter()?.quests ?? [])) console.log('   ', q.id, g.questProgress(q) + '/' + q.target, g.s.quests.claimed.includes(q.id) ? 'claimed' : '');
+console.log('Alliance', JSON.stringify({ lvl: g.s.alliance.level, xp: g.s.alliance.xp, helps: g.s.stats.allianceHelps, embassy: g.level('embassy') }));
 console.log('Current chapter', g.s.quests.chapter, 'next quest:', g.nextQuest()?.title, g.nextQuest() ? g.questProgress(g.nextQuest()!) + '/' + g.nextQuest()!.target : '');
 console.log('Citadel', g.citadel, 'power', g.power(), 'troops', Math.round(sumTroops(g.allTroops())), 'heroes', Object.values(g.s.heroes).filter((x) => x.owned).map((x) => x.id + x.level + '★' + x.stars).join(' '));
 console.log('Stats', JSON.stringify(g.s.stats));

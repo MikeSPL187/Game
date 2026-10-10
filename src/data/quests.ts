@@ -171,6 +171,59 @@ export const CHAPTERS: ChapterDef[] = [
       { id: 'camp20lv', title: 'Победите логово 20 ур.', target: 20, progress: (s) => s.stats.maxCampLevel, go: { kind: 'world', find: 'camp', level: 20 }, reward: { items: { tome3: 3 } } },
     ],
   },
+  // ——— endgame: chapters 9–12
+  {
+    n: 9, title: 'Шёпот эфира',
+    intro: 'Укрощённые титаны тревожны: по ночам они смотрят на север. Магистр Ориан уверен — эфир зовёт кого-то, кто старше самого Раскола.',
+    outro: 'Древние свитки сложились в карту. На вершинах Северного хребта, в вечных снегах, спит Ледяной Колосс.',
+    reward: { res: { food: 300000, wood: 300000, stone: 180000, gold: 80000, aether: 600 }, items: { key_gold: 4, tome3: 3 } },
+    quests: [
+      named(B('citadel', 21, { items: { speed180: 2 } }), 'Улучшите Цитадель до 21 ур.'),
+      named(B('academy', 18, { items: { tome3: 2 } }), 'Улучшите Академию до 18 ур.'),
+      { id: 'res40', title: 'Завершите 40 исследований', target: 40, progress: researchCount, go: { kind: 'building', type: 'academy', action: 'research' }, reward: { res: { gold: 20000 } } },
+      { id: 'rift10', title: 'Закройте 10 Эфирных разломов', target: 10, progress: (s) => s.stats.riftsCleared, go: { kind: 'world', find: 'rift' }, reward: { items: { key_gold: 2, mat_crystal: 10 } } },
+      { id: 'ruin40', title: 'Исследуйте 40 руин', target: 40, progress: (s) => s.stats.ruinsExplored, go: { kind: 'world', find: 'ruin' }, reward: { items: { chest_big: 2 } } },
+    ],
+  },
+  {
+    n: 10, title: 'Вечная зима',
+    intro: 'Путь на север лежит через перевалы, где замерзает дыхание. Лишь армия, закалённая в боях, дойдёт до логова Колосса.',
+    outro: 'Колосс склонил ледяную голову. Четыре титана теперь служат одному лорду — такого не видел даже старый мир.',
+    reward: { res: { food: 400000, wood: 400000, stone: 240000, gold: 100000, aether: 800 }, items: { key_gold: 5, speed180: 3 } },
+    quests: [
+      named(B('citadel', 22, { items: { speed180: 2 } }), 'Улучшите Цитадель до 22 ур.'),
+      { id: 'heroes5star', title: 'Возвысьте героя до 5★', target: 5, progress: (s) => Math.max(0, ...Object.values(s.heroes).filter((h) => h.owned).map((h) => h.stars)), go: { kind: 'panel', panel: 'heroes' }, reward: { items: { shard_any: 30 } } },
+      { id: 'troops20k', title: 'Соберите армию из 20 000 воинов', target: 20000, progress: totalTroops, go: { kind: 'building', type: 'barracks', action: 'train' }, reward: { res: { food: 60000 } } },
+      { id: 'camp23lv', title: 'Победите логово 23 ур.', target: 23, progress: (s) => s.stats.maxCampLevel, go: { kind: 'world', find: 'camp', level: 23 }, reward: { items: { tome3: 4 } } },
+      { id: 'tame_frost', title: 'Приручите Ледяного Колосса', target: 1, progress: (s) => (s.titans.tamed.frost ? 1 : 0), go: { kind: 'world', find: 'titan', titan: 'frost' }, reward: { items: { key_gold: 4 }, res: { aether: 300 } } },
+    ],
+  },
+  {
+    n: 11, title: 'Сердце союза',
+    intro: 'Слава о Повелителе титанов разнеслась по землям. Пепельный Рассвет ждёт, что вы поведёте союз против самой Пустоты.',
+    outro: 'Союз крепок как никогда, лорды-соперники признали вашу силу. Осталось одно — дотянуться до сердца эфира.',
+    reward: { res: { food: 500000, wood: 500000, stone: 300000, gold: 140000, aether: 1000 }, items: { key_gold: 6, chest_big: 3 } },
+    quests: [
+      named(B('citadel', 23, { items: { speed180: 3 } }), 'Улучшите Цитадель до 23 ур.'),
+      named(B('embassy', 15, { items: { speed180: 1 } }), 'Улучшите Посольство до 15 ур.'),
+      { id: 'ally150', title: 'Помогите союзникам 150 раз', target: 150, progress: (s) => s.stats.allianceHelps ?? 0, go: { kind: 'panel', panel: 'alliance' }, reward: { items: { speed180: 2 } } },
+      { id: 'allylv4', title: 'Поднимите уровень союза до 4', target: 4, progress: (s) => s.alliance?.level ?? 1, go: { kind: 'panel', panel: 'alliance' }, reward: { items: { key_gold: 2 } } },
+      { id: 'lord10', title: 'Победите армии лордов 10 раз', target: 10, progress: (s) => s.stats.lordsDefeated, go: { kind: 'world', find: 'lord' }, reward: { items: { chest_big: 2 } } },
+    ],
+  },
+  {
+    n: 12, title: 'Владыка эфира',
+    intro: 'Эфир сгущается над Цитаделью. Четыре титана поют в унисон — мир ждёт, когда его новый владыка поднимет корону.',
+    outro: 'Небесный престол собран заново — уже не на облаках, а в вашей Цитадели. Эпоха титанов началась. Да здравствует Владыка эфира!',
+    reward: { res: { food: 800000, wood: 800000, stone: 500000, gold: 250000, aether: 2000 }, items: { key_gold: 10, chest_big: 5, speed180: 5 } },
+    quests: [
+      named(B('citadel', 25, { items: { speed180: 5 } }), 'Улучшите Цитадель до 25 ур.'),
+      { id: 'titans4', title: 'Приручите всех четырёх титанов', target: 4, progress: (s) => Object.keys(s.titans.tamed).length, go: { kind: 'panel', panel: 'titans' }, reward: { res: { aether: 500 } } },
+      { id: 'titanlv5', title: 'Поднимите титана до 5 ур.', target: 5, progress: (s) => Math.max(0, ...Object.values(s.titans.tamed).map((t) => t.level)), go: { kind: 'panel', panel: 'titans' }, reward: { items: { titan_food: 10 } } },
+      { id: 'camp25lv', title: 'Победите логово 25 ур.', target: 25, progress: (s) => s.stats.maxCampLevel, go: { kind: 'world', find: 'camp', level: 25 }, reward: { items: { tome3: 5 } } },
+      { id: 'herolv50', title: 'Поднимите героя до 50 ур.', target: 50, progress: bestHeroLevel, go: { kind: 'panel', panel: 'heroes' }, reward: { items: { tome3: 5 } } },
+    ],
+  },
 ];
 
 export interface DailyDef { id: string; title: string; target: number; points: number; stat: keyof GameState['stats'] }
