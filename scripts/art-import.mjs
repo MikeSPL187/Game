@@ -175,7 +175,9 @@ await page.evaluate(() => {
     c = resize(c, tw, th);
     const webp = c.toDataURL('image/webp', cut || kind === 'texture' ? 0.9 : 0.86);
     const entry = { file: name + '.webp', w: c.width, h: c.height, size: c.width, ax: 0.5, ay: 0.5 };
-    const scale = ov.scale ?? 1;
+    // buildings grow a little with each tier so upgrades read at a glance
+    const tier = /^bld_.+_t([1-4])$/.exec(name);
+    const scale = (ov.scale ?? 1) * (tier ? [0.88, 0.95, 1, 1.05][Number(tier[1]) - 1] : 1);
     let note = '';
     if (cut) {
       const ref = await measureReference(name);

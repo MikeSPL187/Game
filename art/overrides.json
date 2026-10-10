@@ -1,1 +1,6 @@
-{}
+{
+ "bld_farm_order_t1": { "scale": 1.2 },
+ "bld_farm_order_t2": { "scale": 1.2 },
+ "bld_farm_order_t3": { "scale": 1.2 },
+ "bld_farm_order_t4": { "scale": 1.2 }
+}

@@ -1,4 +1,20 @@
 {
+ "bld_citadel_order_t1": {
+  "file": "bld_citadel_order_t1.webp",
+  "w": 627,
+  "h": 680,
+  "size": 414,
+  "ax": 0.5,
+  "ay": 0.863
+ },
+ "bld_citadel_order_t2": {
+  "file": "bld_citadel_order_t2.webp",
+  "w": 669,
+  "h": 768,
+  "size": 447,
+  "ax": 0.5,
+  "ay": 0.87
+ },
  "bld_citadel_order_t3": {
   "file": "bld_citadel_order_t3.webp",
   "w": 768,
@@ -11,8 +27,24 @@
   "file": "bld_citadel_order_t4.webp",
   "w": 764,
   "h": 768,
-  "size": 470,
+  "size": 494,
   "ax": 0.5,
   "ay": 0.852
+ },
+ "bld_farm_order_t1": {
+  "file": "bld_farm_order_t1.webp",
+  "w": 768,
+  "h": 561,
+  "size": 225,
+  "ax": 0.531,
+  "ay": 0.634
+ },
+ "bld_farm_order_t2": {
+  "file": "bld_farm_order_t2.webp",
+  "w": 768,
+  "h": 686,
+  "size": 243,
+  "ax": 0.53,
+  "ay": 0.701
  }
 }
