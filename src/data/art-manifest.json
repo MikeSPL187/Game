@@ -1,1 +1,18 @@
-{}
+{
+ "bld_citadel_order_t3": {
+  "file": "bld_citadel_order_t3.webp",
+  "w": 768,
+  "h": 758,
+  "size": 470,
+  "ax": 0.5,
+  "ay": 0.849
+ },
+ "bld_citadel_order_t4": {
+  "file": "bld_citadel_order_t4.webp",
+  "w": 764,
+  "h": 768,
+  "size": 470,
+  "ax": 0.5,
+  "ay": 0.852
+ }
+}

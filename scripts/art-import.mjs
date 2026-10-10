@@ -47,6 +47,13 @@ await page.evaluate(() => {
   const canvas = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
   const ctx = (c) => c.getContext('2d', { willReadFrequently: true });
 
+  /** generators leave the body at alpha ≈ 250 and a faint haze around it: snap both */
+  function cleanAlpha(c) {
+    const g = ctx(c), im = g.getImageData(0, 0, c.width, c.height), p = im.data;
+    for (let i = 3; i < p.length; i += 4) { if (p[i] >= 240) p[i] = 255; else if (p[i] < 12) p[i] = 0; }
+    g.putImageData(im, 0, 0);
+  }
+
   function hasAlpha(c) {
     const d = ctx(c).getImageData(0, 0, c.width, c.height).data;
     let n = 0;
@@ -155,6 +162,7 @@ await page.evaluate(() => {
     let bg = null;
     if (cut) {
       if (!hasAlpha(c)) bg = removeBackground(c);
+      cleanAlpha(c);
       const b = bbox(c, 8);
       if (!b) throw new Error('image is empty after background removal');
       c = crop(c, b, 2);
@@ -202,6 +210,7 @@ await page.evaluate(() => {
     const c = canvas(img.width, img.height);
     ctx(c).drawImage(img, 0, 0);
     if (!hasAlpha(c)) removeBackground(c);
+    cleanAlpha(c);
     const W = c.width, H = c.height, F = 4, w = Math.ceil(W / F), h = Math.ceil(H / F);
     const px = ctx(c).getImageData(0, 0, W, H).data;
     let m = new Uint8Array(w * h);
