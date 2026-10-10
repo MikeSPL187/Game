@@ -11,7 +11,10 @@ import '@fontsource/nunito/latin-800.css';
 import './styles/main.css';
 import './styles/ui.css';
 import { applySkin } from './ui/skin';
+import { artUrl, hasArt } from './art/manifest';
 applySkin();
+// generated key art for the loading screen
+if (hasArt('key_loading')) { const b = document.getElementById('boot'); if (b) { b.style.background = `#0b0f1a url("${artUrl('key_loading')}") center / cover no-repeat`; } }
 import { render } from 'preact';
 import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';

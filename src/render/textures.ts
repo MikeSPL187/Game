@@ -119,3 +119,27 @@ export function shadowTexture(b: Baked): Texture | null {
   shadows.set(b.raster, tex);
   return tex;
 }
+
+export interface TexData { w: number; h: number; d: Uint8ClampedArray; mean: [number, number, number]; canvas: HTMLCanvasElement }
+/** Pixels of a raster texture asset (tex_*), or null when it has not been generated yet. */
+export async function loadTexData(name: string): Promise<TexData | null> {
+  if (!artEntry(name)) return null;
+  try {
+    const img = await loadImage(artUrl(name));
+    const c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height;
+    const g = c.getContext('2d', { willReadFrequently: true })!;
+    g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, c.width, c.height).data;
+    let r = 0, gg = 0, b = 0;
+    for (let i = 0; i < d.length; i += 4) { r += d[i]; gg += d[i + 1]; b += d[i + 2]; }
+    const n = d.length / 4;
+    return { w: c.width, h: c.height, d, mean: [r / n, gg / n, b / n], canvas: c };
+  } catch (err) { reportError('tex:' + name, err); return null; }
+}
+/** Wrapped texel lookup. */
+export function texAt(t: TexData, x: number, y: number): [number, number, number] {
+  const xi = ((Math.floor(x) % t.w) + t.w) % t.w, yi = ((Math.floor(y) % t.h) + t.h) % t.h;
+  const i = (yi * t.w + xi) * 4;
+  return [t.d[i], t.d[i + 1], t.d[i + 2]];
+}

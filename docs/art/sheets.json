@@ -680,6 +680,77 @@
    "icon_heart"
   ]
  },
+ "S83": {
+  "cols": 4,
+  "rows": 4,
+  "cells": [
+   "icon_tome",
+   "icon_shield",
+   "icon_flag",
+   "icon_bow",
+   "icon_lance",
+   "icon_rune",
+   "icon_tower",
+   "icon_boot",
+   "icon_cart",
+   "icon_pick",
+   "icon_herb",
+   "icon_coin",
+   "icon_crystal",
+   "icon_lock",
+   "icon_star",
+   "icon_clock"
+  ]
+ },
+ "S84": {
+  "cols": 4,
+  "rows": 4,
+  "cells": [
+   "icon_plus",
+   "icon_check",
+   "icon_arrowUp",
+   "icon_camp",
+   "icon_node",
+   "icon_ruin",
+   "icon_rift",
+   "icon_lord",
+   "icon_report",
+   "icon_attack",
+   "icon_info",
+   "icon_speed",
+   "icon_home",
+   "icon_amulet",
+   "icon_move"
+  ]
+ },
+ "S85": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "bg_battle_field"
+  ]
+ },
+ "S86": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "bg_battle_void"
+  ]
+ },
+ "S87": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "bg_battle_titan"
+  ]
+ },
+ "S88": {
+  "cols": 1,
+  "rows": 1,
+  "cells": [
+   "bg_battle_siege"
+  ]
+ },
  "W01": {
   "cols": 2,
   "rows": 1,

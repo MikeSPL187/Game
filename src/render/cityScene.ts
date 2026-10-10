@@ -13,7 +13,7 @@ import type { Game } from '../game/game';
 import { Camera } from './camera';
 import { ROAD_PATHS, distToRoads, inWall, lakeDist, paintCityGround, LAKE } from './cityGround';
 import { Particles, floatText, ringTexture, softCircle, starSprite } from './fx';
-import { bake, bakeOr, canvasTexture, get, shadowTexture, type Baked } from './textures';
+import { bake, bakeOr, canvasTexture, get, loadTexData, shadowTexture, type Baked } from './textures';
 import { bldArtName } from '../art/artMap';
 import { artEntry, hasArt, type ArtFx } from '../art/manifest';
 
@@ -40,9 +40,20 @@ const bubbleIcons = new Map<string, Texture>();
 
 async function iconTex(name: string): Promise<Texture> {
   const k = 'icon:' + name;
-  const b = await bake(k, { svg: iconSvg(name), w: 64, h: 64, ax: 0.5, ay: 0.5 }, 1.5);
-  bubbleIcons.set(name, b.tex);
-  return b.tex;
+  const b = await bakeOr(k, 'icon_' + name, { svg: iconSvg(name), w: 64, h: 64, ax: 0.5, ay: 0.5 }, 1.5);
+  let tex = b.tex;
+  if (b.img) {
+    // generated icon: normalise to the 96 px box the bubbles are laid out for
+    const c = document.createElement('canvas');
+    c.width = c.height = 96;
+    const g = c.getContext('2d')!;
+    const s = 92 / Math.max(b.img.width, b.img.height);
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(b.img, 48 - (b.img.width * s) / 2, 48 - (b.img.height * s) / 2, b.img.width * s, b.img.height * s);
+    tex = canvasTexture(c);
+  }
+  bubbleIcons.set(name, tex);
+  return tex;
 }
 
 function sprite(b: Baked, scale = 1): Sprite {
@@ -93,7 +104,8 @@ export class CityScene {
   async init(progress?: (f: number) => void) {
     const tg = performance.now();
     const gScale = this.game.s.settings.quality === 'low' ? 0.35 : 0.5;
-    const groundTex = canvasTexture(paintCityGround(gScale));
+    const [grass, plaza, road] = await Promise.all(['tex_city_grass', 'tex_city_plaza', 'tex_city_road'].map(loadTexData));
+    const groundTex = canvasTexture(paintCityGround(gScale, { grass, plaza, road }));
     this.perf.ground = Math.round(performance.now() - tg);
     const g = new Sprite(groundTex);
     g.scale.set(1 / gScale);

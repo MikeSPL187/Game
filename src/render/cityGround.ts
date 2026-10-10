@@ -1,3 +1,4 @@
+import { texAt, type TexData } from './textures';
 import { hash2, noiseTile } from '../core/rng';
 import { CITY_CENTER, CITY_H, CITY_W, GATE, PLOTS, WALL_RX, WALL_RY } from '../data/cityLayout';
 
@@ -57,7 +58,9 @@ export function lakeDist(x: number, y: number): number {
 }
 
 /** Paint the city ground into a canvas at the given scale. */
-export function paintCityGround(scale = 0.5): HTMLCanvasElement {
+export interface GroundTex { grass: TexData | null; plaza: TexData | null; road: TexData | null }
+
+export function paintCityGround(scale = 0.5, tex: GroundTex = { grass: null, plaza: null, road: null }): HTMLCanvasElement {
   const W = Math.round(CITY_W * scale), H = Math.round(CITY_H * scale);
   const c = document.createElement('canvas');
   c.width = W; c.height = H;
@@ -70,18 +73,25 @@ export function paintCityGround(scale = 0.5): HTMLCanvasElement {
       const x = px / scale, y = py / scale;
       const n = N1(x * 0.145, y * 0.145);
       const n2 = N2(x * 0.8, y * 0.8);
-      // grass
+      // grass (generated texture when available, light noise on top breaks up the repetition)
       let r = 88 + n * 50 + n2 * 14, g = 128 + n * 46 + n2 * 16, b = 52 + n * 18;
+      if (tex.grass) { const [tr, tg, tb] = texAt(tex.grass, x * 0.5, y * 0.5); const m = 0.85 + n * 0.3; r = tr * m; g = tg * m; b = tb * m; }
       // dry patches
       const dry = N3(x * 0.107, y * 0.107);
       if (dry > 0.58) { const t = Math.min(1, (dry - 0.58) * 5); r += 30 * t; g += 12 * t; b += 4 * t; }
       // inner city stone
       if (inWall(x, y, -24)) {
         const tile = (Math.floor((x + y * 2) / 46) + Math.floor((x - y * 2) / 46)) & 1;
-        const s = 150 + n * 30 + n2 * 20 + tile * 8;
-        r = s * 1.02; g = s * 0.97; b = s * 0.86;
-        const gx = ((x + y * 2) % 46 + 46) % 46, gy = ((x - y * 2) % 46 + 46) % 46;
-        if (gx < 2.5 || gy < 2.5) { r *= 0.78; g *= 0.78; b *= 0.78; }
+        if (tex.plaza) {
+          // iso-projected sampling so the paving runs along the city axes
+          const [tr, tg, tb] = texAt(tex.plaza, (x + y * 2) * 0.35, (x - y * 2) * 0.35);
+          r = tr; g = tg; b = tb;
+        } else {
+          const s = 150 + n * 30 + n2 * 20 + tile * 8;
+          r = s * 1.02; g = s * 0.97; b = s * 0.86;
+          const gx = ((x + y * 2) % 46 + 46) % 46, gy = ((x - y * 2) % 46 + 46) % 46;
+          if (gx < 2.5 || gy < 2.5) { r *= 0.78; g *= 0.78; b *= 0.78; }
+        }
       } else if (inWall(x, y, 30)) {
         // packed earth ring around the wall
         r = r * 0.6 + 138 * 0.4; g = g * 0.6 + 116 * 0.4; b = b * 0.6 + 80 * 0.4;
@@ -109,8 +119,9 @@ export function paintCityGround(scale = 0.5): HTMLCanvasElement {
   // roads
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  for (const pass of [[58, 'rgba(70,52,30,.45)'], [46, '#a88a5c'], [30, '#c2a575']] as const) {
-    ctx.strokeStyle = pass[1];
+  const roadPat = tex.road ? ctx.createPattern(tex.road.canvas, 'repeat') : null;
+  for (const pass of (roadPat ? [[58, 'rgba(70,52,30,.45)'], [46, 'pattern']] : [[58, 'rgba(70,52,30,.45)'], [46, '#a88a5c'], [30, '#c2a575']]) as [number, string][]) {
+    ctx.strokeStyle = pass[1] === 'pattern' ? roadPat! : pass[1];
     ctx.lineWidth = pass[0];
     for (const path of ROAD_PATHS) {
       ctx.beginPath();
@@ -119,8 +130,8 @@ export function paintCityGround(scale = 0.5): HTMLCanvasElement {
     }
   }
   // road pebbles
-  ctx.fillStyle = 'rgba(90,70,40,.35)';
-  for (const path of ROAD_PATHS) for (let i = 0; i < path.length; i++) {
+  if (!roadPat) ctx.fillStyle = 'rgba(90,70,40,.35)';
+  if (!roadPat) for (const path of ROAD_PATHS) for (let i = 0; i < path.length; i++) {
     const p = path[i];
     for (let k = 0; k < 3; k++) {
       const h = hash2(i, k, path.length);
@@ -136,7 +147,7 @@ export function paintCityGround(scale = 0.5): HTMLCanvasElement {
     ctx.beginPath(); ctx.ellipse(p.x, p.y, 170, 85, 0, 0, Math.PI * 2); ctx.fill();
   }
   // flowers & grass speckles
-  for (let i = 0; i < 2600; i++) {
+  for (let i = 0; i < (tex.grass ? 0 : 2600); i++) {
     const x = hash2(i, 1, 5) * CITY_W, y = hash2(i, 2, 5) * CITY_H;
     if (inWall(x, y, 30) || lakeDist(x, y) < 1.15 || distToRoads(x, y) < 30) continue;
     const t = hash2(i, 3, 5);

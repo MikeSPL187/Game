@@ -232,10 +232,21 @@ function img(url: string): HTMLImageElement {
   return i;
 }
 
+/** Generated battlefield backdrops (bg_battle_*), preloaded so they are ready when a report opens. */
+const BG_IMG: Partial<Record<string, HTMLImageElement>> = {};
+for (const th of ['field', 'void', 'titan', 'siege']) if (hasArt(`bg_battle_${th}`)) { const im = new Image(); im.src = artUrl(`bg_battle_${th}`); BG_IMG[th] = im; }
+
 function background(theme: 'field' | 'void' | 'titan' | 'siege', seed: number): HTMLCanvasElement {
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const c = cv.getContext('2d')!;
+  const art = BG_IMG[theme];
+  if (art?.complete && art.naturalWidth) {
+    // cover-fit, anchored to the bottom where the armies stand
+    const s = Math.max(W / art.naturalWidth, H / art.naturalHeight);
+    c.drawImage(art, (W - art.naturalWidth * s) / 2, H - art.naturalHeight * s, art.naturalWidth * s, art.naturalHeight * s);
+    return cv;
+  }
   const sky = c.createLinearGradient(0, 0, 0, 90);
   const skyCols: Record<string, [string, string]> = { field: ['#5a8ac8', '#bcd4e8'], void: ['#2a1640', '#7a4a9a'], titan: ['#2a3040', '#6a7080'], siege: ['#c8783a', '#f0c890'] };
   sky.addColorStop(0, skyCols[theme][0]); sky.addColorStop(1, skyCols[theme][1]);

@@ -12,7 +12,7 @@ import { T, type Terrain } from '../game/terrain';
 import { Camera } from './camera';
 import { WorldAmbience } from './ambience';
 import { Particles, floatText, ringTexture, softCircle, starSprite } from './fx';
-import { bake, bakeOr, canvasTexture, get, type Baked } from './textures';
+import { bake, bakeOr, canvasTexture, get, loadTexData, texAt, type Baked, type TexData } from './textures';
 import { worldArtName } from '../art/artMap';
 import type { ArtResult } from '../art/buildings';
 
@@ -65,6 +65,7 @@ export class WorldScene {
   private lastFogPaint = -9;
   private lastSync = 0;
   ambience: WorldAmbience | null = null;
+  private biomeTex: Record<number, TexData> = {};
 
   constructor(public app: Application, public game: Game) {
     this.ter = game.ter;
@@ -100,10 +101,15 @@ export class WorldScene {
       jobs.push(bake(`wsold:${t}:me`, () => soldierArt(pc, t)));
       jobs.push(bake(`wsold:${t}:foe`, () => soldierArt('#a02a2a', t)));
     }
-    for (const n of ['attack', 'pick', 'ruin', 'home', 'move', 'skull', 'sword']) jobs.push(bake('wicon:' + n, { svg: iconSvg(n), w: 64, h: 64, ax: 0.5, ay: 0.5 }, 1.5));
+    for (const n of ['attack', 'pick', 'ruin', 'home', 'move', 'skull', 'sword']) jobs.push(bakeOr('wicon:' + n, 'icon_' + n, { svg: iconSvg(n), w: 64, h: 64, ax: 0.5, ay: 0.5 }, 1.5));
     let done = 0;
     jobs.forEach((j) => j.then(() => progress?.(++done / (jobs.length + 2))));
     await Promise.all(jobs);
+    // generated biome textures (tex_*): sampled instead of the flat biome colours when present
+    const BIOME_TEX: [number, string][] = [[T.Grass, 'grass'], [T.Meadow, 'meadow'], [T.Forest, 'forest'], [T.Sand, 'sand'], [T.Deep, 'sand'], [T.Shallow, 'sand'],
+      [T.Hills, 'hills'], [T.Mountain, 'mountain'], [T.Snow, 'snow'], [T.Ash, 'ash'], [T.Swamp, 'swamp']];
+    const loaded = await Promise.all(BIOME_TEX.map(([, n]) => loadTexData('tex_' + n)));
+    BIOME_TEX.forEach(([tt], i) => { if (loaded[i]) this.biomeTex[tt] = loaded[i]!; });
     let t = performance.now();
     this.paintTerrain();
     this.perf.terrain = Math.round(performance.now() - t);
@@ -138,6 +144,8 @@ export class WorldScene {
     const seed = this.ter.seed;
     // tile period: 32 px per lattice cell at octave 0 → scale k = 32 / featureSize
     const NA = noiseTile(seed + 5, 256, 3, 8), NB = noiseTile(seed + 9, 256, 3, 8);
+    const col = (tt: number) => this.biomeTex[tt]?.mean ?? BASE[tt];
+    const textured = Object.keys(this.biomeTex).length > 0;
     const H = (x: number, y: number) => {
       x = Math.max(0, Math.min(n - 1.001, x)); y = Math.max(0, Math.min(n - 1.001, y));
       const xi = Math.floor(x), yi = Math.floor(y), ax = x - xi, ay = y - yi;
@@ -150,11 +158,13 @@ export class WorldScene {
         const fx = px / P - 0.5;
         const x0 = Math.max(0, Math.min(n - 1, Math.floor(fx))), x1 = Math.min(n - 1, x0 + 1), kx = Math.max(0, Math.min(1, fx - x0));
         // bilinear blend of the four surrounding tiles…
-        const c00 = BASE[t[y0 * n + x0]], c10 = BASE[t[y0 * n + x1]], c01 = BASE[t[y1 * n + x0]], c11 = BASE[t[y1 * n + x1]];
+        const c00 = col(t[y0 * n + x0]), c10 = col(t[y0 * n + x1]), c01 = col(t[y1 * n + x0]), c11 = col(t[y1 * n + x1]);
         // …mixed with a domain-warped nearest tile, which turns square tile borders into organic shapes
         const wx = Math.round(fx + (NA(px * 1.6, py * 1.6) - 0.5) * 3.2 + (NB(px * 5, py * 5) - 0.5) * 1.3);
         const wy = Math.round(fy + (NA(px * 1.6 + 53, py * 1.6 + 29) - 0.5) * 3.2 + (NB(px * 5 + 31, py * 5 + 17) - 0.5) * 1.3);
-        const cw = BASE[t[Math.max(0, Math.min(n - 1, wy)) * n + Math.max(0, Math.min(n - 1, wx))]];
+        const tw = t[Math.max(0, Math.min(n - 1, wy)) * n + Math.max(0, Math.min(n - 1, wx))];
+        const bt = this.biomeTex[tw];
+        const cw = bt ? texAt(bt, px * 2, py * 2) : BASE[tw];
         let r = 0, g = 0, b = 0;
         for (let k = 0; k < 3; k++) {
           const top = c00[k] * (1 - kx) + c10[k] * kx;
@@ -173,7 +183,8 @@ export class WorldScene {
           if (hh + wn > 0.372) { r += 50; g += 40; b += 22; } // foam near coast
         } else {
           const shadeV = (-hx - hy) * 140;
-          r += shadeV + detail * 22; g += shadeV + detail * 22; b += shadeV * 0.8 + detail * 14;
+          const dt = textured && this.biomeTex[tw] ? 0.3 : 1; // the texture already carries its own detail
+          r += shadeV + detail * 22 * dt; g += shadeV + detail * 22 * dt; b += shadeV * 0.8 + detail * 14 * dt;
           const macro = NA(px * 0.53 + 131, py * 0.53 + 77) - 0.5;
           r += macro * 26; g += macro * 22; b += macro * 10;
         }
@@ -186,7 +197,7 @@ export class WorldScene {
     for (let i = 0; i < 9000; i++) {
       const x = hash2(i, 1, seed) * W, y = hash2(i, 2, seed) * W;
       const tt = t[Math.floor(y / P) * n + Math.floor(x / P)];
-      if (tt === T.Meadow || (tt === T.Grass && i % 4 === 0)) {
+      if (!this.biomeTex[tt] && (tt === T.Meadow || (tt === T.Grass && i % 4 === 0))) {
         ctx.fillStyle = ['#f4e46a', '#f0a0c8', '#ffffff', '#c890ff'][i % 4];
         ctx.fillRect(x, y, 1.4, 1.4);
       }
@@ -445,7 +456,7 @@ export class WorldScene {
     ring.ellipse(0, 4, 30, 12).stroke({ color: foe ? 0xff4a3a : 0x7fe3ff, width: 3, alpha: 0.9 });
     c.addChildAt(ring, 0);
     const flagS = new Sprite(get(foe ? 'wicon:skull' : 'wicon:sword')!.tex);
-    flagS.anchor.set(0.5); flagS.scale.set(0.28); flagS.y = -54;
+    flagS.anchor.set(0.5); flagS.width = flagS.height = 27; flagS.y = -54;
     const bg = new Graphics();
     bg.circle(0, -54, 15).fill({ color: foe ? 0x5a1010 : 0x10203a, alpha: 0.95 }).stroke({ color: foe ? 0xff6a4a : 0xe8b84a, width: 2.5 });
     c.addChild(bg, flagS);

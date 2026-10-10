@@ -371,13 +371,14 @@ export function ProfilePanel() {
 }
 
 // ———————————————————————————————————————— intro / faction select
+const introBg = () => (hasArt('key_loading') ? { background: `linear-gradient(180deg, rgba(6,8,16,.35), rgba(6,8,16,.8)), url("${artUrl('key_loading')}") center / cover no-repeat` } : undefined);
 export function IntroScreen({ onDone }: { onDone: (f: FactionId, name: string) => void }) {
   const [f, setF] = useState<FactionId>('order');
   const [name, setName] = useState('Лорд Эйдан');
   const [step, setStep] = useState(0);
   if (step === 0) {
     return (
-      <div class="intro" onClick={() => { initAudio(); sfx('horn'); setStep(1); }}>
+      <div class="intro" style={introBg()} onClick={() => { initAudio(); sfx('horn'); setStep(1); }}>
         <div class="logo">AETHERFALL</div>
         <div class="tag">ЭПОХА ТИТАНОВ</div>
         <div style={{ maxWidth: 760, textAlign: 'center', fontSize: 17, lineHeight: 1.6, margin: '20px 0', color: '#d8d0c0' }}>
@@ -389,7 +390,7 @@ export function IntroScreen({ onDone }: { onDone: (f: FactionId, name: string) =
     );
   }
   return (
-    <div class="intro">
+    <div class="intro" style={introBg()}>
       <div class="h" style={{ fontSize: 34, color: 'var(--gold2)' }}>Выберите свой путь</div>
       <div class="fcards">
         {(Object.keys(FACTIONS) as FactionId[]).map((id) => {
@@ -397,7 +398,7 @@ export function IntroScreen({ onDone }: { onDone: (f: FactionId, name: string) =
           const hero = id === 'order' ? 'aerena' : id === 'wild' ? 'lyra' : 'grom';
           return (
             <div class={'fcard' + (f === id ? ' on' : '')} style={{ '--fc': fc.color } as any} onClick={() => { sfx('click'); haptic(); setF(id); }}>
-              <img src={portraitUrl(hero)} style={{ width: 120, height: 150, objectFit: 'cover', borderRadius: 12, boxShadow: `0 0 0 2px ${fc.color}` }} />
+              <img src={hasArt(`key_faction_${id}`) ? artUrl(`key_faction_${id}`) : portraitUrl(hero)} style={{ width: hasArt(`key_faction_${id}`) ? 240 : 120, height: hasArt(`key_faction_${id}`) ? 300 : 150, objectFit: 'cover', borderRadius: 12, boxShadow: `0 0 0 2px ${fc.color}` }} />
               <div class="fn">{fc.name}</div>
               <div class="fm">«{fc.motto}»</div>
               <div class="fd">{fc.desc}</div>

@@ -204,11 +204,34 @@ const UNITS = [
   ['void_mag', 'Огонёк Пустоты', 'a floating void wisp, a glowing purple-white orb with trailing smoke tendrils'],
 ];
 
+// icons the game uses beyond the first set (status marks, map markers, misc items)
+const ICONS2 = [
+  ['tome', 'a stack of two experience books'], ['shield', 'a steel kite shield with a blue sun emblem'], ['flag', 'a small blue war banner on a pole'],
+  ['bow', 'a recurve wooden bow'], ['lance', 'a knight lance with a blue pennant'], ['rune', 'a glowing blue rune stone'], ['tower', 'a stone watchtower'],
+  ['boot', 'a leather boot with a small wing (march speed)'], ['cart', 'a wooden cart loaded with sacks'], ['pick', 'an iron pickaxe'],
+  ['herb', 'a bundle of green healing herbs'], ['coin', 'a single shiny gold coin'], ['crystal', 'a cluster of glowing blue crystals'],
+  ['lock', 'a heavy golden padlock'], ['star', 'a shining golden star'], ['clock', 'a round golden pocket clock'],
+  ['plus', 'a green round plus button symbol'], ['check', 'a green check mark'], ['arrowUp', 'a bold green upward arrow (upgrade)'],
+  ['camp', 'a dark purple void creature tent with a skull'], ['node', 'a pile of mixed resources: wheat, logs and stone'], ['ruin', 'a broken ancient stone column'],
+  ['rift', 'a swirling purple and blue magic portal'], ['lord', 'a dark enemy castle tower with a red banner'], ['report', 'a sealed scroll with a wax seal'],
+  ['attack', 'two crossed swords'], ['info', 'a blue round information badge with a letter i'], ['speed', 'a winged golden hourglass'],
+  ['home', 'a small house with a blue roof'], ['amulet', 'a golden amulet with a blue gem'], ['move', 'a blue banner flag with a boot print (move order)'],
+];
+const BATTLE_BG = [
+  ['field', 'a green summer battlefield meadow with distant hills and a forest line under a bright blue sky'],
+  ['void', 'a corrupted purple wasteland near a glowing aether rift with floating rocks under a violet sky'],
+  ['titan', 'a stormy rocky highland plateau with dark clouds and lightning in the distance'],
+  ['siege', 'the grassy field in front of a white stone city wall with blue banners at golden hour'],
+];
+
 const battleUi = () => {
   let out = '\n# Этап D — бой и интерфейс\n\n## Юниты для повтора битвы\n\n';
   for (const [id, ru, what] of UNITS) out += block(ru, `unit_${id}.png`, '1024×1024, прозрачный фон', `${what}. ${UNIT}.`);
   out += '\nЦвет врагов-людей (красный) я получу из синих юнитов перекраской — отдельно генерировать не нужно.\n\n## Иконки\n\n';
   for (const [id, what] of ICONS) out += block(id, `icon_${id}.png`, '512×512, прозрачный фон', `${what}. ${ICON}.`, '--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text');
+  for (const [id, what] of ICONS2) out += block(id, `icon_${id}.png`, '512×512, прозрачный фон', `${what}. ${ICON}.`, '--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text');
+  out += '\n## Фоны повтора битвы\n\nШирокая панорама: нижние две трети кадра — ровная земля, где встанут армии.\n\n';
+  for (const [id, what] of BATTLE_BG) out += block(`Поле боя: ${id}`, `bg_battle_${id}.png`, '1536×1024 (3:2)', `${what}, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. ${STYLE}. No text.`, '--ar 3:2 --style raw --sref <ETALON_URL> --sw 150');
   return out;
 };
 
@@ -297,6 +320,13 @@ const UIKIT = [
     body: `Top row: a horizontal parchment scroll plate for a quest tracker, light aged parchment with rolled ends and a thin gold trim, empty, about 3.5 times wider than tall. Bottom row: a horizontal name plate ribbon, dark blue enamel with a gold edge that fades out on the right end, empty, about 5 times wider than tall. ${UIS}.` },
 ];
 for (const u of UIKIT) sheet('ui', u.title, u.cols, u.rows, u.size, u.cells, u.body);
+
+for (const g of chunk(ICONS2, 16)) {
+  const rows = Math.ceil(g.length / 4);
+  sheet('main', 'Иконки: ' + g.map((x) => x[0]).join(', '), 4, rows, '1024x1024', g.map((x) => `icon_${x[0]}`),
+    'A set of matching game UI icons in one consistent style, reading left to right, top to bottom: ' + g.map(([, what], i) => `${i + 1}) ${what}`).join('; ') + `. Each icon is a ${ICON}.`);
+}
+for (const a of ASSETS.filter((x) => x.name.startsWith('bg_battle_'))) sheet('main', a.title, 1, 1, a.size, [a.name], a.prompt);
 
 buildingSheets('wild', 'wild', false);
 buildingSheets('ash', 'ash', false);

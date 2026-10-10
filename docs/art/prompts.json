@@ -1512,6 +1512,286 @@
   "transparent": true
  },
  {
+  "name": "icon_tome",
+  "stage": "D",
+  "title": "tome",
+  "prompt": "a stack of two experience books. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_shield",
+  "stage": "D",
+  "title": "shield",
+  "prompt": "a steel kite shield with a blue sun emblem. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_flag",
+  "stage": "D",
+  "title": "flag",
+  "prompt": "a small blue war banner on a pole. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_bow",
+  "stage": "D",
+  "title": "bow",
+  "prompt": "a recurve wooden bow. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_lance",
+  "stage": "D",
+  "title": "lance",
+  "prompt": "a knight lance with a blue pennant. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_rune",
+  "stage": "D",
+  "title": "rune",
+  "prompt": "a glowing blue rune stone. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_tower",
+  "stage": "D",
+  "title": "tower",
+  "prompt": "a stone watchtower. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_boot",
+  "stage": "D",
+  "title": "boot",
+  "prompt": "a leather boot with a small wing (march speed). game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_cart",
+  "stage": "D",
+  "title": "cart",
+  "prompt": "a wooden cart loaded with sacks. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_pick",
+  "stage": "D",
+  "title": "pick",
+  "prompt": "an iron pickaxe. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_herb",
+  "stage": "D",
+  "title": "herb",
+  "prompt": "a bundle of green healing herbs. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_coin",
+  "stage": "D",
+  "title": "coin",
+  "prompt": "a single shiny gold coin. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_crystal",
+  "stage": "D",
+  "title": "crystal",
+  "prompt": "a cluster of glowing blue crystals. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_lock",
+  "stage": "D",
+  "title": "lock",
+  "prompt": "a heavy golden padlock. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_star",
+  "stage": "D",
+  "title": "star",
+  "prompt": "a shining golden star. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_clock",
+  "stage": "D",
+  "title": "clock",
+  "prompt": "a round golden pocket clock. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_plus",
+  "stage": "D",
+  "title": "plus",
+  "prompt": "a green round plus button symbol. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_check",
+  "stage": "D",
+  "title": "check",
+  "prompt": "a green check mark. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_arrowUp",
+  "stage": "D",
+  "title": "arrowUp",
+  "prompt": "a bold green upward arrow (upgrade). game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_camp",
+  "stage": "D",
+  "title": "camp",
+  "prompt": "a dark purple void creature tent with a skull. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_node",
+  "stage": "D",
+  "title": "node",
+  "prompt": "a pile of mixed resources: wheat, logs and stone. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_ruin",
+  "stage": "D",
+  "title": "ruin",
+  "prompt": "a broken ancient stone column. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_rift",
+  "stage": "D",
+  "title": "rift",
+  "prompt": "a swirling purple and blue magic portal. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_lord",
+  "stage": "D",
+  "title": "lord",
+  "prompt": "a dark enemy castle tower with a red banner. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_report",
+  "stage": "D",
+  "title": "report",
+  "prompt": "a sealed scroll with a wax seal. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_attack",
+  "stage": "D",
+  "title": "attack",
+  "prompt": "two crossed swords. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_info",
+  "stage": "D",
+  "title": "info",
+  "prompt": "a blue round information badge with a letter i. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_speed",
+  "stage": "D",
+  "title": "speed",
+  "prompt": "a winged golden hourglass. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_home",
+  "stage": "D",
+  "title": "home",
+  "prompt": "a small house with a blue roof. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_amulet",
+  "stage": "D",
+  "title": "amulet",
+  "prompt": "a golden amulet with a blue gem. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "icon_move",
+  "stage": "D",
+  "title": "move",
+  "prompt": "a blue banner flag with a boot print (move order). game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.",
+  "size": "1024x1024",
+  "transparent": true
+ },
+ {
+  "name": "bg_battle_field",
+  "stage": "D",
+  "title": "Поле боя: field",
+  "prompt": "a green summer battlefield meadow with distant hills and a forest line under a bright blue sky, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.",
+  "size": "1536x1024",
+  "transparent": false
+ },
+ {
+  "name": "bg_battle_void",
+  "stage": "D",
+  "title": "Поле боя: void",
+  "prompt": "a corrupted purple wasteland near a glowing aether rift with floating rocks under a violet sky, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.",
+  "size": "1536x1024",
+  "transparent": false
+ },
+ {
+  "name": "bg_battle_titan",
+  "stage": "D",
+  "title": "Поле боя: titan",
+  "prompt": "a stormy rocky highland plateau with dark clouds and lightning in the distance, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.",
+  "size": "1536x1024",
+  "transparent": false
+ },
+ {
+  "name": "bg_battle_siege",
+  "stage": "D",
+  "title": "Поле боя: siege",
+  "prompt": "the grassy field in front of a white stone city wall with blue banners at golden hour, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.",
+  "size": "1536x1024",
+  "transparent": false
+ },
+ {
   "name": "bld_citadel_wild_t1",
   "stage": "E",
   "title": "Цитадель — T1",

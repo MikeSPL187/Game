@@ -1656,3 +1656,288 @@ a red heart with a green leaf (healing). game UI icon, stylized 3D render, thick
 ```
 <sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
 
+### tome
+`icon_tome.png` · 512×512, прозрачный фон
+
+```
+a stack of two experience books. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### shield
+`icon_shield.png` · 512×512, прозрачный фон
+
+```
+a steel kite shield with a blue sun emblem. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### flag
+`icon_flag.png` · 512×512, прозрачный фон
+
+```
+a small blue war banner on a pole. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### bow
+`icon_bow.png` · 512×512, прозрачный фон
+
+```
+a recurve wooden bow. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### lance
+`icon_lance.png` · 512×512, прозрачный фон
+
+```
+a knight lance with a blue pennant. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### rune
+`icon_rune.png` · 512×512, прозрачный фон
+
+```
+a glowing blue rune stone. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### tower
+`icon_tower.png` · 512×512, прозрачный фон
+
+```
+a stone watchtower. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### boot
+`icon_boot.png` · 512×512, прозрачный фон
+
+```
+a leather boot with a small wing (march speed). game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### cart
+`icon_cart.png` · 512×512, прозрачный фон
+
+```
+a wooden cart loaded with sacks. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### pick
+`icon_pick.png` · 512×512, прозрачный фон
+
+```
+an iron pickaxe. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### herb
+`icon_herb.png` · 512×512, прозрачный фон
+
+```
+a bundle of green healing herbs. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### coin
+`icon_coin.png` · 512×512, прозрачный фон
+
+```
+a single shiny gold coin. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### crystal
+`icon_crystal.png` · 512×512, прозрачный фон
+
+```
+a cluster of glowing blue crystals. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### lock
+`icon_lock.png` · 512×512, прозрачный фон
+
+```
+a heavy golden padlock. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### star
+`icon_star.png` · 512×512, прозрачный фон
+
+```
+a shining golden star. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### clock
+`icon_clock.png` · 512×512, прозрачный фон
+
+```
+a round golden pocket clock. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### plus
+`icon_plus.png` · 512×512, прозрачный фон
+
+```
+a green round plus button symbol. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### check
+`icon_check.png` · 512×512, прозрачный фон
+
+```
+a green check mark. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### arrowUp
+`icon_arrowUp.png` · 512×512, прозрачный фон
+
+```
+a bold green upward arrow (upgrade). game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### camp
+`icon_camp.png` · 512×512, прозрачный фон
+
+```
+a dark purple void creature tent with a skull. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### node
+`icon_node.png` · 512×512, прозрачный фон
+
+```
+a pile of mixed resources: wheat, logs and stone. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### ruin
+`icon_ruin.png` · 512×512, прозрачный фон
+
+```
+a broken ancient stone column. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### rift
+`icon_rift.png` · 512×512, прозрачный фон
+
+```
+a swirling purple and blue magic portal. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### lord
+`icon_lord.png` · 512×512, прозрачный фон
+
+```
+a dark enemy castle tower with a red banner. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### report
+`icon_report.png` · 512×512, прозрачный фон
+
+```
+a sealed scroll with a wax seal. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### attack
+`icon_attack.png` · 512×512, прозрачный фон
+
+```
+two crossed swords. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### info
+`icon_info.png` · 512×512, прозрачный фон
+
+```
+a blue round information badge with a letter i. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### speed
+`icon_speed.png` · 512×512, прозрачный фон
+
+```
+a winged golden hourglass. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### home
+`icon_home.png` · 512×512, прозрачный фон
+
+```
+a small house with a blue roof. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### amulet
+`icon_amulet.png` · 512×512, прозрачный фон
+
+```
+a golden amulet with a blue gem. game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+### move
+`icon_move.png` · 512×512, прозрачный фон
+
+```
+a blue banner flag with a boot print (move order). game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 1:1 --style raw --sref <ETALON_URL> --sw 150 --no text`
+
+
+## Фоны повтора битвы
+
+Широкая панорама: нижние две трети кадра — ровная земля, где встанут армии.
+
+### Поле боя: field
+`bg_battle_field.png` · 1536×1024 (3:2)
+
+```
+a green summer battlefield meadow with distant hills and a forest line under a bright blue sky, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 3:2 --style raw --sref <ETALON_URL> --sw 150`
+
+### Поле боя: void
+`bg_battle_void.png` · 1536×1024 (3:2)
+
+```
+a corrupted purple wasteland near a glowing aether rift with floating rocks under a violet sky, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 3:2 --style raw --sref <ETALON_URL> --sw 150`
+
+### Поле боя: titan
+`bg_battle_titan.png` · 1536×1024 (3:2)
+
+```
+a stormy rocky highland plateau with dark clouds and lightning in the distance, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 3:2 --style raw --sref <ETALON_URL> --sw 150`
+
+### Поле боя: siege
+`bg_battle_siege.png` · 1536×1024 (3:2)
+
+```
+the grassy field in front of a white stone city wall with blue banners at golden hour, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+<sub>Midjourney: добавьте в конец</sub> `--ar 3:2 --style raw --sref <ETALON_URL> --sw 150`
+

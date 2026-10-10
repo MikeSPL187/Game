@@ -583,3 +583,45 @@ A game asset sheet: 16 separate images arranged in a grid of 4 columns and 4 row
 A game asset sheet: 16 separate images arranged in a grid of 4 columns and 4 rows, each one centered in its own equal cell with wide empty space around it, nothing touching or crossing the cell borders, no grid lines, no labels. A set of matching game UI icons in one consistent style, reading left to right, top to bottom: 1) an open spellbook with a glowing rune; 2) a purple gift box with a gold ribbon; 3) a golden trophy cup; 4) a calendar parchment with a golden star; 5) a bronze settings gear; 6) a blue alliance banner with a golden emblem; 7) a horned skull with glowing pink eyes (void hunt); 8) a stone titan head with glowing blue eyes; 9) a builder hammer; 10) an armored gauntlet; 11) a steel breastplate; 12) a fine steel sword; 13) a red heart with a green leaf (healing). Each icon is a game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
 ```
 
+### S83 — Иконки: tome, shield, flag, bow, lance, rune, tower, boot, cart, pick, herb, coin, crystal, lock, star, clock
+1024×1024 · 4×4 · даёт: `icon_tome`, `icon_shield`, `icon_flag`, `icon_bow`, `icon_lance`, `icon_rune`, `icon_tower`, `icon_boot`, `icon_cart`, `icon_pick`, `icon_herb`, `icon_coin`, `icon_crystal`, `icon_lock`, `icon_star`, `icon_clock`
+
+```
+A game asset sheet: 16 separate images arranged in a grid of 4 columns and 4 rows, each one centered in its own equal cell with wide empty space around it, nothing touching or crossing the cell borders, no grid lines, no labels. A set of matching game UI icons in one consistent style, reading left to right, top to bottom: 1) a stack of two experience books; 2) a steel kite shield with a blue sun emblem; 3) a small blue war banner on a pole; 4) a recurve wooden bow; 5) a knight lance with a blue pennant; 6) a glowing blue rune stone; 7) a stone watchtower; 8) a leather boot with a small wing (march speed); 9) a wooden cart loaded with sacks; 10) an iron pickaxe; 11) a bundle of green healing herbs; 12) a single shiny gold coin; 13) a cluster of glowing blue crystals; 14) a heavy golden padlock; 15) a shining golden star; 16) a round golden pocket clock. Each icon is a game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+
+### S84 — Иконки: plus, check, arrowUp, camp, node, ruin, rift, lord, report, attack, info, speed, home, amulet, move
+1024×1024 · 4×4 · даёт: `icon_plus`, `icon_check`, `icon_arrowUp`, `icon_camp`, `icon_node`, `icon_ruin`, `icon_rift`, `icon_lord`, `icon_report`, `icon_attack`, `icon_info`, `icon_speed`, `icon_home`, `icon_amulet`, `icon_move`
+
+```
+A game asset sheet: 16 separate images arranged in a grid of 4 columns and 4 rows, each one centered in its own equal cell with wide empty space around it, nothing touching or crossing the cell borders, no grid lines, no labels. A set of matching game UI icons in one consistent style, reading left to right, top to bottom: 1) a green round plus button symbol; 2) a green check mark; 3) a bold green upward arrow (upgrade); 4) a dark purple void creature tent with a skull; 5) a pile of mixed resources: wheat, logs and stone; 6) a broken ancient stone column; 7) a swirling purple and blue magic portal; 8) a dark enemy castle tower with a red banner; 9) a sealed scroll with a wax seal; 10) two crossed swords; 11) a blue round information badge with a letter i; 12) a winged golden hourglass; 13) a small house with a blue roof; 14) a golden amulet with a blue gem; 15) a blue banner flag with a boot print (move order). Each icon is a game UI icon, stylized 3D render, thick bold shapes, strong rim light, slight three-quarter angle, centered with margins, readable at small size, isolated on a transparent background, no text, no frame.
+```
+
+### S85 — Поле боя: field
+1536×1024 · 1×1 · даёт: `bg_battle_field`
+
+```
+a green summer battlefield meadow with distant hills and a forest line under a bright blue sky, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+
+### S86 — Поле боя: void
+1536×1024 · 1×1 · даёт: `bg_battle_void`
+
+```
+a corrupted purple wasteland near a glowing aether rift with floating rocks under a violet sky, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+
+### S87 — Поле боя: titan
+1536×1024 · 1×1 · даёт: `bg_battle_titan`
+
+```
+a stormy rocky highland plateau with dark clouds and lightning in the distance, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+
+### S88 — Поле боя: siege
+1536×1024 · 1×1 · даёт: `bg_battle_siege`
+
+```
+the grassy field in front of a white stone city wall with blue banners at golden hour, wide side-view battlefield backdrop for a mobile strategy game battle screen, the lower two thirds is open flat ground with nothing on it, horizon in the upper third, no characters, no armies, no buildings in the foreground. stylized 3D game asset in the style of premium mobile 4X strategy games, hand-painted PBR textures, chunky readable shapes, slightly exaggerated proportions, rich but natural colors, warm golden-hour key light from the upper left, soft cool fill light from the right, subtle rim light, crisp high detail, clean silhouette. No text.
+```
+
