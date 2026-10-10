@@ -599,6 +599,614 @@
   "ax": 0.475,
   "ay": 0.877
  },
+ "icon_aether": {
+  "file": "icon_aether.webp",
+  "w": 182,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_amulet": {
+  "file": "icon_amulet.webp",
+  "w": 162,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_arc": {
+  "file": "icon_arc.webp",
+  "w": 191,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_armor": {
+  "file": "icon_armor.webp",
+  "w": 192,
+  "h": 177,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_arrowUp": {
+  "file": "icon_arrowUp.webp",
+  "w": 161,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_attack": {
+  "file": "icon_attack.webp",
+  "w": 192,
+  "h": 170,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_bag": {
+  "file": "icon_bag.webp",
+  "w": 187,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_banner": {
+  "file": "icon_banner.webp",
+  "w": 187,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_bone": {
+  "file": "icon_bone.webp",
+  "w": 191,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_book": {
+  "file": "icon_book.webp",
+  "w": 192,
+  "h": 173,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_boot": {
+  "file": "icon_boot.webp",
+  "w": 170,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_bow": {
+  "file": "icon_bow.webp",
+  "w": 119,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_calendar": {
+  "file": "icon_calendar.webp",
+  "w": 188,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_camp": {
+  "file": "icon_camp.webp",
+  "w": 192,
+  "h": 180,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_cart": {
+  "file": "icon_cart.webp",
+  "w": 192,
+  "h": 158,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_castle": {
+  "file": "icon_castle.webp",
+  "w": 185,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_cav": {
+  "file": "icon_cav.webp",
+  "w": 177,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_check": {
+  "file": "icon_check.webp",
+  "w": 192,
+  "h": 176,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_chest": {
+  "file": "icon_chest.webp",
+  "w": 192,
+  "h": 177,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_chest_gold": {
+  "file": "icon_chest_gold.webp",
+  "w": 192,
+  "h": 181,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_clock": {
+  "file": "icon_clock.webp",
+  "w": 162,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_coin": {
+  "file": "icon_coin.webp",
+  "w": 185,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_crystal": {
+  "file": "icon_crystal.webp",
+  "w": 176,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_crystalMat": {
+  "file": "icon_crystalMat.webp",
+  "w": 169,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_essence": {
+  "file": "icon_essence.webp",
+  "w": 136,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_flag": {
+  "file": "icon_flag.webp",
+  "w": 137,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_food": {
+  "file": "icon_food.webp",
+  "w": 192,
+  "h": 191,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_gauntlet": {
+  "file": "icon_gauntlet.webp",
+  "w": 187,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_gear": {
+  "file": "icon_gear.webp",
+  "w": 192,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_gift": {
+  "file": "icon_gift.webp",
+  "w": 184,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_gold": {
+  "file": "icon_gold.webp",
+  "w": 192,
+  "h": 166,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_hammer": {
+  "file": "icon_hammer.webp",
+  "w": 171,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_heart": {
+  "file": "icon_heart.webp",
+  "w": 189,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_herb": {
+  "file": "icon_herb.webp",
+  "w": 192,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_hero": {
+  "file": "icon_hero.webp",
+  "w": 171,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_home": {
+  "file": "icon_home.webp",
+  "w": 192,
+  "h": 182,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_hourglass": {
+  "file": "icon_hourglass.webp",
+  "w": 133,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_inf": {
+  "file": "icon_inf.webp",
+  "w": 187,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_info": {
+  "file": "icon_info.webp",
+  "w": 192,
+  "h": 191,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_key_gold": {
+  "file": "icon_key_gold.webp",
+  "w": 173,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_key_silver": {
+  "file": "icon_key_silver.webp",
+  "w": 159,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_lance": {
+  "file": "icon_lance.webp",
+  "w": 192,
+  "h": 182,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_leather": {
+  "file": "icon_leather.webp",
+  "w": 192,
+  "h": 163,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_lock": {
+  "file": "icon_lock.webp",
+  "w": 150,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_lord": {
+  "file": "icon_lord.webp",
+  "w": 177,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_mag": {
+  "file": "icon_mag.webp",
+  "w": 175,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_mail": {
+  "file": "icon_mail.webp",
+  "w": 192,
+  "h": 142,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_map": {
+  "file": "icon_map.webp",
+  "w": 192,
+  "h": 190,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_move": {
+  "file": "icon_move.webp",
+  "w": 161,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_node": {
+  "file": "icon_node.webp",
+  "w": 192,
+  "h": 177,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_ore": {
+  "file": "icon_ore.webp",
+  "w": 192,
+  "h": 187,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_pick": {
+  "file": "icon_pick.webp",
+  "w": 178,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_plus": {
+  "file": "icon_plus.webp",
+  "w": 191,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_power": {
+  "file": "icon_power.webp",
+  "w": 156,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_quest": {
+  "file": "icon_quest.webp",
+  "w": 192,
+  "h": 162,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_report": {
+  "file": "icon_report.webp",
+  "w": 192,
+  "h": 167,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_rift": {
+  "file": "icon_rift.webp",
+  "w": 192,
+  "h": 191,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_ruin": {
+  "file": "icon_ruin.webp",
+  "w": 183,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_rune": {
+  "file": "icon_rune.webp",
+  "w": 148,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_shard": {
+  "file": "icon_shard.webp",
+  "w": 174,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_shield": {
+  "file": "icon_shield.webp",
+  "w": 141,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_shieldItem": {
+  "file": "icon_shieldItem.webp",
+  "w": 180,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_skull": {
+  "file": "icon_skull.webp",
+  "w": 192,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_speed": {
+  "file": "icon_speed.webp",
+  "w": 192,
+  "h": 164,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_star": {
+  "file": "icon_star.webp",
+  "w": 185,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_stone": {
+  "file": "icon_stone.webp",
+  "w": 192,
+  "h": 188,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_sword": {
+  "file": "icon_sword.webp",
+  "w": 178,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_titan": {
+  "file": "icon_titan.webp",
+  "w": 170,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_tome": {
+  "file": "icon_tome.webp",
+  "w": 192,
+  "h": 175,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_tome1": {
+  "file": "icon_tome1.webp",
+  "w": 192,
+  "h": 163,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_tome2": {
+  "file": "icon_tome2.webp",
+  "w": 192,
+  "h": 180,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_tome3": {
+  "file": "icon_tome3.webp",
+  "w": 192,
+  "h": 178,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_tower": {
+  "file": "icon_tower.webp",
+  "w": 155,
+  "h": 192,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_troops": {
+  "file": "icon_troops.webp",
+  "w": 192,
+  "h": 187,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_trophy": {
+  "file": "icon_trophy.webp",
+  "w": 192,
+  "h": 182,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
+ "icon_wood": {
+  "file": "icon_wood.webp",
+  "w": 192,
+  "h": 163,
+  "size": 64,
+  "ax": 0.5,
+  "ay": 0.5
+ },
  "ui_badge_level": {
   "file": "ui_badge_level.webp",
   "w": 578,

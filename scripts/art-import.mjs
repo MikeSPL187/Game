@@ -298,23 +298,32 @@ await page.evaluate(() => {
       comps.push({ area, cx: sx / area, cy: sy / area, x0, y0, x1, y1, cell: -1 });
     }
     const minArea = (w * h) / (cols * rows) * 0.002;
+    const cw = w / cols, chh = h / rows;
+    const cellOf = (x, y) => Math.min(rows - 1, Math.floor(y / chh)) * cols + Math.min(cols - 1, Math.floor(x / cw));
     for (const k of comps) {
       if (k.area < minArea) continue; // specks and noise
-      const col = Math.min(cols - 1, Math.floor((k.cx / w) * cols)), row = Math.min(rows - 1, Math.floor((k.cy / h) * rows));
-      k.cell = row * cols + col;
+      // two neighbours fused by touching glow: split that blob along the grid lines instead
+      k.split = cols * rows > 1 && (k.x1 - k.x0 > cw * 1.25 || k.y1 - k.y0 > chh * 1.25);
+      k.cell = k.split ? -2 : cellOf(k.cx, k.cy);
     }
+    const owner = (l, gx, gy) => (l < 0 ? -1 : comps[l].cell === -2 ? cellOf(gx, gy) : comps[l].cell);
     const out = [];
     for (let cell = 0; cell < cols * rows; cell++) {
-      const mine = comps.filter((k) => k.cell === cell);
-      if (!mine.length) { out.push(null); continue; }
-      const bx0 = Math.max(0, Math.min(...mine.map((k) => k.x0)) * F - 4), by0 = Math.max(0, Math.min(...mine.map((k) => k.y0)) * F - 4);
-      const bx1 = Math.min(W, (Math.max(...mine.map((k) => k.x1)) + 1) * F + 4), by1 = Math.min(H, (Math.max(...mine.map((k) => k.y1)) + 1) * F + 4);
+      // bbox of every low-res pixel this cell owns
+      let gx0 = w, gy0 = h, gx1 = -1, gy1 = -1;
+      for (let gy = 0; gy < h; gy++) for (let gx = 0; gx < w; gx++) {
+        if (owner(lab[gy * w + gx], gx, gy) !== cell) continue;
+        if (gx < gx0) gx0 = gx; if (gx > gx1) gx1 = gx; if (gy < gy0) gy0 = gy; if (gy > gy1) gy1 = gy;
+      }
+      if (gx1 < 0) { out.push(null); continue; }
+      const bx0 = Math.max(0, gx0 * F - 4), by0 = Math.max(0, gy0 * F - 4);
+      const bx1 = Math.min(W, (gx1 + 1) * F + 4), by1 = Math.min(H, (gy1 + 1) * F + 4);
       const o = canvas(bx1 - bx0, by1 - by0), g = ctx(o);
       g.drawImage(c, bx0, by0, o.width, o.height, 0, 0, o.width, o.height);
       const im = g.getImageData(0, 0, o.width, o.height), p = im.data;
       for (let y = 0; y < o.height; y++) for (let x = 0; x < o.width; x++) {
-        const l = lab[(((by0 + y) / F) | 0) * w + (((bx0 + x) / F) | 0)];
-        if (l < 0 || comps[l].cell !== cell) p[(y * o.width + x) * 4 + 3] = 0;
+        const gx = ((bx0 + x) / F) | 0, gy = ((by0 + y) / F) | 0;
+        if (owner(lab[gy * w + gx], gx, gy) !== cell) p[(y * o.width + x) * 4 + 3] = 0;
       }
       g.putImageData(im, 0, 0);
       out.push(o.toDataURL('image/png'));
